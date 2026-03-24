@@ -949,8 +949,16 @@
             
             button.appendChild(circle);
         }
-
+        window.onload = () => {
+            getTableNumber();
+            renderMenu('grid-cat-1', DB.cat1, 1);
+            renderMenu('grid-cat-2', DB.cat2, 2);
+            renderMenu('grid-cat-3', DB.cat3, 3);
+            renderMenu('grid-cat-4', DB.cat4, 4);
+        }
         window.onload = initApp;
+        
     </script>
+    
 </body>
 </html>
