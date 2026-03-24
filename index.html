@@ -902,6 +902,12 @@
 
             // จำลองการส่งข้อมูล
             setTimeout(() => {
+                const tableNum = document.getElementById('table-number').innerText;
+                const successMsg = document.querySelector('#overlay-success .success-modal p');
+                if (successMsg) {
+                    successMsg.innerHTML = `ออเดอร์ของ <b>โต๊ะ ${tableNum}</b> ถูกส่งตรงเข้าครัวแล้วครับ<br>รอรับความแซ่บซี๊ดดดด ได้เลย! 🌶️✨`;
+                }
+
                 closeOverlayManual('overlay-summary');
                 document.getElementById('overlay-success').classList.add('show');
                 
@@ -952,14 +958,21 @@
             
             button.appendChild(circle);
         }
-        window.onload = () => {
-            getTableNumber();
-            renderMenu('grid-cat-1', DB.cat1, 1);
-            renderMenu('grid-cat-2', DB.cat2, 2);
-            renderMenu('grid-cat-3', DB.cat3, 3);
-            renderMenu('grid-cat-4', DB.cat4, 4);
+        /**
+         * 9. TABLE NUMBER FROM URL
+         */
+        function getTableNumber() {
+            const params = new URLSearchParams(window.location.search);
+            const tableNum = params.get('table') || params.get('t');
+            if (tableNum) {
+                document.getElementById('table-number').innerText = tableNum;
+            }
         }
-        window.onload = initApp;
+
+        window.onload = function() {
+            getTableNumber();
+            initApp();
+        };
         
     </script>
     
