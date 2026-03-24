@@ -13,37 +13,41 @@
 
     <style>
         /* ==========================================================================
-           1. CSS VARIABLES (Warm Craft Theme)
+           1. CSS VARIABLES (Modern Vibrant App Theme)
            ========================================================================== */
         :root {
-            /* Warm & Authentic Palette */
-            --bg-main: #f2d4d5;    /* สีครีมกระดาษสาอ่อนๆ */
-            --bg-card: #fbf6f6;
-            --text-main: #6b0d1d;  /* สีน้ำตาลเข้มเกือบดำ */
-            --text-muted: #8D6E63;
-            --primary: #2b2626;    /* สีแดงชาดดั้งเดิม */
-            --primary-light: #e8cdd4;
-            --accent: #dd8b5c;     /* สีทองดอกบวบ */
-            --border-light: #ea6060;
-            --success: #035507;
+            /* Vibrant & Appetizing Palette */
+            --bg-main: #F4F7F6;    /* สีพื้นหลังแอปสว่าง สะอาดตา */
+            --bg-card: #FFFFFF;
+            --text-main: #1A1A24;  /* สีตัวอักษรหลักเข้มข้น */
+            --text-muted: #7E8299; /* สีเทาสำหรับข้อความรอง */
+            --primary: #F94144;    /* สีแดงสดใส กระตุ้นความอยากอาหาร */
+            --primary-light: #FFEBEC;
+            --primary-gradient: linear-gradient(135deg, #F94144 0%, #FF7A7D 100%);
+            --accent: #F8961E;     /* สีส้มอมเหลือง เพิ่มความแซ่บ */
+            --accent-gradient: linear-gradient(135deg, #F8961E 0%, #F9C74F 100%);
+            --border-light: #E4E6EF;
+            --success: #43A047;
+            --success-gradient: linear-gradient(135deg, #43A047 0%, #66BB6A 100%);
             
-            /* Shadows & Effects (Soft & Crafted) */
-            --shadow-card: 0 10px 30px rgba(62, 39, 35, 0.05);
-            --shadow-float: 0 15px 40px rgba(211, 47, 47, 0.2);
-            --shadow-modal: 0 -15px 50px rgba(62, 39, 35, 0.1);
+            /* Shadows & Effects (Modern Soft Shadows) */
+            --shadow-card: 0 12px 24px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 16px 32px rgba(249, 65, 68, 0.12);
+            --shadow-float: 0 20px 40px rgba(249, 65, 68, 0.3);
+            --shadow-modal: 0 -10px 40px rgba(0, 0, 0, 0.15);
             
-            /* Radius (Soft & Round) */
-            --radius-sm: 15px;
-            --radius-md: 25px;
-            --radius-lg: 35px;
-            --radius-full: 999px;
+            /* Radius (Smooth Apple-like Squircles) */
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --radius-full: 99px;
 
             /* Spacing */
-            --space-xs: 5px;
-            --space-sm: 10px;
+            --space-xs: 6px;
+            --space-sm: 12px;
             --space-md: 20px;
-            --space-lg: 30px;
-            --space-xl: 40px;
+            --space-lg: 32px;
+            --space-xl: 48px;
         }
 
         /* ==========================================================================
@@ -65,13 +69,13 @@
             scroll-behavior: smooth;
         }
 
-        /* ซ่อน Scrollbar */
+        /* ซ่อน Scrollbar แต่ยังเลื่อนได้ */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
 
         /* ==========================================================================
            3. TYPOGRAPHY & UTILITIES
            ========================================================================== */
-        h1, h2, h3, h4 { font-weight: 600; color: var(--text-main); }
+        h1, h2, h3, h4 { font-weight: 700; color: var(--text-main); letter-spacing: -0.3px; }
         .text-primary { color: var(--primary); }
         .text-accent { color: var(--accent); }
         .text-muted { color: var(--text-muted); font-size: 0.9rem; }
@@ -80,66 +84,73 @@
         /* ==========================================================================
            4. LAYOUT COMPONENTS
            ========================================================================== */
-        /* Header - Soft & Grand */
+        /* Header - Glassmorphism & Dynamic */
         .app-header {
             position: sticky;
             top: 0;
             z-index: 100;
-            background-color: rgba(233, 89, 89, 0.9);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: var(--space-xl) var(--space-md) var(--space-md);
-            border-bottom: 1px solid rgba(245, 235, 235, 0.5);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: var(--space-lg) var(--space-md) var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            animation: fadeInDown 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            animation: slideDownFade 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
         }
 
         .brand-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 5px;
-            color: var(--primary);
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+            font-size: 1.6rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            animation: pulse-soft 3s infinite alternate;
         }
 
         .brand-subtitle {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
             font-weight: 400;
+            margin-top: 5px;
         }
 
         .table-badge {
-            margin-top: 15px;
-            background-color: var(--primary-light);
+            margin-top: 18px;
+            background: var(--bg-card);
             color: var(--primary);
-            padding: 10px 25px;
+            padding: 8px 24px;
             border-radius: var(--radius-full);
-            font-size: 0.9rem;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.1);
+            font-size: 0.95rem;
+            font-weight: 700;
+            box-shadow: 0 6px 16px rgba(249, 65, 68, 0.15);
             display: flex;
             align-items: center;
-            gap: 8px;
-            border: 2px solid var(--primary);
+            gap: 10px;
+            border: 2px solid var(--primary-light);
+            transition: transform 0.3s ease;
         }
+        .table-badge:hover { transform: translateY(-2px); }
 
-        /* Tab Navigation - Crafted Scrolls */
+        /* Tab Navigation - Modern Pills */
         .nav-categories {
             position: sticky;
-            top: 110px; /* Adjust base on header height */
+            top: 125px; /* Adjust based on header height */
             z-index: 99;
-            background-color: rgba(255, 248, 240, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(244, 247, 246, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: flex;
             overflow-x: auto;
             padding: var(--space-md) var(--space-sm);
-            gap: 12px;
-            border-bottom: 1px solid var(--border-light);
+            gap: 14px;
+            border-bottom: 1px solid rgba(0,0,0,0.02);
             justify-content: start;
         }
 
@@ -148,105 +159,136 @@
         }
 
         .cat-tab {
-            padding: 12px 24px;
-            border-radius: var(--radius-md);
+            padding: 12px 26px;
+            border-radius: var(--radius-full);
             background-color: var(--bg-card);
-            color: var(--text-main);
-            font-weight: 500;
+            color: var(--text-muted);
+            font-weight: 600;
             font-size: 1rem;
             white-space: nowrap;
-            border: 1px solid #EEEEEE;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 10px rgba(62, 39, 35, 0.03);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy transition */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
             display: flex;
             align-items: center;
             gap: 8px;
+            border: 1px solid var(--border-light);
         }
 
         .cat-tab.active {
-            background-color: var(--primary);
+            background: var(--primary-gradient);
             color: white;
-            border-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(211, 47, 47, 0.25);
-            transform: translateY(-4px);
+            border-color: transparent;
+            box-shadow: 0 8px 24px rgba(249, 65, 68, 0.3);
+            transform: scale(1.05);
         }
         
-        .cat-tab i { color: var(--accent); font-size: 0.9rem; }
-        .cat-tab.active i { color: white; }
+        .cat-tab i { color: var(--accent); font-size: 1rem; transition: color 0.3s; }
+        .cat-tab.active i { color: #FFF3E0; }
 
         /* Menu Container */
         .main-container {
             padding: var(--space-md);
-            padding-bottom: 140px; /* Space for float cart */
-            max-width: 650px;
+            padding-bottom: 150px; /* Space for float cart */
+            max-width: 680px;
             margin: 0 auto;
         }
 
         .category-section {
-            scroll-margin-top: 190px;
+            scroll-margin-top: 200px;
         }
 
         .section-title {
-            margin: var(--space-xl) 0 var(--space-lg);
-            font-size: 1.5rem;
-            font-weight: 700;
+            margin: var(--space-xl) 0 var(--space-md);
+            font-size: 1.4rem;
+            font-weight: 800;
             color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 12px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 15px;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--accent-gradient);
+            border-radius: 4px;
         }
 
-        .section-title i { color: var(--primary); font-size: 1.2rem; }
+        .section-title i { 
+            color: var(--primary); 
+            font-size: 1.3rem; 
+            background: var(--primary-light);
+            padding: 10px;
+            border-radius: 12px;
+        }
 
-        /* Menu Cards - Warm & Delicious */
+        /* Menu Cards - Floating & App-like */
         .food-card {
             background-color: var(--bg-card);
             border-radius: var(--radius-lg);
-            padding: var(--space-md);
+            padding: var(--space-sm);
             margin-bottom: var(--space-md);
             display: flex;
             gap: var(--space-md);
             box-shadow: var(--shadow-card);
-            border: 1px solid rgba(62, 39, 35, 0.01);
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
-            animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) both;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
             align-items: center;
+            cursor: pointer;
         }
 
-        /* Staggered animation delays */
+        /* Staggered animation delays for items */
         .food-card:nth-child(1) { animation-delay: 0.1s; }
-        .food-card:nth-child(2) { animation-delay: 0.15s; }
-        .food-card:nth-child(3) { animation-delay: 0.2s; }
-        .food-card:nth-child(4) { animation-delay: 0.25s; }
-        .food-card:nth-child(n+5) { animation-delay: 0.3s; }
+        .food-card:nth-child(2) { animation-delay: 0.2s; }
+        .food-card:nth-child(3) { animation-delay: 0.3s; }
+        .food-card:nth-child(4) { animation-delay: 0.4s; }
+        .food-card:nth-child(n+5) { animation-delay: 0.5s; }
 
         @media (hover: hover) {
             .food-card:hover {
-                transform: translateY(-5px) scale(1.01);
-                box-shadow: 0 15px 35px rgba(62, 39, 35, 0.08);
+                transform: translateY(-6px) scale(1.02);
+                box-shadow: var(--shadow-hover);
+                border-color: var(--primary-light);
+            }
+            .food-card:hover .food-img-wrapper img {
+                transform: scale(1.1) rotate(3deg);
+            }
+            .food-card:hover .btn-add-icon {
+                background: var(--primary-gradient);
+                color: white;
+                transform: rotate(90deg) scale(1.1);
+                box-shadow: 0 6px 15px rgba(249, 65, 68, 0.3);
             }
         }
-        .food-card:active { transform: scale(0.98); }
+        .food-card:active { transform: scale(0.96); }
 
         .food-img-wrapper {
-            width: 100px;
-            height: 100px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            width: 110px;
+            height: 110px;
+            border-radius: var(--radius-md);
+            background: var(--accent-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            color: var(--accent);
-            font-size: 2.2rem;
+            color: white;
+            font-size: 2.5rem;
             overflow: hidden;
-            border: 1px solid #3e320d;
-            box-shadow: inset 0 2px 5px rgba(255, 160, 0, 0.1);
+            position: relative;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+        }
+        .food-img-wrapper img {
+            width: 100%; height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .food-info {
@@ -254,50 +296,48 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding-right: 40px;
+            padding-right: 45px;
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         .food-name {
             font-size: 1.15rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             line-height: 1.3;
         }
 
         .food-price {
-            font-size: 1.3rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 800;
             color: var(--primary);
             margin-top: auto;
+            display: inline-block;
+            background: var(--primary-light);
+            padding: 4px 12px;
+            border-radius: 8px;
+            width: fit-content;
         }
 
-        /* Action Buttons - Round & Bright */
+        /* Action Buttons - Dynamic */
         .btn-add-icon {
             position: absolute;
             right: var(--space-md);
             bottom: var(--space-md);
-            width: 45px;
-            height: 45px;
+            width: 42px;
+            height: 42px;
             border-radius: var(--radius-full);
-            background-color: var(--bg-main);
-            border: 2px solid var(--primary-light);
+            background-color: #F4F7F6;
             color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-        
-        .food-card:hover .btn-add-icon {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 6px 15px rgba(205, 10, 10, 0.2);
-            transform: scale(1.05);
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            z-index: 2;
         }
 
         /* ==========================================================================
@@ -306,13 +346,13 @@
         .overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(62, 39, 35, 0.6);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background-color: rgba(26, 26, 36, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.4s ease;
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -326,15 +366,15 @@
         .bottom-sheet {
             background-color: var(--bg-card);
             width: 100%;
-            max-width: 600px;
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            padding: var(--space-xl) var(--space-md);
+            max-width: 680px;
+            border-radius: 32px 32px 0 0;
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
             transform: translateY(100%);
-            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: var(--shadow-modal);
-            max-height: 95vh;
+            max-height: 90vh;
             overflow-y: auto;
-            border-top: 5px solid var(--accent);
+            position: relative;
         }
 
         .overlay.show .bottom-sheet {
@@ -343,237 +383,264 @@
 
         /* Drag Handle */
         .drag-handle {
-            width: 50px;
-            height: 6px;
-            background-color: var(--border-light);
-            border-radius: 6px;
-            margin: -15px auto 25px;
+            width: 40px;
+            height: 5px;
+            background-color: #D1D5DB;
+            border-radius: 10px;
+            margin: -10px auto 30px;
         }
 
         .sheet-title {
-            font-size: 1.6rem;
-            margin-bottom: var(--space-xl);
+            font-size: 1.5rem;
+            margin-bottom: var(--space-lg);
             text-align: center;
             color: var(--text-main);
-            font-weight: 700;
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .sheet-title::after {
-            content: '';
-            position: absolute;
-            bottom: -8px; left: 20%; right: 20%;
-            height: 3px; background-color: var(--accent);
-            border-radius: 3px;
+            font-weight: 800;
+            padding: 0 20px;
         }
 
         /* Options Selection (Chips) */
         .option-group { margin-bottom: var(--space-lg); }
         .option-label {
-            font-weight: 600;
-            font-size: 1.05rem;
-            margin-bottom: var(--space-md);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: #374151;
         }
-        .option-label .required { color: var(--primary); font-size: 0.8rem; background-color: var(--primary-light); padding: 3px 10px; border-radius: 12px; font-weight: 500;}
+        .option-label .required { 
+            color: white; 
+            font-size: 0.75rem; 
+            background: var(--primary-gradient); 
+            padding: 4px 10px; 
+            border-radius: 8px; 
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
         
         .chip-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            gap: 14px;
         }
 
         .choice-chip {
-            padding: 15px;
+            padding: 14px 10px;
             border: 2px solid var(--border-light);
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
             text-align: center;
             font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: #FAFAFA;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background-color: #FAFAFB;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .choice-chip.selected {
             border-color: var(--accent);
-            background-color: #FFFDE7;
-            color: var(--text-main);
-            box-shadow: 0 5px 15px rgba(255, 160, 0, 0.1);
+            background-color: #FFF9F0;
+            color: var(--accent);
+            box-shadow: 0 8px 20px rgba(248, 150, 30, 0.15);
+            transform: translateY(-3px);
         }
-        .choice-chip.selected i { color: var(--accent); margin-right: 5px; }
+        .choice-chip i { font-size: 1.2rem; display: none; }
+        .choice-chip.selected i { display: block; color: var(--accent); animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 
         /* Custom Textarea */
         .custom-input {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             border: 2px solid var(--border-light);
-            border-radius: var(--radius-sm);
-            background-color: #FAFAFA;
+            border-radius: var(--radius-md);
+            background-color: #FAFAFB;
             font-size: 1rem;
             transition: all 0.3s;
             resize: none;
             color: var(--text-main);
+            font-weight: 500;
         }
         .custom-input:focus {
             outline: none;
-            border-color: var(--accent);
+            border-color: var(--primary);
             background-color: var(--bg-card);
-            box-shadow: 0 0 10px rgba(255, 160, 0, 0.1);
+            box-shadow: 0 0 0 4px rgba(249, 65, 68, 0.1);
         }
 
-        /* === NEW: Quantity Selector inside Modal === */
+        /* Quantity Selector */
         .modal-qty-wrapper {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 25px;
-            margin: var(--space-lg) 0;
-            padding: 15px;
-            background-color: #FAFAFA;
-            border-radius: var(--radius-md);
+            justify-content: space-between;
+            margin: var(--space-xl) 0 var(--space-lg);
+            padding: 10px 20px;
+            background-color: #F9FAFB;
+            border-radius: var(--radius-full);
             border: 1px solid var(--border-light);
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
         }
         .modal-qty-btn {
-            width: 45px;
-            height: 45px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background-color: white;
-            border: 2px solid var(--border-light);
-            color: var(--primary);
+            color: var(--text-main);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             transition: all 0.2s ease;
             user-select: none;
         }
         .modal-qty-btn:active {
-            transform: scale(0.85);
-            background-color: var(--primary-light);
-            border-color: var(--primary);
+            transform: scale(0.9);
+            background: var(--primary-light);
+            color: var(--primary);
         }
         .modal-qty-number {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 800;
             color: var(--text-main);
-            min-width: 50px;
+            min-width: 60px;
             text-align: center;
         }
 
         /* Primary Button */
         .btn-primary {
             width: 100%;
-            padding: 18px;
-            background-color: var(--primary);
+            padding: 20px;
+            background: var(--primary-gradient);
             color: white;
             border: none;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-full);
             font-size: 1.2rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(211, 47, 47, 0.3);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(249, 65, 68, 0.35);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
         }
-        .btn-primary:active { transform: scale(0.97); }
+        .btn-primary:active { transform: scale(0.96); box-shadow: 0 5px 15px rgba(249, 65, 68, 0.2); }
 
         /* ==========================================================================
            6. FLOATING CART & SUMMARY
            ========================================================================== */
         .floating-cart {
             position: fixed;
-            bottom: var(--space-lg);
+            bottom: var(--space-md);
             left: 50%;
             transform: translateX(-50%) translateY(150%);
-            width: calc(100% - 40px);
-            max-width: 450px;
-            background-color: var(--primary);
+            width: calc(100% - 32px);
+            max-width: 500px;
+            background: var(--primary-gradient);
             color: white;
-            padding: 18px 28px;
-            border-radius: var(--radius-lg);
+            padding: 16px 24px;
+            border-radius: var(--radius-full);
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow-float);
             z-index: 900;
             cursor: pointer;
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            border: 3px solid #FFF8F0;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .floating-cart.visible { transform: translateX(-50%) translateY(0); }
-        .cart-left { display: flex; align-items: center; gap: 15px; }
-        .cart-icon-wrapper { position: relative; font-size: 1.4rem; }
+        .floating-cart.visible { 
+            transform: translateX(-50%) translateY(0);
+            animation: float-anim 3s ease-in-out infinite; 
+        }
+
+        .cart-left { display: flex; align-items: center; gap: 16px; }
+        .cart-icon-wrapper { 
+            position: relative; 
+            font-size: 1.5rem; 
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .cart-badge {
             position: absolute;
-            top: -10px; right: -15px;
+            top: -5px; right: -5px;
             background-color: var(--accent);
             color: white;
             font-size: 0.8rem;
-            font-weight: bold;
-            padding: 3px 8px;
+            font-weight: 800;
+            padding: 4px 8px;
             border-radius: 12px;
-            border: 2px solid var(--primary);
+            border: 2px solid white;
+            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .cart-text { font-weight: 500; font-size: 1.05rem; }
-        .cart-total { font-size: 1.3rem; font-weight: 700; color: #FFF8F0; }
+        .cart-text { font-weight: 600; font-size: 1.1rem; letter-spacing: 0.3px; }
+        .cart-total { font-size: 1.4rem; font-weight: 800; background: rgba(0,0,0,0.1); padding: 5px 15px; border-radius: 20px;}
 
         /* Summary Item List */
         .summary-item {
             display: flex;
             justify-content: space-between;
-            padding: var(--space-md) 0;
-            border-bottom: 2px dashed #EEEEEE;
-            animation: fadeIn 0.5s ease;
+            padding: var(--space-md);
+            margin-bottom: 12px;
+            background: #F9FAFB;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+            animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .summary-item:last-child { border-bottom: none; }
-        .sum-detail h4 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 5px; line-height: 1.3; }
-        .sum-detail p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
-        .sum-price { font-weight: 700; font-size: 1.2rem; color: var(--primary); display: flex; align-items: center; margin-left: var(--space-sm); white-space: nowrap;}
+        .sum-detail h4 { font-size: 1.15rem; color: var(--text-main); margin-bottom: 6px; }
+        .sum-detail p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+        .sum-price { 
+            font-weight: 800; 
+            font-size: 1.25rem; 
+            color: var(--primary); 
+            display: flex; 
+            flex-direction: column;
+            align-items: flex-end; 
+            justify-content: center;
+            white-space: nowrap;
+        }
 
         /* Quantity Controls in Summary */
         .qty-control {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-top: 12px;
-            background-color: var(--bg-main);
-            padding: 6px 15px;
+            gap: 16px;
+            margin-top: 14px;
+            background-color: white;
+            padding: 6px 14px;
             border-radius: var(--radius-full);
             width: fit-content;
-            border: 1px solid #EEEEEE;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .qty-btn {
-            color: var(--primary);
-            font-size: 1rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: scale 0.2s;
+            transition: all 0.2s;
         }
-        .qty-btn:active { scale: 0.9; }
-        .qty-val { font-weight: 700; font-size: 1.1rem; color: var(--text-main); min-width: 25px; text-align: center; }
+        .qty-btn:active { transform: scale(0.8); color: var(--primary); }
+        .qty-val { font-weight: 800; font-size: 1.1rem; color: var(--text-main); min-width: 25px; text-align: center; }
 
         /* ==========================================================================
            7. TOAST NOTIFICATIONS & SUCCESS POPUP
            ========================================================================== */
         .toast-container {
             position: fixed;
-            top: 25px;
+            top: 30px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 2100;
@@ -581,37 +648,41 @@
             flex-direction: column;
             gap: 12px;
             pointer-events: none;
+            width: 90%;
+            max-width: 400px;
         }
 
         .toast {
-            background-color: rgba(62, 39, 35, 0.9);
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
             color: white;
-            padding: 15px 25px;
-            border-radius: var(--radius-md);
+            padding: 16px 24px;
+            border-radius: var(--radius-full);
             font-size: 1rem;
-            font-weight: 500;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            font-weight: 600;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
-            animation: toastEnter 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards, toastLeave 0.5s 2.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-            border-left: 4px solid var(--accent);
+            animation: toastEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, toastLeave 0.5s 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        .toast i { color: var(--accent); font-size: 1.1rem; }
+        .toast i { color: var(--accent); font-size: 1.2rem; }
 
         /* Success Center Popup */
         .success-modal {
             background-color: var(--bg-card);
             width: 90%;
-            max-width: 360px;
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl) var(--space-md);
+            max-width: 400px;
+            border-radius: 32px;
+            padding: 40px 30px;
             text-align: center;
             transform: scale(0.8) translateY(20px);
             opacity: 0;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 25px 60px rgba(62, 39, 35, 0.2);
-            border: 4px solid var(--bg-main);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
         }
 
         .overlay.show .success-modal {
@@ -620,40 +691,54 @@
         }
 
         .check-icon-wrapper {
-            width: 90px; height: 90px;
-            background-color: #E8F5E9;
-            color: var(--success);
+            width: 100px; height: 100px;
+            background: var(--success-gradient);
+            color: white;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 3rem;
-            margin: 0 auto var(--space-md);
-            animation: bounceIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
-            border: 5px solid #C8E6C9;
+            font-size: 3.5rem;
+            margin: 0 auto 24px;
+            animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+            box-shadow: 0 15px 30px rgba(67, 160, 71, 0.3);
         }
 
         /* ==========================================================================
            8. ANIMATIONS & KEYFRAMES
            ========================================================================== */
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes bounceIn { 
-            0% { transform: scale(0); opacity: 0; }
-            60% { transform: scale(1.15); opacity: 1; }
+        @keyframes slideDownFade { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes popIn { 
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
-        @keyframes toastEnter { from { opacity: 0; transform: translateY(-20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes toastLeave { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-20px) scale(0.9); } }
+        @keyframes toastEnter { from { opacity: 0; transform: translateY(-30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes toastLeave { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-30px) scale(0.9); } }
+        @keyframes float-anim {
+            0% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-6px); }
+            100% { transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes pulse-soft {
+            0% { opacity: 1; }
+            100% { opacity: 0.85; text-shadow: 0 0 15px rgba(249, 65, 68, 0.4); }
+        }
         
+        /* Ripple Effect */
         .ripple {
             position: absolute;
             border-radius: 50%;
             transform: scale(0);
-            animation: ripple-anim 0.8s linear;
-            background-color: rgba(255, 255, 255, 0.5);
+            animation: ripple-anim 0.6s linear;
+            background-color: rgba(255, 255, 255, 0.4);
             pointer-events: none;
         }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+        /* Utilities */
+        .animate__animated { animation-fill-mode: both; }
+        .animate__fadeInUp { animation-name: slideUpFade; animation-duration: 0.6s; }
 
     </style>
 </head>
@@ -664,11 +749,11 @@
     <header class="app-header">
         <div>
             <h1 class="brand-title">ขนมจีนบีบสดแม่พร</h1>
-            <p class="brand-title">& ส้มตำครกแตก by.เจ๊อ้อม</p>
+            <p class="brand-title" style="font-size: 1.3rem;">& ส้มตำครกแตก by.เจ๊อ้อม</p>
             <p class="brand-subtitle">ขนมจีนน้ำยา เส้นบีบสดทุกวัน บุฟเฟ่ต์ผักหยิบตักไม่อั้น</p>
         </div>
         <div class="table-badge animate__animated animate__jackInTheBox">
-            <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number">...</span></span>
+            <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number">1</span>
         </div>
     </header>
 
@@ -753,15 +838,17 @@
             <div id="summary-list" style="flex-grow: 1; overflow-y: auto; padding: 0 5px 20px 5px;">
                 </div>
 
-            <div style="padding-top: var(--space-md); border-top: 2px solid #EEEEEE; margin-bottom: var(--space-md);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <span style="font-size: 1.1rem; color: var(--text-muted); font-weight:500;">ยอดรวมทั้งสิ้น</span>
-                    <span id="summary-total-price" style="font-size: 1.6rem; font-weight: 700; color: var(--primary);">0 ฿</span>
+            <div style="padding-top: var(--space-md); border-top: 1px solid var(--border-light); margin-bottom: 10px; margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <span style="font-size: 1.2rem; color: var(--text-muted); font-weight:700;">ยอดรวมทั้งสิ้น</span>
+                    <span id="summary-total-price" style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">0 ฿</span>
                 </div>
                 <button class="btn-primary" onclick="submitOrder(event)">
                     <i class="fas fa-paper-plane"></i> ส่งออเดอร์เข้าครัว
                 </button>
-                <button onclick="closeOverlayManual('overlay-summary')" style="width:100%; padding:15px; background:transparent; border:none; color:var(--text-muted); font-weight:500; margin-top:10px; cursor:pointer;">เลือกอาหารเพิ่ม</button>
+                <button onclick="closeOverlayManual('overlay-summary')" style="width:100%; padding:15px; background:transparent; border:none; color:var(--text-muted); font-weight:600; font-size: 1.1rem; margin-top:10px; cursor:pointer; transition: color 0.2s;">
+                    + เลือกอาหารเพิ่ม
+                </button>
             </div>
         </div>
     </div>
@@ -771,9 +858,9 @@
             <div class="check-icon-wrapper">
                 <i class="fas fa-check"></i>
             </div>
-            <h2 style="font-size: 1.6rem; margin-bottom: 10px; color:var(--text-main);">ส่งออเดอร์แล้ว!</h2>
-            <p style="color: var(--text-muted); margin-bottom: var(--space-lg); font-size: 1rem; line-height:1.5;">
-                ทางเราได้รับข้อมูลเรียบร้อยแล้วครับ<br>รออาหารสักครู่นะครับ ทานให้อร่อย!
+            <h2 style="font-size: 1.8rem; margin-bottom: 12px; color:var(--text-main); font-weight: 800;">ส่งออเดอร์สำเร็จ!</h2>
+            <p style="color: var(--text-muted); margin-bottom: var(--space-lg); font-size: 1.05rem; line-height:1.6;">
+                ทางร้านได้รับรายการอาหารเรียบร้อยแล้ว<br>รอความแซ่บสักครู่นะครับ ทานให้อร่อย! 🌶️
             </p>
             <button class="btn-primary" onclick="resetSystem(event)">
                 <i class="fas fa-redo"></i> กลับไปหน้าแรก
@@ -789,7 +876,7 @@
             cat1: [
                 {id:101, n:'ตำป่า', p:70, img: '1pa.jpg'},
                 {id:102, n:'ตำลาว', p:50, img: '2tl.jpg'},
-                {id:103, n:'ตำไทยไข่เค็ม', p:60, img: 'ttk.jpg'}, // ถ้ามีรูปให้ใส่ชื่อไฟล์แบบนี้นะครับ
+                {id:103, n:'ตำไทยไข่เค็ม', p:60, img: 'ttk.jpg'},
                 {id:104, n:'ตำกุ้งสด, สุก', p:80, img: 'ks.jpg'},
                 {id:105, n:'ตำหมูยอ', p:80, img: 'tm.jpg'},
                 {id:106, n:'ตำซั่ว', p:60, img: 'sua.jpg'},
@@ -807,7 +894,7 @@
                 {id:204, n:'น้ำยาไก่', p:50, img: 'nk.jpg'}
                 ],
             cat3: [
-                {id:301, n:'แคปหมู', p:20, img: 'mookrajok.jpg'}, // ถ้ายังไม่มีรูปก็ปล่อยไว้แบบนี้ จะขึ้นเป็นไอคอนแทนครับ
+                {id:301, n:'แคปหมู', p:20, img: 'mookrajok.jpg'},
                 {id:302, n:'ไข่เค็ม', p:10, img: 'unnamed.jpg'},
                 {id:303, n:'ไข่ต้ม', p:5, img: 'kaitom.jpg'}
                 ],
@@ -826,7 +913,7 @@
         let cart = [];
         let currentItem = null;
         let selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
-        let modalTempQty = 1; // ตัวแปรเก็บจำนวนของก่อนกดลงตะกร้า
+        let modalTempQty = 1;
 
         /**
          * 3. INITIALIZATION & RENDER
@@ -839,26 +926,25 @@
         }
 
         function renderMenu(containerId, items, catLevel) {
-    const container = document.getElementById(containerId);
-    // iconMap คือไอคอนสำรองถ้าไม่มีรูปภาพ
-    const iconMap = ['fas fa-mortar-pestle', 'fas fa-bowl-food', 'fas fa-bacon', 'fas fa-wine-glass-side'];
-    
-    container.innerHTML = items.map(item => `
-        <div class="food-card" onclick="openItemModal(${item.id}, ${catLevel}, ${item.p}, '${item.n}')">
-            <div class="food-img-wrapper">
-                ${item.img 
-                    ? `<img src="images/${item.img}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">` 
-                    : `<i class="${iconMap[catLevel-1]}"></i>`
-                }
-            </div>
-            <div class="food-info">
-                <div class="food-name">${item.n}</div>
-                <div class="food-price">${item.p} ฿</div>
-            </div>
-            <div class="btn-add-icon"><i class="fas fa-plus"></i></div>
-        </div>
-    `).join('');
-}
+            const container = document.getElementById(containerId);
+            const iconMap = ['fas fa-mortar-pestle', 'fas fa-bowl-food', 'fas fa-bacon', 'fas fa-wine-glass-side'];
+            
+            container.innerHTML = items.map(item => `
+                <div class="food-card" onclick="openItemModal(${item.id}, ${catLevel}, ${item.p}, '${item.n}')">
+                    <div class="food-img-wrapper">
+                        ${item.img 
+                            ? `<img src="images/${item.img}" alt="${item.n}">` 
+                            : `<i class="${iconMap[catLevel-1]}"></i>`
+                        }
+                    </div>
+                    <div class="food-info">
+                        <div class="food-name">${item.n}</div>
+                        <div class="food-price">${item.p} ฿</div>
+                    </div>
+                    <div class="btn-add-icon"><i class="fas fa-plus"></i></div>
+                </div>
+            `).join('');
+        }
 
         /**
          * 4. UI INTERACTIONS (Scroll, Tabs, Modals)
@@ -867,7 +953,7 @@
             document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
             const target = document.getElementById(id);
-            const headerOffset = 185; 
+            const headerOffset = 190; 
             const elementPosition = target.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -876,11 +962,11 @@
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('nav-cats');
             if (window.scrollY > 100) {
-                nav.style.boxShadow = '0 8px 25px rgba(62, 39, 35, 0.08)';
-                nav.style.backgroundColor = '#FFFDE7';
+                nav.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.05)';
+                nav.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
             } else {
                 nav.style.boxShadow = 'none';
-                nav.style.backgroundColor = 'rgba(255, 248, 240, 0.95)';
+                nav.style.backgroundColor = 'rgba(244, 247, 246, 0.9)';
             }
         });
 
@@ -899,7 +985,6 @@
             document.getElementById('modal-food-name').innerText = name;
             document.getElementById('modal-note').value = '';
             
-            // รีเซ็ตค่าเริ่มต้นเสมอเมื่อเปิดป๊อปอัพ
             selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
             modalTempQty = 1; 
             
@@ -908,33 +993,33 @@
             const area = document.getElementById('dynamic-options-area');
             let html = '';
 
-            // For ส้มตำ (cat1) or ขนมจีน (cat2)
             if(catLevel === 1 || catLevel === 2) {
                 html += `
                 <div class="option-group animate__animated animate__fadeInUp">
                     <div class="option-label">การเสิร์ฟ <span class="required">จำเป็น</span></div>
                     <div class="chip-container">
-                        <div class="choice-chip selected" onclick="selectChip(this, 'type')"><i class="fas fa-check"></i>ใส่จาน</div>
-                        <div class="choice-chip" onclick="selectChip(this, 'type')">ใส่ถุง</div>
+                        <div class="choice-chip selected" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่จาน</div>
+                        <div class="choice-chip" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่ถุง</div>
                     </div>
                 </div>`;
                 
-                // เฉพาะส้มตำที่มีระดับความเผ็ด
                 if(catLevel === 1) {
                     html += `
                     <div class="option-group animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
                         <div class="option-label">ระดับความเผ็ด <span class="required">จำเป็น</span></div>
                         <div class="chip-container">
-                            <div class="choice-chip" onclick="selectChip(this, 'spicy')">ไม่เผ็ด</div>
-                            <div class="choice-chip" onclick="selectChip(this, 'spicy')">เผ็ดน้อย</div>
-                            <div class="choice-chip selected" onclick="selectChip(this, 'spicy')"><i class="fas fa-check"></i>เผ็ดปกติ</div>
-                            <div class="choice-chip" onclick="selectChip(this, 'spicy')">เผ็ดมาก</div>
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>ไม่เผ็ด</div>
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดน้อย</div>
+                            <div class="choice-chip selected" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดปกติ</div>
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดมาก</div>
                         </div>
                     </div>`;
                 }
             } else {
-                // ของทานเล่น / เครื่องดื่ม
-                html = `<p style="color:var(--text-muted); text-align:center; margin-bottom:20px; font-size:0.95rem; background:#FAFAFA; padding:15px; border-radius:10px; border:1px solid #EEE;">เมนูนี้ไม่มีตัวเลือกเสริมเพิ่มเติมครับ</p>`;
+                html = `<div style="background:#F9FAFB; padding:20px; border-radius:16px; border:1px solid var(--border-light); text-align:center; color:var(--text-muted); margin-bottom:20px; font-weight:500;">
+                            <i class="fas fa-info-circle" style="color:var(--accent); font-size:1.5rem; margin-bottom:10px; display:block;"></i>
+                            เมนูนี้ไม่มีตัวเลือกเสริมเพิ่มเติมครับ
+                        </div>`;
             }
 
             area.innerHTML = html;
@@ -943,25 +1028,16 @@
 
         function selectChip(element, typeCategory) {
             const siblings = element.parentElement.querySelectorAll('.choice-chip');
-            siblings.forEach(el => {
-                el.classList.remove('selected');
-                const check = el.querySelector('i');
-                if(check) check.remove();
-            });
-            
+            siblings.forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
-            element.innerHTML = `<i class="fas fa-check"></i>` + element.innerText;
-            
-            selectedOptions[typeCategory] = element.innerText;
+            selectedOptions[typeCategory] = element.innerText.trim();
         }
 
-        // --- ระบบเพิ่มลดจำนวนใน Modal ก่อนลงตะกร้า ---
         function changeModalQty(amount) {
             modalTempQty += amount;
-            if(modalTempQty < 1) modalTempQty = 1; // บังคับขั้นต่ำคือ 1
+            if(modalTempQty < 1) modalTempQty = 1; 
             updateModalQtyUI();
             
-            // เล่นอนิเมชั่นเด้งดึ๋งเล็กน้อยที่ตัวเลข
             const display = document.getElementById('modal-qty-display');
             display.style.transform = 'scale(1.2)';
             setTimeout(() => display.style.transform = 'scale(1)', 150);
@@ -980,7 +1056,6 @@
             createRipple(e);
             const note = document.getElementById('modal-note').value.trim();
             
-            // Generate Unique Key for Consolidation
             let optString = '';
             if(currentItem.catLevel === 1) optString = `(${selectedOptions.type}, ${selectedOptions.spicy})`;
             else if(currentItem.catLevel === 2) optString = `(${selectedOptions.type})`;
@@ -989,7 +1064,7 @@
 
             const existItem = cart.find(c => c.key === uniqueKey);
             if(existItem) {
-                existItem.qty += modalTempQty; // อัปเดตบวกเพิ่มตามจำนวนที่เลือกมา
+                existItem.qty += modalTempQty;
             } else {
                 cart.push({
                     key: uniqueKey,
@@ -998,7 +1073,7 @@
                     price: currentItem.price,
                     options: optString,
                     note: note,
-                    qty: modalTempQty // ใส่จำนวนที่เลือกไว้
+                    qty: modalTempQty 
                 });
             }
 
@@ -1015,7 +1090,13 @@
             if(totalQty > 0) {
                 cartFloat.classList.add('visible');
                 document.getElementById('cart-badge-count').innerText = totalQty;
-                document.getElementById('cart-float-price').innerText = `${totalPrice} ฿`;
+                
+                // Animation for total price update
+                const priceEl = document.getElementById('cart-float-price');
+                priceEl.innerText = `${totalPrice} ฿`;
+                priceEl.style.transform = 'scale(1.1)';
+                setTimeout(() => priceEl.style.transform = 'scale(1)', 200);
+
             } else {
                 cartFloat.classList.remove('visible');
                 closeOverlayManual('overlay-summary'); 
@@ -1035,22 +1116,29 @@
             let total = 0;
             
             if(cart.length === 0) {
-                list.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:80px;"><i class="fas fa-shopping-basket" style="font-size:4rem; color:#EEEEEE; margin-bottom:20px;"></i><br>ยังไม่มีรายการอาหารในตะกร้า<br>ลองเลือกเมนูแซ่บๆ สักหน่อยไหมครับ?</div>`;
+                list.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:100px;">
+                    <i class="fas fa-shopping-basket" style="font-size:4.5rem; color:#E4E6EF; margin-bottom:20px;"></i><br>
+                    <span style="font-size:1.1rem; font-weight:600;">ยังไม่มีรายการอาหารในตะกร้า</span><br>
+                    ลองเลือกเมนูแซ่บๆ สักหน่อยไหมครับ?</div>`;
                 document.getElementById('summary-total-price').innerText = `0 ฿`;
                 return;
             }
 
             list.innerHTML = cart.map((item, index) => {
                 total += (item.price * item.qty);
+                // Style fix for note
+                const noteHtml = item.note ? `<div style="color:var(--accent); background:#FFF9F0; padding:6px 12px; border-radius:8px; display:inline-block; margin-top:8px; font-size:0.85rem;"><i class="fas fa-pen" style="margin-right:5px;"></i>${item.note}</div>` : '';
+                
                 return `
-                <div class="summary-item">
+                <div class="summary-item" style="animation-delay: ${index * 0.05}s;">
                     <div class="sum-detail">
                         <h4>${item.name}</h4>
-                        <p>${item.options} ${item.note ? '<br><span style="color:var(--accent);">📌'+item.note+'</span>' : ''}</p>
+                        <p>${item.options}</p>
+                        ${noteHtml}
                         <div class="qty-control">
-                            <span class="qty-btn" onclick="changeQty(${index}, -1)"><i class="fas fa-minus-circle"></i></span>
+                            <span class="qty-btn" onclick="changeQty(${index}, -1)"><i class="fas fa-minus"></i></span>
                             <span class="qty-val">${item.qty}</span>
-                            <span class="qty-btn" onclick="changeQty(${index}, 1)"><i class="fas fa-plus-circle"></i></span>
+                            <span class="qty-btn" onclick="changeQty(${index}, 1)"><i class="fas fa-plus"></i></span>
                         </div>
                     </div>
                     <div class="sum-price">${item.price * item.qty} ฿</div>
@@ -1077,10 +1165,10 @@
             if(cart.length === 0) return;
             createRipple(e);
             
-            const btn = e.target;
+            const btn = e.target.closest('.btn-primary');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังส่งข้อมูล...';
-            btn.style.opacity = '0.8';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังส่งข้อมูล...';
+            btn.style.opacity = '0.9';
             btn.style.pointerEvents = 'none';
 
             setTimeout(() => {
@@ -1090,7 +1178,7 @@
                 btn.innerHTML = originalHTML;
                 btn.style.opacity = '1';
                 btn.style.pointerEvents = 'auto';
-            }, 1800);
+            }, 1500);
         }
 
         function resetSystem(e) {
@@ -1110,8 +1198,8 @@
         function showToast(message) {
             const container = document.getElementById('toast-box');
             const toast = document.createElement('div');
-            toast.className = 'toast animate__animated';
-            toast.innerHTML = `<i class="fas fa-info-circle"></i> <span>${message}</span>`;
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-bell"></i> <span>${message}</span>`;
             container.appendChild(toast);
             
             setTimeout(() => {
@@ -1141,17 +1229,5 @@
         window.onload = initApp;
 
     </script>
-        <script>
-            // ดึงค่าเลขโต๊ะจาก URL เช่น ?table=5
-            const urlParams = new URLSearchParams(window.location.search);
-            const tableId = urlParams.get('table'); 
-
-            // ถ้ามีเลขโต๊ะในลิงก์ ให้เปลี่ยนเครื่องหมาย ... เป็นเลขโต๊ะจริง
-            if (tableId) {
-                document.getElementById('table-number').innerText = tableId;
-            }else {
-                document.getElementById('table-number').innerText = "สั่งกลับบ้าน"; 
-        }
-</script>
 </body>
 </html>
