@@ -446,6 +446,9 @@
         @keyframes toastLeave { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-30px) scale(0.8); } }
         .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.5); pointer-events: none; }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+        /* จุดสำคัญ: Badge แสดงเลขโต๊ะ */
+        .table-badge { margin-top: 15px; background: white; color: var(--primary-dark); padding: 8px 25px; border-radius: var(--radius-full); font-size: 1.1rem; font-weight: 800; box-shadow: 0 10px 20px rgba(239, 35, 60, 0.15); border: 2px solid var(--primary); display: flex; align-items: center; gap: 10px; }
+        #table-number { color: var(--primary); font-size: 1.3rem; }
     </style>
 </head>
 <body>
