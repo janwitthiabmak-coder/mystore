@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ขนมจีนบีบสดแม่พร & ส้มตำครกแตก by.เจ๊อ้อม</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES (Warm Craft Theme)
+           ========================================================================== */
+        :root {
+            /* Warm & Authentic Palette */
+            --bg-main: #FFF8F0;    /* สีครีมกระดาษสาอ่อนๆ */
+            --bg-card: #FFFFFF;
+            --text-main: #3E2723;  /* สีน้ำตาลเข้มเกือบดำ */
+            --text-muted: #8D6E63;
+            --primary: #D32F2F;    /* สีแดงชาดดั้งเดิม */
+            --primary-light: #FFCDD2;
+            --accent: #FFA000;     /* สีทองดอกบวบ */
+            --border-light: #E0E0E0;
+            --success: #388E3C;
+            
+            /* Shadows & Effects (Soft & Crafted) */
+            --shadow-card: 0 10px 30px rgba(62, 39, 35, 0.05);
+            --shadow-float: 0 15px 40px rgba(211, 47, 47, 0.2);
+            --shadow-modal: 0 -15px 50px rgba(62, 39, 35, 0.1);
+            
+            /* Radius (Soft & Round) */
+            --radius-sm: 15px;
+            --radius-md: 25px;
+            --radius-lg: 35px;
+            --radius-full: 999px;
+
+            /* Spacing */
+            --space-xs: 5px;
+            --space-sm: 10px;
+            --space-md: 20px;
+            --space-lg: 30px;
+            --space-xl: 40px;
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* ซ่อน Scrollbar */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        /* ==========================================================================
+           3. TYPOGRAPHY & UTILITIES
+           ========================================================================== */
+        h1, h2, h3, h4 { font-weight: 600; color: var(--text-main); }
+        .text-primary { color: var(--primary); }
+        .text-accent { color: var(--accent); }
+        .text-muted { color: var(--text-muted); font-size: 0.9rem; }
+        .font-bold { font-weight: 700; }
+        
+        /* ==========================================================================
+           4. LAYOUT COMPONENTS
+           ========================================================================== */
+        /* Header - Soft & Grand */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(255, 248, 240, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: var(--space-xl) var(--space-md) var(--space-md);
+            border-bottom: 1px solid rgba(224, 224, 224, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: fadeInDown 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 5px;
+            color: var(--primary);
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+        }
+
+        .brand-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .table-badge {
+            margin-top: 15px;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 10px 25px;
+            border-radius: var(--radius-full);
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid var(--primary);
+        }
+
+        /* Tab Navigation - Crafted Scrolls */
+        .nav-categories {
+            position: sticky;
+            top: 110px; /* Adjust base on header height */
+            z-index: 99;
+            background-color: rgba(255, 248, 240, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            overflow-x: auto;
+            padding: var(--space-md) var(--space-sm);
+            gap: 12px;
+            border-bottom: 1px solid var(--border-light);
+            justify-content: start;
+        }
+
+        @media (min-width: 600px) {
+            .nav-categories { justify-content: center; }
+        }
+
+        .cat-tab {
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1rem;
+            white-space: nowrap;
+            border: 1px solid #EEEEEE;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(62, 39, 35, 0.03);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cat-tab.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(211, 47, 47, 0.25);
+            transform: translateY(-4px);
+        }
+        
+        .cat-tab i { color: var(--accent); font-size: 0.9rem; }
+        .cat-tab.active i { color: white; }
+
+        /* Menu Container */
+        .main-container {
+            padding: var(--space-md);
+            padding-bottom: 140px; /* Space for float cart */
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .category-section {
+            scroll-margin-top: 190px;
+        }
+
+        .section-title {
+            margin: var(--space-xl) 0 var(--space-lg);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        .section-title i { color: var(--primary); font-size: 1.2rem; }
+
+        /* Menu Cards - Warm & Delicious */
+        .food-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            display: flex;
+            gap: var(--space-md);
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(62, 39, 35, 0.01);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) both;
+            align-items: center;
+        }
+
+        /* Staggered animation delays */
+        .food-card:nth-child(1) { animation-delay: 0.1s; }
+        .food-card:nth-child(2) { animation-delay: 0.15s; }
+        .food-card:nth-child(3) { animation-delay: 0.2s; }
+        .food-card:nth-child(4) { animation-delay: 0.25s; }
+        .food-card:nth-child(n+5) { animation-delay: 0.3s; }
+
+        @media (hover: hover) {
+            .food-card:hover {
+                transform: translateY(-5px) scale(1.01);
+                box-shadow: 0 15px 35px rgba(62, 39, 35, 0.08);
+            }
+        }
+        .food-card:active { transform: scale(0.98); }
+
+        .food-img-wrapper {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--accent);
+            font-size: 2.2rem;
+            overflow: hidden;
+            border: 1px solid #FFE082;
+            box-shadow: inset 0 2px 5px rgba(255, 160, 0, 0.1);
+        }
+
+        .food-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 40px;
+        }
+
+        .food-name {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .food-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: auto;
+        }
+
+        /* Action Buttons - Round & Bright */
+        .btn-add-icon {
+            position: absolute;
+            right: var(--space-md);
+            bottom: var(--space-md);
+            width: 45px;
+            height: 45px;
+            border-radius: var(--radius-full);
+            background-color: var(--bg-main);
+            border: 2px solid var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        
+        .food-card:hover .btn-add-icon {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 6px 15px rgba(211, 47, 47, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* ==========================================================================
+           5. MODALS & BOTTOM SHEETS
+           ========================================================================== */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(62, 39, 35, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .bottom-sheet {
+            background-color: var(--bg-card);
+            width: 100%;
+            max-width: 600px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: var(--space-xl) var(--space-md);
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: var(--shadow-modal);
+            max-height: 95vh;
+            overflow-y: auto;
+            border-top: 5px solid var(--accent);
+        }
+
+        .overlay.show .bottom-sheet {
+            transform: translateY(0);
+        }
+
+        /* Drag Handle */
+        .drag-handle {
+            width: 50px;
+            height: 6px;
+            background-color: var(--border-light);
+            border-radius: 6px;
+            margin: -15px auto 25px;
+        }
+
+        .sheet-title {
+            font-size: 1.6rem;
+            margin-bottom: var(--space-xl);
+            text-align: center;
+            color: var(--text-main);
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .sheet-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px; left: 20%; right: 20%;
+            height: 3px; background-color: var(--accent);
+            border-radius: 3px;
+        }
+
+        /* Options Selection (Chips) */
+        .option-group { margin-bottom: var(--space-lg); }
+        .option-label {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-label .required { color: var(--primary); font-size: 0.8rem; background-color: var(--primary-light); padding: 3px 10px; border-radius: 12px; font-weight: 500;}
+        
+        .chip-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 12px;
+        }
+
+        .choice-chip {
+            padding: 15px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #FAFAFA;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-chip.selected {
+            border-color: var(--accent);
+            background-color: #FFFDE7;
+            color: var(--text-main);
+            box-shadow: 0 5px 15px rgba(255, 160, 0, 0.1);
+        }
+        .choice-chip.selected i { color: var(--accent); margin-right: 5px; }
+
+        /* Custom Textarea */
+        .custom-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            background-color: #FAFAFA;
+            font-size: 1rem;
+            transition: all 0.3s;
+            resize: none;
+            color: var(--text-main);
+        }
+        .custom-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: var(--bg-card);
+            box-shadow: 0 0 10px rgba(255, 160, 0, 0.1);
+        }
+
+        /* === NEW: Quantity Selector inside Modal === */
+        .modal-qty-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            margin: var(--space-lg) 0;
+            padding: 15px;
+            background-color: #FAFAFA;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .modal-qty-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid var(--border-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .modal-qty-btn:active {
+            transform: scale(0.85);
+            background-color: var(--primary-light);
+            border-color: var(--primary);
+        }
+        .modal-qty-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Primary Button */
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(211, 47, 47, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary:active { transform: scale(0.97); }
+
+        /* ==========================================================================
+           6. FLOATING CART & SUMMARY
+           ========================================================================== */
+        .floating-cart {
+            position: fixed;
+            bottom: var(--space-lg);
+            left: 50%;
+            transform: translateX(-50%) translateY(150%);
+            width: calc(100% - 40px);
+            max-width: 450px;
+            background-color: var(--primary);
+            color: white;
+            padding: 18px 28px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-float);
+            z-index: 900;
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 3px solid #FFF8F0;
+        }
+
+        .floating-cart.visible { transform: translateX(-50%) translateY(0); }
+        .cart-left { display: flex; align-items: center; gap: 15px; }
+        .cart-icon-wrapper { position: relative; font-size: 1.4rem; }
+        .cart-badge {
+            position: absolute;
+            top: -10px; right: -15px;
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+        }
+        .cart-text { font-weight: 500; font-size: 1.05rem; }
+        .cart-total { font-size: 1.3rem; font-weight: 700; color: #FFF8F0; }
+
+        /* Summary Item List */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-md) 0;
+            border-bottom: 2px dashed #EEEEEE;
+            animation: fadeIn 0.5s ease;
+        }
+        .summary-item:last-child { border-bottom: none; }
+        .sum-detail h4 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 5px; line-height: 1.3; }
+        .sum-detail p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
+        .sum-price { font-weight: 700; font-size: 1.2rem; color: var(--primary); display: flex; align-items: center; margin-left: var(--space-sm); white-space: nowrap;}
+
+        /* Quantity Controls in Summary */
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 12px;
+            background-color: var(--bg-main);
+            padding: 6px 15px;
+            border-radius: var(--radius-full);
+            width: fit-content;
+            border: 1px solid #EEEEEE;
+        }
+        .qty-btn {
+            color: var(--primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: scale 0.2s;
+        }
+        .qty-btn:active { scale: 0.9; }
+        .qty-val { font-weight: 700; font-size: 1.1rem; color: var(--text-main); min-width: 25px; text-align: center; }
+
+        /* ==========================================================================
+           7. TOAST NOTIFICATIONS & SUCCESS POPUP
+           ========================================================================== */
+        .toast-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background-color: rgba(62, 39, 35, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: toastEnter 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards, toastLeave 0.5s 2.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            border-left: 4px solid var(--accent);
+        }
+        .toast i { color: var(--accent); font-size: 1.1rem; }
+
+        /* Success Center Popup */
+        .success-modal {
+            background-color: var(--bg-card);
+            width: 90%;
+            max-width: 360px;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl) var(--space-md);
+            text-align: center;
+            transform: scale(0.8) translateY(20px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 60px rgba(62, 39, 35, 0.2);
+            border: 4px solid var(--bg-main);
+        }
+
+        .overlay.show .success-modal {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .check-icon-wrapper {
+            width: 90px; height: 90px;
+            background-color: #E8F5E9;
+            color: var(--success);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto var(--space-md);
+            animation: bounceIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
+            border: 5px solid #C8E6C9;
+        }
+
+        /* ==========================================================================
+           8. ANIMATIONS & KEYFRAMES
+           ========================================================================== */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes bounceIn { 
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes toastEnter { from { opacity: 0; transform: translateY(-20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes toastLeave { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-20px) scale(0.9); } }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-anim 0.8s linear;
+            background-color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+        }
+        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="toast-container" id="toast-box"></div>
+
+    <header class="app-header">
+        <div>
+            <h1 class="brand-title">ขนมจีนบีบสดแม่พร</h1>
+            <p class="brand-title">& ส้มตำครกแตก by.เจ๊อ้อม</p>
+            <p class="brand-subtitle">ขนมจีนน้ำยา เส้นบีบสดทุกวัน บุฟเฟ่ต์ผักหยิบตักไม่อั้น</p>
+        </div>
+        <div class="table-badge animate__animated animate__jackInTheBox">
+            <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number">1</span>
+        </div>
+    </header>
+
+    <nav class="nav-categories" id="nav-cats">
+        <div class="cat-tab active" onclick="scrollToCategory('cat-1', this)">
+            <i class="fas fa-pepper-hot"></i> ส้มตำครกแตก
+        </div>
+        <div class="cat-tab" onclick="scrollToCategory('cat-2', this)">
+            <i class="fas fa-bowl-food"></i> ขนมจีนน้ำยา
+        </div>
+        <div class="cat-tab" onclick="scrollToCategory('cat-3', this)">
+            <i class="fas fa-egg"></i> ของทานเล่น
+        </div>
+        <div class="cat-tab" onclick="scrollToCategory('cat-4', this)">
+            <i class="fas fa-glass-water"></i> เครื่องดื่ม
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div id="cat-1" class="category-section">
+            <h2 class="section-title"><i class="fas fa-pepper-hot"></i> ส้มตำครกแตก (เผ็ด...ครกแตก!)</h2>
+            <div id="grid-cat-1"></div>
+        </div>
+
+        <div id="cat-2" class="category-section">
+            <h2 class="section-title"><i class="fas fa-bowl-food"></i> ขนมจีนบีบสดแม่พร</h2>
+            <div id="grid-cat-2"></div>
+        </div>
+
+        <div id="cat-3" class="category-section">   
+            <h2 class="section-title"><i class="fas fa-egg"></i> ของทานเล่น & ของเสริม กับแกล้ม</h2>
+            <div id="grid-cat-3"></div>
+        </div>
+
+        <div id="cat-4" class="category-section">
+            <h2 class="section-title"><i class="fas fa-glass-water"></i> เครื่องดื่มเย็นๆ</h2>
+            <div id="grid-cat-4"></div>
+        </div>
+    </main>
+
+    <div id="float-cart" class="floating-cart" onclick="openSummary(event)">
+        <div class="cart-left">
+            <div class="cart-icon-wrapper">
+                <i class="fas fa-shopping-basket"></i>
+                <span id="cart-badge-count" class="cart-badge">0</span>
+            </div>
+            <span class="cart-text">ดูสรุปรายการ</span>
+        </div>
+        <div class="cart-total" id="cart-float-price">0 ฿</div>
+    </div>
+
+    <div id="overlay-options" class="overlay" onclick="closeOverlay(event, 'overlay-options')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="drag-handle"></div>
+            <h3 id="modal-food-name" class="sheet-title">ชื่อเมนู</h3>
+            
+            <div id="dynamic-options-area">
+                </div>
+
+            <div class="option-group animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                <div class="option-label">ระบุเพิ่มเติม <span style="color:var(--text-muted); font-size:0.8rem; font-weight:normal;">(ไม่บังคับ)</span></div>
+                <textarea id="modal-note" class="custom-input" rows="2" placeholder="เช่น ไม่ใส่น้ำตาล, ไม่ปลาร้า, ไม่ถั่ว..."></textarea>
+            </div>
+
+            <div class="modal-qty-wrapper animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+                <div class="modal-qty-btn" onclick="changeModalQty(-1)"><i class="fas fa-minus"></i></div>
+                <div class="modal-qty-number" id="modal-qty-display">1</div>
+                <div class="modal-qty-btn" onclick="changeModalQty(1)"><i class="fas fa-plus"></i></div>
+            </div>
+
+            <button class="btn-primary animate__animated animate__fadeInUp" style="animation-delay: 0.4s;" onclick="confirmAddToCart(event)">
+                <i class="fas fa-cart-plus"></i> เพิ่มลงตะกร้า - <span id="modal-price-display">0</span> ฿
+            </button>
+        </div>
+    </div>
+
+    <div id="overlay-summary" class="overlay" onclick="closeOverlay(event, 'overlay-summary')">
+        <div class="bottom-sheet" style="height: 88vh; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+            <div class="drag-handle"></div>
+            <h3 class="sheet-title">สรุปรายการที่สั่ง</h3>
+            
+            <div id="summary-list" style="flex-grow: 1; overflow-y: auto; padding: 0 5px 20px 5px;">
+                </div>
+
+            <div style="padding-top: var(--space-md); border-top: 2px solid #EEEEEE; margin-bottom: var(--space-md);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <span style="font-size: 1.1rem; color: var(--text-muted); font-weight:500;">ยอดรวมทั้งสิ้น</span>
+                    <span id="summary-total-price" style="font-size: 1.6rem; font-weight: 700; color: var(--primary);">0 ฿</span>
+                </div>
+                <button class="btn-primary" onclick="submitOrder(event)">
+                    <i class="fas fa-paper-plane"></i> ส่งออเดอร์เข้าครัว
+                </button>
+                <button onclick="closeOverlayManual('overlay-summary')" style="width:100%; padding:15px; background:transparent; border:none; color:var(--text-muted); font-weight:500; margin-top:10px; cursor:pointer;">เลือกอาหารเพิ่ม</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay-success" class="overlay">
+        <div class="success-modal">
+            <div class="check-icon-wrapper">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 style="font-size: 1.6rem; margin-bottom: 10px; color:var(--text-main);">ส่งออเดอร์แล้ว!</h2>
+            <p style="color: var(--text-muted); margin-bottom: var(--space-lg); font-size: 1rem; line-height:1.5;">
+                ทางเราได้รับข้อมูลเรียบร้อยแล้วครับ<br>รออาหารสักครู่นะครับ ทานให้อร่อย!
+            </p>
+            <button class="btn-primary" onclick="resetSystem(event)">
+                <i class="fas fa-redo"></i> กลับไปหน้าแรก
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 1. DATABASE: ข้อมูลเมนูอาหาร (ห้ามแก้ไข)
+         */
+        const DB = {
+            cat1: [
+                {id:101, n:'ตำป่า', p:70, img: '1pa.jpg'},
+                {id:102, n:'ตำลาว', p:50, img: '2tl.jpg'},
+                {id:103, n:'ตำไทยไข่เค็ม', p:60, img: 'ttk.jpg'}, // ถ้ามีรูปให้ใส่ชื่อไฟล์แบบนี้นะครับ
+                {id:104, n:'ตำกุ้งสด, สุก', p:80, img: 'ks.jpg'},
+                {id:105, n:'ตำหมูยอ', p:80, img: 'tm.jpg'},
+                {id:106, n:'ตำซั่ว', p:60, img: 'sua.jpg'},
+                {id:107, n:'ตำข้าวโพด', p:80, img: 'cn.jpg'},
+                {id:108, n:'ตำตีนไก่', p:80, img: 'tk.jpg'},
+                {id:109, n:'ตำถั่ว', p:50, img: 'tt.jpg'},
+                {id:110, n:'ตำแตง', p:50, img: 'taeng.jpg'},
+                {id:111, n:'ตำซั่วแตง', p:60, img: 'staeng.jpg'},
+                {id:112, n:'ตำด้องแด้ง', p:80, img: 'dd.jpg'}
+                ],
+            cat2: [
+                {id:201, n:'น้ำยาป่า', p:50, img: 'np.jpg'},
+                {id:202, n:'น้ำยากะทิ', p:50, img: 'nkt.jpg'},
+                {id:203, n:'น้ำยาแกงเขียวหวาน', p:50, img: 'kw.jpg'},
+                {id:204, n:'น้ำยาไก่', p:50, img: 'nk.jpg'}
+                ],
+            cat3: [
+                {id:301, n:'แคปหมู', p:20, img: 'mookrajok.jpg'}, // ถ้ายังไม่มีรูปก็ปล่อยไว้แบบนี้ จะขึ้นเป็นไอคอนแทนครับ
+                {id:302, n:'ไข่เค็ม', p:10, img: 'unnamed.jpg'},
+                {id:303, n:'ไข่ต้ม', p:5, img: 'kaitom.jpg'}
+                ],
+            cat4: [
+                {id:401, n:'น้ำโค้ก', p:25, img: 'coke.jpg'},
+                {id:402, n:'น้ำสไปรท์', p:25, img: 'sprite.png'},
+                {id:403, n:'น้ำเขียว', p:25, img: 'fanta-frontier-green-rgb-280-ml.png'},
+                {id:404, n:'น้ำส้ม', p:25, img: 'fanta-frontier-orange-422-ml.png'},
+                {id:405, n:'น้ำเปล่า', p:10, img: 'water.png'}
+                ]
+            };
+
+        /**
+         * 2. STATE MANAGEMENT
+         */
+        let cart = [];
+        let currentItem = null;
+        let selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
+        let modalTempQty = 1; // ตัวแปรเก็บจำนวนของก่อนกดลงตะกร้า
+
+        /**
+         * 3. INITIALIZATION & RENDER
+         */
+        function initApp() {
+            renderMenu('grid-cat-1', DB.cat1, 1);
+            renderMenu('grid-cat-2', DB.cat2, 2);
+            renderMenu('grid-cat-3', DB.cat3, 3);
+            renderMenu('grid-cat-4', DB.cat4, 4);
+        }
+
+        function renderMenu(containerId, items, catLevel) {
+    const container = document.getElementById(containerId);
+    // iconMap คือไอคอนสำรองถ้าไม่มีรูปภาพ
+    const iconMap = ['fas fa-mortar-pestle', 'fas fa-bowl-food', 'fas fa-bacon', 'fas fa-wine-glass-side'];
+    
+    container.innerHTML = items.map(item => `
+        <div class="food-card" onclick="openItemModal(${item.id}, ${catLevel}, ${item.p}, '${item.n}')">
+            <div class="food-img-wrapper">
+                ${item.img 
+                    ? `<img src="images/${item.img}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">` 
+                    : `<i class="${iconMap[catLevel-1]}"></i>`
+                }
+            </div>
+            <div class="food-info">
+                <div class="food-name">${item.n}</div>
+                <div class="food-price">${item.p} ฿</div>
+            </div>
+            <div class="btn-add-icon"><i class="fas fa-plus"></i></div>
+        </div>
+    `).join('');
+}
+
+        /**
+         * 4. UI INTERACTIONS (Scroll, Tabs, Modals)
+         */
+        function scrollToCategory(id, element) {
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            const target = document.getElementById(id);
+            const headerOffset = 185; 
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav-cats');
+            if (window.scrollY > 100) {
+                nav.style.boxShadow = '0 8px 25px rgba(62, 39, 35, 0.08)';
+                nav.style.backgroundColor = '#FFFDE7';
+            } else {
+                nav.style.boxShadow = 'none';
+                nav.style.backgroundColor = 'rgba(255, 248, 240, 0.95)';
+            }
+        });
+
+        function closeOverlay(e, id) {
+            if(e.target.id === id) closeOverlayManual(id);
+        }
+        function closeOverlayManual(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        /**
+         * 5. OPTION MODAL LOGIC & QUANTITY SELECTOR
+         */
+        function openItemModal(id, catLevel, price, name) {
+            currentItem = { id, name, price, catLevel };
+            document.getElementById('modal-food-name').innerText = name;
+            document.getElementById('modal-note').value = '';
+            
+            // รีเซ็ตค่าเริ่มต้นเสมอเมื่อเปิดป๊อปอัพ
+            selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
+            modalTempQty = 1; 
+            
+            updateModalQtyUI();
+
+            const area = document.getElementById('dynamic-options-area');
+            let html = '';
+
+            // For ส้มตำ (cat1) or ขนมจีน (cat2)
+            if(catLevel === 1 || catLevel === 2) {
+                html += `
+                <div class="option-group animate__animated animate__fadeInUp">
+                    <div class="option-label">การเสิร์ฟ <span class="required">จำเป็น</span></div>
+                    <div class="chip-container">
+                        <div class="choice-chip selected" onclick="selectChip(this, 'type')"><i class="fas fa-check"></i>ใส่จาน</div>
+                        <div class="choice-chip" onclick="selectChip(this, 'type')">ใส่ถุง</div>
+                    </div>
+                </div>`;
+                
+                // เฉพาะส้มตำที่มีระดับความเผ็ด
+                if(catLevel === 1) {
+                    html += `
+                    <div class="option-group animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+                        <div class="option-label">ระดับความเผ็ด <span class="required">จำเป็น</span></div>
+                        <div class="chip-container">
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')">ไม่เผ็ด</div>
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')">เผ็ดน้อย</div>
+                            <div class="choice-chip selected" onclick="selectChip(this, 'spicy')"><i class="fas fa-check"></i>เผ็ดปกติ</div>
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')">เผ็ดมาก</div>
+                        </div>
+                    </div>`;
+                }
+            } else {
+                // ของทานเล่น / เครื่องดื่ม
+                html = `<p style="color:var(--text-muted); text-align:center; margin-bottom:20px; font-size:0.95rem; background:#FAFAFA; padding:15px; border-radius:10px; border:1px solid #EEE;">เมนูนี้ไม่มีตัวเลือกเสริมเพิ่มเติมครับ</p>`;
+            }
+
+            area.innerHTML = html;
+            document.getElementById('overlay-options').classList.add('show');
+        }
+
+        function selectChip(element, typeCategory) {
+            const siblings = element.parentElement.querySelectorAll('.choice-chip');
+            siblings.forEach(el => {
+                el.classList.remove('selected');
+                const check = el.querySelector('i');
+                if(check) check.remove();
+            });
+            
+            element.classList.add('selected');
+            element.innerHTML = `<i class="fas fa-check"></i>` + element.innerText;
+            
+            selectedOptions[typeCategory] = element.innerText;
+        }
+
+        // --- ระบบเพิ่มลดจำนวนใน Modal ก่อนลงตะกร้า ---
+        function changeModalQty(amount) {
+            modalTempQty += amount;
+            if(modalTempQty < 1) modalTempQty = 1; // บังคับขั้นต่ำคือ 1
+            updateModalQtyUI();
+            
+            // เล่นอนิเมชั่นเด้งดึ๋งเล็กน้อยที่ตัวเลข
+            const display = document.getElementById('modal-qty-display');
+            display.style.transform = 'scale(1.2)';
+            setTimeout(() => display.style.transform = 'scale(1)', 150);
+        }
+
+        function updateModalQtyUI() {
+            document.getElementById('modal-qty-display').innerText = modalTempQty;
+            const totalPrice = currentItem.price * modalTempQty;
+            document.getElementById('modal-price-display').innerText = totalPrice;
+        }
+
+        /**
+         * 6. CART MANAGEMENT
+         */
+        function confirmAddToCart(e) {
+            createRipple(e);
+            const note = document.getElementById('modal-note').value.trim();
+            
+            // Generate Unique Key for Consolidation
+            let optString = '';
+            if(currentItem.catLevel === 1) optString = `(${selectedOptions.type}, ${selectedOptions.spicy})`;
+            else if(currentItem.catLevel === 2) optString = `(${selectedOptions.type})`;
+            
+            const uniqueKey = `${currentItem.id}-${optString}-${note}`;
+
+            const existItem = cart.find(c => c.key === uniqueKey);
+            if(existItem) {
+                existItem.qty += modalTempQty; // อัปเดตบวกเพิ่มตามจำนวนที่เลือกมา
+            } else {
+                cart.push({
+                    key: uniqueKey,
+                    id: currentItem.id,
+                    name: currentItem.name,
+                    price: currentItem.price,
+                    options: optString,
+                    note: note,
+                    qty: modalTempQty // ใส่จำนวนที่เลือกไว้
+                });
+            }
+
+            updateCartUI();
+            closeOverlayManual('overlay-options');
+            showToast(`เพิ่ม <b>${currentItem.name}</b> (${modalTempQty} ที่) เรียบร้อย`);
+        }
+
+        function updateCartUI() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            const cartFloat = document.getElementById('float-cart');
+            if(totalQty > 0) {
+                cartFloat.classList.add('visible');
+                document.getElementById('cart-badge-count').innerText = totalQty;
+                document.getElementById('cart-float-price').innerText = `${totalPrice} ฿`;
+            } else {
+                cartFloat.classList.remove('visible');
+                closeOverlayManual('overlay-summary'); 
+            }
+        }
+
+        function openSummary(e) {
+            createRipple(e);
+            setTimeout(() => {
+                renderSummaryList();
+                document.getElementById('overlay-summary').classList.add('show');
+            }, 100);
+        }
+
+        function renderSummaryList() {
+            const list = document.getElementById('summary-list');
+            let total = 0;
+            
+            if(cart.length === 0) {
+                list.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:80px;"><i class="fas fa-shopping-basket" style="font-size:4rem; color:#EEEEEE; margin-bottom:20px;"></i><br>ยังไม่มีรายการอาหารในตะกร้า<br>ลองเลือกเมนูแซ่บๆ สักหน่อยไหมครับ?</div>`;
+                document.getElementById('summary-total-price').innerText = `0 ฿`;
+                return;
+            }
+
+            list.innerHTML = cart.map((item, index) => {
+                total += (item.price * item.qty);
+                return `
+                <div class="summary-item">
+                    <div class="sum-detail">
+                        <h4>${item.name}</h4>
+                        <p>${item.options} ${item.note ? '<br><span style="color:var(--accent);">📌'+item.note+'</span>' : ''}</p>
+                        <div class="qty-control">
+                            <span class="qty-btn" onclick="changeQty(${index}, -1)"><i class="fas fa-minus-circle"></i></span>
+                            <span class="qty-val">${item.qty}</span>
+                            <span class="qty-btn" onclick="changeQty(${index}, 1)"><i class="fas fa-plus-circle"></i></span>
+                        </div>
+                    </div>
+                    <div class="sum-price">${item.price * item.qty} ฿</div>
+                </div>`;
+            }).join('');
+
+            document.getElementById('summary-total-price').innerText = `${total} ฿`;
+        }
+
+        function changeQty(index, amount) {
+            cart[index].qty += amount;
+            if(cart[index].qty <= 0) {
+                cart.splice(index, 1); 
+                showToast(`ลบรายการเรียบร้อย`);
+            }
+            updateCartUI();
+            renderSummaryList();
+        }
+
+        /**
+         * 7. ORDER SUBMISSION
+         */
+        function submitOrder(e) {
+            if(cart.length === 0) return;
+            createRipple(e);
+            
+            const btn = e.target;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังส่งข้อมูล...';
+            btn.style.opacity = '0.8';
+            btn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                closeOverlayManual('overlay-summary');
+                document.getElementById('overlay-success').classList.add('show');
+                
+                btn.innerHTML = originalHTML;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }, 1800);
+        }
+
+        function resetSystem(e) {
+            createRipple(e);
+            setTimeout(() => {
+                cart = [];
+                updateCartUI();
+                closeOverlayManual('overlay-success');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                showToast(`เริ่มออเดอร์ใหม่`);
+            }, 300);
+        }
+
+        /**
+         * 8. MICRO-INTERACTIONS
+         */
+        function showToast(message) {
+            const container = document.getElementById('toast-box');
+            const toast = document.createElement('div');
+            toast.className = 'toast animate__animated';
+            toast.innerHTML = `<i class="fas fa-info-circle"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                if(container.contains(toast)) container.removeChild(toast);
+            }, 3300);
+        }
+
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const circle = document.createElement('span');
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+            
+            const rect = button.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - rect.left - radius}px`;
+            circle.style.top = `${event.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple');
+            
+            const existingRipple = button.querySelector('.ripple');
+            if(existingRipple) existingRipple.remove();
+            
+            button.appendChild(circle);
+        }
+
+        // Run Application
+        window.onload = initApp;
+
+    </script>
+</body>
+</html>
