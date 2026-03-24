@@ -7,57 +7,51 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
         /* ==========================================================================
-           1. CSS VARIABLES (Modern Vibrant App Theme)
+           1. CSS VARIABLES (Premium Glass & Vibrant Theme)
            ========================================================================== */
         :root {
-            /* Vibrant & Appetizing Palette */
-            --bg-main: #F4F7F6;    /* สีพื้นหลังแอปสว่าง สะอาดตา */
-            --bg-card: #FFFFFF;
-            --text-main: #1A1A24;  /* สีตัวอักษรหลักเข้มข้น */
-            --text-muted: #7E8299; /* สีเทาสำหรับข้อความรอง */
-            --primary: #F94144;    /* สีแดงสดใส กระตุ้นความอยากอาหาร */
-            --primary-light: #FFEBEC;
-            --primary-gradient: linear-gradient(135deg, #F94144 0%, #FF7A7D 100%);
-            --accent: #F8961E;     /* สีส้มอมเหลือง เพิ่มความแซ่บ */
-            --accent-gradient: linear-gradient(135deg, #F8961E 0%, #F9C74F 100%);
-            --border-light: #E4E6EF;
-            --success: #43A047;
-            --success-gradient: linear-gradient(135deg, #43A047 0%, #66BB6A 100%);
+            --bg-main: #f8f9fa;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
             
-            /* Shadows & Effects (Modern Soft Shadows) */
-            --shadow-card: 0 12px 24px rgba(0, 0, 0, 0.04);
-            --shadow-hover: 0 16px 32px rgba(249, 65, 68, 0.12);
-            --shadow-float: 0 20px 40px rgba(249, 65, 68, 0.3);
-            --shadow-modal: 0 -10px 40px rgba(0, 0, 0, 0.15);
+            /* Gradients สุดแซ่บ */
+            --primary: #ef233c;
+            --primary-dark: #d90429;
+            --primary-gradient: linear-gradient(135deg, #ff4d4d 0%, #d90429 100%);
+            --primary-glow: rgba(239, 35, 60, 0.4);
             
-            /* Radius (Smooth Apple-like Squircles) */
-            --radius-sm: 12px;
-            --radius-md: 20px;
-            --radius-lg: 28px;
-            --radius-full: 99px;
+            --accent: #f77f00;
+            --accent-gradient: linear-gradient(135deg, #fcbf49 0%, #f77f00 100%);
+            
+            --success: #38b000;
+            --success-gradient: linear-gradient(135deg, #70e000 0%, #38b000 100%);
 
-            /* Spacing */
-            --space-xs: 6px;
-            --space-sm: 12px;
-            --space-md: 20px;
-            --space-lg: 32px;
-            --space-xl: 48px;
+            /* Glassmorphism Variables */
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            
+            --shadow-float: 0 20px 40px rgba(217, 4, 41, 0.25);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
+            
+            --radius-sm: 16px;
+            --radius-md: 24px;
+            --radius-lg: 32px;
+            --radius-full: 999px;
         }
 
         /* ==========================================================================
-           2. RESET & BASE STYLES
+           2. RESET & ANIMATED BACKGROUND
            ========================================================================== */
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Prompt', -apple-system, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -67,709 +61,417 @@
             line-height: 1.6;
             overflow-x: hidden;
             scroll-behavior: smooth;
+            /* เพิ่มลูกเล่นพื้นหลังเคลื่อนไหวแบบละมุนๆ */
+            background: linear-gradient(-45deg, #fdfbfb, #fff0f0, #fdfbfb, #fff7ed);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            position: relative;
         }
 
-        /* ซ่อน Scrollbar แต่ยังเลื่อนได้ */
+        /* ของตกแต่งพื้นหลัง */
+        .bg-blobs {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; overflow: hidden; pointer-events: none;
+        }
+        .blob {
+            position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5;
+            animation: floatBlob 10s infinite alternate ease-in-out;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 300px; height: 300px; background: #ffcccc; animation-delay: 0s; }
+        .blob-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #ffe6cc; animation-delay: -5s; }
+
         ::-webkit-scrollbar { width: 0px; background: transparent; }
 
         /* ==========================================================================
-           3. TYPOGRAPHY & UTILITIES
+           3. HEADER (Floating Glass)
            ========================================================================== */
-        h1, h2, h3, h4 { font-weight: 700; color: var(--text-main); letter-spacing: -0.3px; }
-        .text-primary { color: var(--primary); }
-        .text-accent { color: var(--accent); }
-        .text-muted { color: var(--text-muted); font-size: 0.9rem; }
-        .font-bold { font-weight: 700; }
-        
-        /* ==========================================================================
-           4. LAYOUT COMPONENTS
-           ========================================================================== */
-        /* Header - Glassmorphism & Dynamic */
         .app-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            padding: var(--space-lg) var(--space-md) var(--space-md);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            animation: slideDownFade 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+            position: sticky; top: 0; z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 30px 20px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            box-shadow: var(--glass-shadow);
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 20px;
         }
 
         .brand-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 4px;
+            font-size: 1.8rem; font-weight: 800; line-height: 1.2;
             background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-            animation: pulse-soft 3s infinite alternate;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 2px 4px 10px var(--primary-glow);
+            letter-spacing: -0.5px;
         }
 
         .brand-subtitle {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            font-weight: 400;
-            margin-top: 5px;
+            font-size: 0.95rem; color: var(--text-muted);
+            font-weight: 500; margin-top: 8px;
+            background: rgba(255,255,255,0.8);
+            padding: 4px 12px; border-radius: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
         }
 
         .table-badge {
-            margin-top: 18px;
-            background: var(--bg-card);
-            color: var(--primary);
-            padding: 8px 24px;
-            border-radius: var(--radius-full);
-            font-size: 0.95rem;
-            font-weight: 700;
-            box-shadow: 0 6px 16px rgba(249, 65, 68, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 2px solid var(--primary-light);
-            transition: transform 0.3s ease;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            color: var(--primary-dark);
+            padding: 10px 30px; border-radius: var(--radius-full);
+            font-size: 1.1rem; font-weight: 800;
+            box-shadow: 0 10px 20px rgba(239, 35, 60, 0.15), inset 0 2px 0 #fff;
+            border: 1px solid rgba(239, 35, 60, 0.2);
+            display: flex; align-items: center; gap: 12px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .table-badge:hover { transform: translateY(-2px); }
+        .table-badge:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 15px 25px rgba(239, 35, 60, 0.25); }
+        .table-badge i { font-size: 1.2rem; animation: tada 2s infinite; }
 
-        /* Tab Navigation - Modern Pills */
+        /* ==========================================================================
+           4. TABS NAVIGATION (Floating Pills)
+           ========================================================================== */
         .nav-categories {
-            position: sticky;
-            top: 125px; /* Adjust based on header height */
-            z-index: 99;
-            background: rgba(244, 247, 246, 0.9);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            display: flex;
-            overflow-x: auto;
-            padding: var(--space-md) var(--space-sm);
-            gap: 14px;
-            border-bottom: 1px solid rgba(0,0,0,0.02);
+            position: sticky; top: 140px; z-index: 99;
+            display: flex; overflow-x: auto;
+            padding: 10px 20px 20px; gap: 12px;
             justify-content: start;
+            scroll-snap-type: x mandatory;
         }
-
-        @media (min-width: 600px) {
-            .nav-categories { justify-content: center; }
-        }
+        .nav-categories::-webkit-scrollbar { display: none; }
 
         .cat-tab {
-            padding: 12px 26px;
+            scroll-snap-align: start;
+            padding: 14px 28px;
             border-radius: var(--radius-full);
-            background-color: var(--bg-card);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
             color: var(--text-muted);
-            font-weight: 600;
-            font-size: 1rem;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy transition */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid var(--border-light);
+            font-weight: 700; font-size: 1.05rem;
+            white-space: nowrap; cursor: pointer;
+            box-shadow: var(--glass-shadow);
+            border: 1px solid var(--glass-border);
+            display: flex; align-items: center; gap: 10px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .cat-tab.active {
             background: var(--primary-gradient);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 8px 24px rgba(249, 65, 68, 0.3);
-            transform: scale(1.05);
+            color: white; border: none;
+            box-shadow: 0 10px 20px var(--primary-glow);
+            transform: translateY(-5px) scale(1.05);
         }
-        
-        .cat-tab i { color: var(--accent); font-size: 1rem; transition: color 0.3s; }
-        .cat-tab.active i { color: #FFF3E0; }
+        .cat-tab i { font-size: 1.2rem; transition: 0.3s; color: var(--accent); }
+        .cat-tab.active i { color: #fff; animation: bounceIn 0.5s; }
 
-        /* Menu Container */
+        /* ==========================================================================
+           5. MAIN CONTENT & CARDS
+           ========================================================================== */
         .main-container {
-            padding: var(--space-md);
-            padding-bottom: 150px; /* Space for float cart */
-            max-width: 680px;
-            margin: 0 auto;
-        }
-
-        .category-section {
-            scroll-margin-top: 200px;
+            padding: 10px 20px 180px; max-width: 680px; margin: 0 auto;
         }
 
         .section-title {
-            margin: var(--space-xl) 0 var(--space-md);
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 15px;
-            position: relative;
+            margin: 40px 0 20px; font-size: 1.5rem; font-weight: 800;
+            display: flex; align-items: center; gap: 15px;
+            position: relative; padding-left: 10px;
         }
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 50px;
-            height: 4px;
+        .section-title i {
             background: var(--accent-gradient);
-            border-radius: 4px;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 1.8rem; filter: drop-shadow(0 4px 6px rgba(247, 127, 0, 0.3));
         }
 
-        .section-title i { 
-            color: var(--primary); 
-            font-size: 1.3rem; 
-            background: var(--primary-light);
-            padding: 10px;
-            border-radius: 12px;
-        }
-
-        /* Menu Cards - Floating & App-like */
+        /* 3D Glass Cards */
         .food-card {
-            background-color: var(--bg-card);
-            border-radius: var(--radius-lg);
-            padding: var(--space-sm);
-            margin-bottom: var(--space-md);
-            display: flex;
-            gap: var(--space-md);
-            box-shadow: var(--shadow-card);
-            border: 1px solid rgba(255,255,255,0.8);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-            align-items: center;
-            cursor: pointer;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-radius: var(--radius-md);
+            padding: 15px; margin-bottom: 20px;
+            display: flex; gap: 20px; align-items: center;
+            box-shadow: var(--glass-shadow);
+            border: 1px solid var(--glass-border);
+            position: relative; overflow: hidden; cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            /* Scroll Reveal Base State */
+            opacity: 0; transform: translateY(30px) scale(0.95);
+        }
+        
+        /* Class สำหรับ Intersection Observer */
+        .food-card.reveal {
+            opacity: 1; transform: translateY(0) scale(1);
         }
 
-        /* Staggered animation delays for items */
-        .food-card:nth-child(1) { animation-delay: 0.1s; }
-        .food-card:nth-child(2) { animation-delay: 0.2s; }
-        .food-card:nth-child(3) { animation-delay: 0.3s; }
-        .food-card:nth-child(4) { animation-delay: 0.4s; }
-        .food-card:nth-child(n+5) { animation-delay: 0.5s; }
-
-        @media (hover: hover) {
-            .food-card:hover {
-                transform: translateY(-6px) scale(1.02);
-                box-shadow: var(--shadow-hover);
-                border-color: var(--primary-light);
-            }
-            .food-card:hover .food-img-wrapper img {
-                transform: scale(1.1) rotate(3deg);
-            }
-            .food-card:hover .btn-add-icon {
-                background: var(--primary-gradient);
-                color: white;
-                transform: rotate(90deg) scale(1.1);
-                box-shadow: 0 6px 15px rgba(249, 65, 68, 0.3);
-            }
+        .food-card::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg); transition: 0.5s;
         }
-        .food-card:active { transform: scale(0.96); }
+
+        .food-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(239, 35, 60, 0.3);
+        }
+        .food-card:hover::before { left: 150%; }
 
         .food-img-wrapper {
-            width: 110px;
-            height: 110px;
-            border-radius: var(--radius-md);
-            background: var(--accent-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            color: white;
-            font-size: 2.5rem;
-            overflow: hidden;
+            width: 100px; height: 100px; border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #fdfbfb, #ebedee);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem; flex-shrink: 0;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.05), 0 8px 15px rgba(0,0,0,0.08);
             position: relative;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
         }
-        .food-img-wrapper img {
-            width: 100%; height: 100%; 
-            object-fit: cover; 
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .food-info {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-right: 45px;
-            padding-top: 10px;
-            padding-bottom: 10px;
+        .food-img-wrapper i {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
         }
 
+        .food-info { flex-grow: 1; padding-right: 45px; }
         .food-name {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 8px;
-            line-height: 1.3;
+            font-size: 1.25rem; font-weight: 800; color: var(--text-main);
+            margin-bottom: 5px; line-height: 1.3;
         }
-
         .food-price {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-top: auto;
-            display: inline-block;
-            background: var(--primary-light);
-            padding: 4px 12px;
-            border-radius: 8px;
-            width: fit-content;
+            font-size: 1.3rem; font-weight: 800; color: var(--primary-dark);
+            background: rgba(239, 35, 60, 0.08);
+            padding: 4px 14px; border-radius: 12px; display: inline-block;
+            border: 1px solid rgba(239, 35, 60, 0.1);
         }
 
-        /* Action Buttons - Dynamic */
         .btn-add-icon {
-            position: absolute;
-            right: var(--space-md);
-            bottom: var(--space-md);
-            width: 42px;
-            height: 42px;
-            border-radius: var(--radius-full);
-            background-color: #F4F7F6;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
+            position: absolute; right: 20px; bottom: 20px;
+            width: 45px; height: 45px; border-radius: var(--radius-full);
+            background: white; color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            z-index: 2;
+            border: 2px solid transparent;
+        }
+        .food-card:hover .btn-add-icon {
+            background: var(--primary-gradient); color: white;
+            transform: rotate(180deg) scale(1.1);
+            box-shadow: 0 10px 20px var(--primary-glow);
         }
 
         /* ==========================================================================
-           5. MODALS & BOTTOM SHEETS
+           6. BOTTOM SHEETS & MODALS (Super Smooth)
            ========================================================================== */
         .overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(26, 26, 36, 0.5);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 1000; opacity: 0; visibility: hidden;
+            display: flex; align-items: flex-end; justify-content: center;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
-        .overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
+        .overlay.show { opacity: 1; visibility: visible; }
 
         .bottom-sheet {
-            background-color: var(--bg-card);
-            width: 100%;
-            max-width: 680px;
-            border-radius: 32px 32px 0 0;
-            padding: var(--space-lg) var(--space-md) var(--space-xl);
+            background: var(--bg-main);
+            width: 100%; max-width: 680px;
+            border-radius: 35px 35px 0 0;
+            padding: 20px 25px 40px;
             transform: translateY(100%);
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: var(--shadow-modal);
-            max-height: 90vh;
-            overflow-y: auto;
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 -20px 40px rgba(0,0,0,0.2);
+            max-height: 90vh; overflow-y: auto;
             position: relative;
         }
+        .overlay.show .bottom-sheet { transform: translateY(0); }
 
-        .overlay.show .bottom-sheet {
-            transform: translateY(0);
-        }
-
-        /* Drag Handle */
         .drag-handle {
-            width: 40px;
-            height: 5px;
-            background-color: #D1D5DB;
-            border-radius: 10px;
-            margin: -10px auto 30px;
+            width: 50px; height: 6px; background-color: #cbd5e1;
+            border-radius: 10px; margin: 0 auto 25px;
         }
 
         .sheet-title {
-            font-size: 1.5rem;
-            margin-bottom: var(--space-lg);
-            text-align: center;
-            color: var(--text-main);
-            font-weight: 800;
-            padding: 0 20px;
+            font-size: 1.8rem; text-align: center; font-weight: 800;
+            margin-bottom: 30px; color: var(--text-main);
+            background: var(--primary-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* Options Selection (Chips) */
-        .option-group { margin-bottom: var(--space-lg); }
+        /* Options */
+        .option-group { margin-bottom: 25px; }
         .option-label {
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #374151;
+            font-weight: 800; font-size: 1.15rem; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .option-label .required { 
-            color: white; 
-            font-size: 0.75rem; 
-            background: var(--primary-gradient); 
-            padding: 4px 10px; 
-            border-radius: 8px; 
-            font-weight: 600;
-            letter-spacing: 0.5px;
+        .required {
+            background: var(--primary-gradient); color: white;
+            font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;
+            letter-spacing: 0.5px; box-shadow: 0 4px 10px var(--primary-glow);
         }
-        
+
         .chip-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
-            gap: 14px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px;
         }
-
         .choice-chip {
-            padding: 14px 10px;
-            border: 2px solid var(--border-light);
-            border-radius: var(--radius-md);
-            text-align: center;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            background-color: #FAFAFB;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            padding: 15px 10px; border: 2px solid #e2e8f0;
+            border-radius: var(--radius-sm); text-align: center;
+            font-size: 1.05rem; font-weight: 700; color: var(--text-muted);
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: white; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
         }
-
         .choice-chip.selected {
-            border-color: var(--accent);
-            background-color: #FFF9F0;
-            color: var(--accent);
-            box-shadow: 0 8px 20px rgba(248, 150, 30, 0.15);
-            transform: translateY(-3px);
+            border-color: var(--accent); background: #fffaf0; color: var(--accent);
+            box-shadow: 0 10px 20px rgba(247, 127, 0, 0.15); transform: translateY(-3px);
         }
-        .choice-chip i { font-size: 1.2rem; display: none; }
-        .choice-chip.selected i { display: block; color: var(--accent); animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .choice-chip i { font-size: 1.4rem; display: none; }
+        .choice-chip.selected i { display: block; animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-        /* Custom Textarea */
         .custom-input {
-            width: 100%;
-            padding: 18px;
-            border: 2px solid var(--border-light);
-            border-radius: var(--radius-md);
-            background-color: #FAFAFB;
-            font-size: 1rem;
-            transition: all 0.3s;
-            resize: none;
-            color: var(--text-main);
-            font-weight: 500;
+            width: 100%; padding: 18px; border: 2px solid #e2e8f0;
+            border-radius: var(--radius-sm); background: white;
+            font-size: 1.05rem; transition: 0.3s; resize: none; font-weight: 500;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
         }
         .custom-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background-color: var(--bg-card);
-            box-shadow: 0 0 0 4px rgba(249, 65, 68, 0.1);
+            outline: none; border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow); background: #fff;
         }
 
-        /* Quantity Selector */
+        /* Qty Control */
         .modal-qty-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: var(--space-xl) 0 var(--space-lg);
-            padding: 10px 20px;
-            background-color: #F9FAFB;
-            border-radius: var(--radius-full);
-            border: 1px solid var(--border-light);
+            display: flex; align-items: center; justify-content: space-between;
+            background: white; padding: 10px 20px; border-radius: var(--radius-full);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05); margin: 30px 0; border: 1px solid #e2e8f0;
         }
         .modal-qty-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background-color: white;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            transition: all 0.2s ease;
-            user-select: none;
+            width: 50px; height: 50px; border-radius: 50%;
+            background: var(--bg-main); display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; cursor: pointer; transition: 0.2s; color: var(--text-main);
         }
-        .modal-qty-btn:active {
-            transform: scale(0.9);
-            background: var(--primary-light);
-            color: var(--primary);
-        }
-        .modal-qty-number {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--text-main);
-            min-width: 60px;
-            text-align: center;
-        }
+        .modal-qty-btn:active { background: var(--primary-gradient); color: white; transform: scale(0.9); }
+        .modal-qty-number { font-size: 2rem; font-weight: 800; min-width: 60px; text-align: center; color: var(--primary-dark); }
 
-        /* Primary Button */
+        /* Buttons */
         .btn-primary {
-            width: 100%;
-            padding: 20px;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: var(--radius-full);
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(249, 65, 68, 0.35);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
+            width: 100%; padding: 22px; border: none;
+            background: var(--primary-gradient); color: white;
+            border-radius: var(--radius-full); font-size: 1.3rem; font-weight: 800;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 12px;
+            box-shadow: 0 15px 30px var(--primary-glow);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative; overflow: hidden;
         }
-        .btn-primary:active { transform: scale(0.96); box-shadow: 0 5px 15px rgba(249, 65, 68, 0.2); }
-
+        .btn-primary:active { transform: scale(0.95); box-shadow: 0 5px 15px var(--primary-glow); }
+        
         /* ==========================================================================
-           6. FLOATING CART & SUMMARY
+           7. FLOATING CART & SUMMARY
            ========================================================================== */
         .floating-cart {
-            position: fixed;
-            bottom: var(--space-md);
-            left: 50%;
+            position: fixed; bottom: 25px; left: 50%;
             transform: translateX(-50%) translateY(150%);
-            width: calc(100% - 32px);
-            max-width: 500px;
-            background: var(--primary-gradient);
-            color: white;
-            padding: 16px 24px;
+            width: calc(100% - 40px); max-width: 500px;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(15px);
+            color: white; padding: 15px 25px;
             border-radius: var(--radius-full);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-float);
-            z-index: 900;
-            cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3); z-index: 900; cursor: pointer;
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255,255,255,0.1);
         }
-
-        .floating-cart.visible { 
-            transform: translateX(-50%) translateY(0);
-            animation: float-anim 3s ease-in-out infinite; 
-        }
-
-        .cart-left { display: flex; align-items: center; gap: 16px; }
-        .cart-icon-wrapper { 
-            position: relative; 
-            font-size: 1.5rem; 
-            background: rgba(255,255,255,0.2);
-            padding: 10px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .floating-cart.visible { transform: translateX(-50%) translateY(0); animation: float-anim 4s ease-in-out infinite; }
+        
+        .cart-icon-wrapper {
+            position: relative; font-size: 1.8rem; background: rgba(255,255,255,0.1);
+            padding: 12px; border-radius: 50%; display: flex;
         }
         .cart-badge {
-            position: absolute;
-            top: -5px; right: -5px;
-            background-color: var(--accent);
-            color: white;
-            font-size: 0.8rem;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 12px;
-            border: 2px solid white;
-            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: absolute; top: -5px; right: -5px; background: var(--primary-gradient);
+            color: white; font-size: 0.85rem; font-weight: 800; padding: 4px 10px;
+            border-radius: 12px; border: 2px solid #1e293b;
+            box-shadow: 0 4px 10px var(--primary-glow);
         }
-        .cart-text { font-weight: 600; font-size: 1.1rem; letter-spacing: 0.3px; }
-        .cart-total { font-size: 1.4rem; font-weight: 800; background: rgba(0,0,0,0.1); padding: 5px 15px; border-radius: 20px;}
+        .cart-total {
+            font-size: 1.5rem; font-weight: 800; background: var(--primary-gradient);
+            padding: 8px 20px; border-radius: 20px; box-shadow: 0 5px 15px var(--primary-glow);
+        }
 
-        /* Summary Item List */
+        /* Summary Modal Additions */
         .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: var(--space-md);
-            margin-bottom: 12px;
-            background: #F9FAFB;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-light);
-            animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; justify-content: space-between; padding: 20px;
+            background: white; border-radius: var(--radius-sm); margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;
         }
-        .sum-detail h4 { font-size: 1.15rem; color: var(--text-main); margin-bottom: 6px; }
-        .sum-detail p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
-        .sum-price { 
-            font-weight: 800; 
-            font-size: 1.25rem; 
-            color: var(--primary); 
-            display: flex; 
-            flex-direction: column;
-            align-items: flex-end; 
-            justify-content: center;
-            white-space: nowrap;
-        }
-
-        /* Quantity Controls in Summary */
-        .qty-control {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-top: 14px;
-            background-color: white;
-            padding: 6px 14px;
-            border-radius: var(--radius-full);
-            width: fit-content;
-            border: 1px solid var(--border-light);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .qty-btn {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .qty-btn:active { transform: scale(0.8); color: var(--primary); }
-        .qty-val { font-weight: 800; font-size: 1.1rem; color: var(--text-main); min-width: 25px; text-align: center; }
+        .summary-item h4 { font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 5px; }
 
         /* ==========================================================================
-           7. TOAST NOTIFICATIONS & SUCCESS POPUP
+           8. SUCCESS POPUP & TOASTS
            ========================================================================== */
-        .toast-container {
-            position: fixed;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2100;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            pointer-events: none;
-            width: 90%;
-            max-width: 400px;
-        }
-
+        .toast-container { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); z-index: 2100; pointer-events: none; }
         .toast {
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 16px 24px;
-            border-radius: var(--radius-full);
-            font-size: 1rem;
-            font-weight: 600;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            animation: toastEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, toastLeave 0.5s 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); color: white;
+            padding: 16px 28px; border-radius: var(--radius-full); font-size: 1.1rem; font-weight: 600;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 15px; margin-bottom: 10px;
+            animation: toastEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, toastLeave 0.5s 3s forwards;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .toast i { color: var(--accent); font-size: 1.2rem; }
+        .toast i { color: var(--success); font-size: 1.5rem; }
 
-        /* Success Center Popup */
         .success-modal {
-            background-color: var(--bg-card);
-            width: 90%;
-            max-width: 400px;
-            border-radius: 32px;
-            padding: 40px 30px;
-            text-align: center;
-            transform: scale(0.8) translateY(20px);
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
+            background: var(--glass-bg); backdrop-filter: blur(25px);
+            width: 90%; max-width: 420px; border-radius: 40px; padding: 50px 30px;
+            text-align: center; transform: scale(0.8) translateY(30px); opacity: 0;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border);
         }
-
-        .overlay.show .success-modal {
-            transform: scale(1) translateY(0);
-            opacity: 1;
-        }
-
+        .overlay.show .success-modal { transform: scale(1) translateY(0); opacity: 1; }
+        
         .check-icon-wrapper {
-            width: 100px; height: 100px;
-            background: var(--success-gradient);
-            color: white;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3.5rem;
-            margin: 0 auto 24px;
-            animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
-            box-shadow: 0 15px 30px rgba(67, 160, 71, 0.3);
+            width: 120px; height: 120px; background: var(--success-gradient);
+            color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 4rem; margin: 0 auto 30px;
+            box-shadow: 0 20px 40px rgba(56, 176, 0, 0.4), inset 0 5px 10px rgba(255,255,255,0.5);
+            animation: bounceIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
         }
 
         /* ==========================================================================
-           8. ANIMATIONS & KEYFRAMES
+           9. KEYFRAMES
            ========================================================================== */
-        @keyframes slideDownFade { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes popIn { 
-            0% { transform: scale(0.5); opacity: 0; }
-            70% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes toastEnter { from { opacity: 0; transform: translateY(-30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes toastLeave { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-30px) scale(0.9); } }
-        @keyframes float-anim {
-            0% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-6px); }
-            100% { transform: translateX(-50%) translateY(0); }
-        }
-        @keyframes pulse-soft {
-            0% { opacity: 1; }
-            100% { opacity: 0.85; text-shadow: 0 0 15px rgba(249, 65, 68, 0.4); }
-        }
-        
-        /* Ripple Effect */
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-anim 0.6s linear;
-            background-color: rgba(255, 255, 255, 0.4);
-            pointer-events: none;
-        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes floatBlob { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.1); } }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.1); opacity: 1; } 70% { transform: scale(0.9); } 100% { transform: scale(1); } }
+        @keyframes float-anim { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-10px); } }
+        @keyframes toastEnter { from { opacity: 0; transform: translateY(-40px) scale(0.8); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes toastLeave { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-30px) scale(0.8); } }
+        .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.5); pointer-events: none; }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
-
-        /* Utilities */
-        .animate__animated { animation-fill-mode: both; }
-        .animate__fadeInUp { animation-name: slideUpFade; animation-duration: 0.6s; }
-
     </style>
 </head>
 <body>
 
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
     <div class="toast-container" id="toast-box"></div>
 
-    <header class="app-header">
-        <div>
-            <h1 class="brand-title">ขนมจีนบีบสดแม่พร</h1>
-            <p class="brand-title" style="font-size: 1.3rem;">& ส้มตำครกแตก by.เจ๊อ้อม</p>
-            <p class="brand-subtitle">ขนมจีนน้ำยา เส้นบีบสดทุกวัน บุฟเฟ่ต์ผักหยิบตักไม่อั้น</p>
-        </div>
-        <div class="table-badge animate__animated animate__jackInTheBox">
-            <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number">1</span>
+    <header class="app-header animate__animated animate__fadeInDown">
+        <h1 class="brand-title">ขนมจีนบีบสดแม่พร</h1>
+        <p class="brand-title" style="font-size: 1.4rem; margin-top:-5px;">& ส้มตำครกแตก by.เจ๊อ้อม</p>
+        <p class="brand-subtitle"><i class="fas fa-leaf" style="color:var(--success);"></i> ขนมจีนน้ำยา เส้นบีบสดทุกวัน บุฟเฟ่ต์ผักหยิบตักไม่อั้น</p>
+        
+        <div class="table-badge animate__animated animate__bounceIn" style="animation-delay: 0.5s;">
+            <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number" style="font-size:1.4rem; color:var(--primary);">1</span>
         </div>
     </header>
 
-    <nav class="nav-categories" id="nav-cats">
-        <div class="cat-tab active" onclick="scrollToCategory('cat-1', this)">
-            <i class="fas fa-pepper-hot"></i> ส้มตำครกแตก
-        </div>
-        <div class="cat-tab" onclick="scrollToCategory('cat-2', this)">
-            <i class="fas fa-bowl-food"></i> ขนมจีนน้ำยา
-        </div>
-        <div class="cat-tab" onclick="scrollToCategory('cat-3', this)">
-            <i class="fas fa-egg"></i> ของทานเล่น
-        </div>
-        <div class="cat-tab" onclick="scrollToCategory('cat-4', this)">
-            <i class="fas fa-glass-water"></i> เครื่องดื่ม
-        </div>
+    <nav class="nav-categories animate__animated animate__fadeIn" id="nav-cats">
+        <div class="cat-tab active" onclick="scrollToCategory('cat-1', this)"><i class="fas fa-pepper-hot"></i> ส้มตำครกแตก</div>
+        <div class="cat-tab" onclick="scrollToCategory('cat-2', this)"><i class="fas fa-bowl-food"></i> ขนมจีนน้ำยา</div>
+        <div class="cat-tab" onclick="scrollToCategory('cat-3', this)"><i class="fas fa-egg"></i> ของทานเล่น</div>
+        <div class="cat-tab" onclick="scrollToCategory('cat-4', this)"><i class="fas fa-glass-water"></i> เครื่องดื่ม</div>
     </nav>
 
     <main class="main-container">
@@ -795,12 +497,12 @@
     </main>
 
     <div id="float-cart" class="floating-cart" onclick="openSummary(event)">
-        <div class="cart-left">
+        <div class="cart-left" style="display:flex; align-items:center; gap:20px;">
             <div class="cart-icon-wrapper">
                 <i class="fas fa-shopping-basket"></i>
                 <span id="cart-badge-count" class="cart-badge">0</span>
             </div>
-            <span class="cart-text">ดูสรุปรายการ</span>
+            <span style="font-weight: 700; font-size: 1.2rem; letter-spacing: 0.5px;">ดูสรุปรายการ</span>
         </div>
         <div class="cart-total" id="cart-float-price">0 ฿</div>
     </div>
@@ -810,43 +512,41 @@
             <div class="drag-handle"></div>
             <h3 id="modal-food-name" class="sheet-title">ชื่อเมนู</h3>
             
-            <div id="dynamic-options-area">
-                </div>
+            <div id="dynamic-options-area"></div>
 
             <div class="option-group animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
-                <div class="option-label">ระบุเพิ่มเติม <span style="color:var(--text-muted); font-size:0.8rem; font-weight:normal;">(ไม่บังคับ)</span></div>
+                <div class="option-label">ระบุเพิ่มเติม <span style="color:var(--text-muted); font-size:0.9rem; font-weight:500;">(ไม่บังคับ)</span></div>
                 <textarea id="modal-note" class="custom-input" rows="2" placeholder="เช่น ไม่ใส่น้ำตาล, ไม่ปลาร้า, ไม่ถั่ว..."></textarea>
             </div>
 
             <div class="modal-qty-wrapper animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
                 <div class="modal-qty-btn" onclick="changeModalQty(-1)"><i class="fas fa-minus"></i></div>
                 <div class="modal-qty-number" id="modal-qty-display">1</div>
-                <div class="modal-qty-btn" onclick="changeModalQty(1)"><i class="fas fa-plus"></i></div>
+                <div class="modal-qty-btn" style="background:var(--primary-light); color:var(--primary);" onclick="changeModalQty(1)"><i class="fas fa-plus"></i></div>
             </div>
 
             <button class="btn-primary animate__animated animate__fadeInUp" style="animation-delay: 0.4s;" onclick="confirmAddToCart(event)">
-                <i class="fas fa-cart-plus"></i> เพิ่มลงตะกร้า - <span id="modal-price-display">0</span> ฿
+                <i class="fas fa-cart-plus" style="font-size:1.5rem;"></i> เพิ่มลงตะกร้า - <span id="modal-price-display">0</span> ฿
             </button>
         </div>
     </div>
 
     <div id="overlay-summary" class="overlay" onclick="closeOverlay(event, 'overlay-summary')">
-        <div class="bottom-sheet" style="height: 88vh; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+        <div class="bottom-sheet" style="height: 90vh; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
             <div class="drag-handle"></div>
-            <h3 class="sheet-title">สรุปรายการที่สั่ง</h3>
+            <h3 class="sheet-title" style="margin-bottom:15px;">สรุปรายการที่สั่ง</h3>
             
-            <div id="summary-list" style="flex-grow: 1; overflow-y: auto; padding: 0 5px 20px 5px;">
-                </div>
+            <div id="summary-list" style="flex-grow: 1; overflow-y: auto; padding: 10px 5px 20px 5px;"></div>
 
-            <div style="padding-top: var(--space-md); border-top: 1px solid var(--border-light); margin-bottom: 10px; margin-top: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <span style="font-size: 1.2rem; color: var(--text-muted); font-weight:700;">ยอดรวมทั้งสิ้น</span>
-                    <span id="summary-total-price" style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">0 ฿</span>
+            <div style="padding-top: 25px; border-top: 2px dashed #cbd5e1; margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <span style="font-size: 1.3rem; color: var(--text-muted); font-weight:800;">ยอดรวมทั้งสิ้น</span>
+                    <span id="summary-total-price" style="font-size: 2.2rem; font-weight: 800; color: var(--primary-dark); text-shadow: 0 4px 10px rgba(239,35,60,0.2);">0 ฿</span>
                 </div>
                 <button class="btn-primary" onclick="submitOrder(event)">
-                    <i class="fas fa-paper-plane"></i> ส่งออเดอร์เข้าครัว
+                    <i class="fas fa-paper-plane"></i> ยืนยันส่งออเดอร์เข้าครัว
                 </button>
-                <button onclick="closeOverlayManual('overlay-summary')" style="width:100%; padding:15px; background:transparent; border:none; color:var(--text-muted); font-weight:600; font-size: 1.1rem; margin-top:10px; cursor:pointer; transition: color 0.2s;">
+                <button onclick="closeOverlayManual('overlay-summary')" style="width:100%; padding:20px; background:transparent; border:none; color:var(--text-muted); font-weight:700; font-size: 1.2rem; margin-top:5px; cursor:pointer; transition: color 0.2s;">
                     + เลือกอาหารเพิ่ม
                 </button>
             </div>
@@ -858,9 +558,9 @@
             <div class="check-icon-wrapper">
                 <i class="fas fa-check"></i>
             </div>
-            <h2 style="font-size: 1.8rem; margin-bottom: 12px; color:var(--text-main); font-weight: 800;">ส่งออเดอร์สำเร็จ!</h2>
-            <p style="color: var(--text-muted); margin-bottom: var(--space-lg); font-size: 1.05rem; line-height:1.6;">
-                ทางร้านได้รับรายการอาหารเรียบร้อยแล้ว<br>รอความแซ่บสักครู่นะครับ ทานให้อร่อย! 🌶️
+            <h2 style="font-size: 2.2rem; margin-bottom: 15px; color:var(--text-main); font-weight: 800;">สั่งอาหารสำเร็จ!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 35px; font-size: 1.1rem; line-height:1.6; font-weight:500;">
+                ออเดอร์ถูกส่งตรงเข้าครัวแล้วครับ<br>รอรับความแซ่บซี๊ดดดด ได้เลย! 🌶️✨
             </p>
             <button class="btn-primary" onclick="resetSystem(event)">
                 <i class="fas fa-redo"></i> กลับไปหน้าแรก
@@ -870,13 +570,13 @@
 
     <script>
         /**
-         * 1. DATABASE: ข้อมูลเมนูอาหาร (ห้ามแก้ไข)
+         * 1. DATABASE: ข้อมูลเมนูอาหาร (คงเดิม 100%)
          */
         const DB = {
             cat1: [
                 {id:101, n:'ตำป่า', p:70, img: '1pa.jpg'},
                 {id:102, n:'ตำลาว', p:50, img: '2tl.jpg'},
-                {id:103, n:'ตำไทยไข่เค็ม', p:60, img: 'ttk.jpg'},
+                {id:103, n:'ตำไทยไข่เค็ม', p:60, img: 'ttk.jpg'}, // ถ้ามีรูปให้ใส่ชื่อไฟล์แบบนี้นะครับ
                 {id:104, n:'ตำกุ้งสด, สุก', p:80, img: 'ks.jpg'},
                 {id:105, n:'ตำหมูยอ', p:80, img: 'tm.jpg'},
                 {id:106, n:'ตำซั่ว', p:60, img: 'sua.jpg'},
@@ -894,7 +594,7 @@
                 {id:204, n:'น้ำยาไก่', p:50, img: 'nk.jpg'}
                 ],
             cat3: [
-                {id:301, n:'แคปหมู', p:20, img: 'mookrajok.jpg'},
+                {id:301, n:'แคปหมู', p:20, img: 'mookrajok.jpg'}, // ถ้ายังไม่มีรูปก็ปล่อยไว้แบบนี้ จะขึ้นเป็นไอคอนแทนครับ
                 {id:302, n:'ไข่เค็ม', p:10, img: 'unnamed.jpg'},
                 {id:303, n:'ไข่ต้ม', p:5, img: 'kaitom.jpg'}
                 ],
@@ -923,37 +623,61 @@
             renderMenu('grid-cat-2', DB.cat2, 2);
             renderMenu('grid-cat-3', DB.cat3, 3);
             renderMenu('grid-cat-4', DB.cat4, 4);
+            
+            // Intersection Observer สำหรับแอนิเมชันตอนเลื่อนหน้าจอ
+            setupScrollAnimations();
         }
 
         function renderMenu(containerId, items, catLevel) {
-            const container = document.getElementById(containerId);
-            const iconMap = ['fas fa-mortar-pestle', 'fas fa-bowl-food', 'fas fa-bacon', 'fas fa-wine-glass-side'];
-            
-            container.innerHTML = items.map(item => `
-                <div class="food-card" onclick="openItemModal(${item.id}, ${catLevel}, ${item.p}, '${item.n}')">
-                    <div class="food-img-wrapper">
-                        ${item.img 
-                            ? `<img src="images/${item.img}" alt="${item.n}">` 
-                            : `<i class="${iconMap[catLevel-1]}"></i>`
-                        }
-                    </div>
-                    <div class="food-info">
-                        <div class="food-name">${item.n}</div>
-                        <div class="food-price">${item.p} ฿</div>
-                    </div>
-                    <div class="btn-add-icon"><i class="fas fa-plus"></i></div>
-                </div>
-            `).join('');
+    const container = document.getElementById(containerId);
+    // iconMap คือไอคอนสำรองถ้าไม่มีรูปภาพ
+    const iconMap = ['fas fa-mortar-pestle', 'fas fa-bowl-food', 'fas fa-bacon', 'fas fa-wine-glass-side'];
+    
+    container.innerHTML = items.map(item => `
+        <div class="food-card" onclick="openItemModal(${item.id}, ${catLevel}, ${item.p}, '${item.n}')">
+            <div class="food-img-wrapper">
+                ${item.img 
+                    ? `<img src="images/${item.img}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">` 
+                    : `<i class="${iconMap[catLevel-1]}"></i>`
+                }
+            </div>
+            <div class="food-info">
+                <div class="food-name">${item.n}</div>
+                <div class="food-price">${item.p} ฿</div>
+            </div>
+            <div class="btn-add-icon"><i class="fas fa-plus"></i></div>
+        </div>
+    `).join('');
+}
+
+        // แอนิเมชันให้การ์ดค่อยๆ ลอยขึ้นมาเวลา Scroll ลง
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+            document.querySelectorAll('.food-card').forEach(card => {
+                observer.observe(card);
+            });
         }
 
         /**
-         * 4. UI INTERACTIONS (Scroll, Tabs, Modals)
+         * 4. UI INTERACTIONS
          */
         function scrollToCategory(id, element) {
             document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
+            
+            // ขยับแท็บให้เมนูที่เลือกอยู่ตรงกลาง
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            
             const target = document.getElementById(id);
-            const headerOffset = 190; 
+            const headerOffset = 210; 
             const elementPosition = target.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -961,12 +685,13 @@
 
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('nav-cats');
-            if (window.scrollY > 100) {
-                nav.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.05)';
-                nav.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(255, 255, 255, 0.85)';
+                nav.style.boxShadow = 'var(--glass-shadow)';
+                nav.style.backdropFilter = 'blur(15px)';
             } else {
+                nav.style.background = 'transparent';
                 nav.style.boxShadow = 'none';
-                nav.style.backgroundColor = 'rgba(244, 247, 246, 0.9)';
             }
         });
 
@@ -978,16 +703,14 @@
         }
 
         /**
-         * 5. OPTION MODAL LOGIC & QUANTITY SELECTOR
+         * 5. MODAL & OPTIONS LOGIC
          */
         function openItemModal(id, catLevel, price, name) {
             currentItem = { id, name, price, catLevel };
             document.getElementById('modal-food-name').innerText = name;
             document.getElementById('modal-note').value = '';
-            
             selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
             modalTempQty = 1; 
-            
             updateModalQtyUI();
 
             const area = document.getElementById('dynamic-options-area');
@@ -996,30 +719,31 @@
             if(catLevel === 1 || catLevel === 2) {
                 html += `
                 <div class="option-group animate__animated animate__fadeInUp">
-                    <div class="option-label">การเสิร์ฟ <span class="required">จำเป็น</span></div>
+                    <div class="option-label">รูปแบบการเสิร์ฟ <span class="required">จำเป็น</span></div>
                     <div class="chip-container">
                         <div class="choice-chip selected" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่จาน</div>
-                        <div class="choice-chip" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่ถุง</div>
+                        <div class="choice-chip" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่ถุงกลับบ้าน</div>
                     </div>
                 </div>`;
                 
                 if(catLevel === 1) {
                     html += `
                     <div class="option-group animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
-                        <div class="option-label">ระดับความเผ็ด <span class="required">จำเป็น</span></div>
+                        <div class="option-label">ระดับความแซ่บซี๊ด <span class="required">จำเป็น</span></div>
                         <div class="chip-container">
-                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>ไม่เผ็ด</div>
-                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดน้อย</div>
-                            <div class="choice-chip selected" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดปกติ</div>
-                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดมาก</div>
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>ไม่ใส่พริกเลย</div>
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดน้อย (อนุบาล)</div>
+                            <div class="choice-chip selected" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดปกติ (มาตรฐาน)</div>
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')" style="color:var(--primary); border-color:var(--primary-light);"><i class="fas fa-fire"></i>เผ็ดมาก (ตายไม่เอาเรื่อง)</div>
                         </div>
                     </div>`;
                 }
             } else {
-                html = `<div style="background:#F9FAFB; padding:20px; border-radius:16px; border:1px solid var(--border-light); text-align:center; color:var(--text-muted); margin-bottom:20px; font-weight:500;">
-                            <i class="fas fa-info-circle" style="color:var(--accent); font-size:1.5rem; margin-bottom:10px; display:block;"></i>
-                            เมนูนี้ไม่มีตัวเลือกเสริมเพิ่มเติมครับ
-                        </div>`;
+                html = `
+                <div class="animate__animated animate__zoomIn" style="background:linear-gradient(135deg, #f8f9fa, #e9ecef); padding:25px; border-radius:24px; text-align:center; color:var(--text-muted); margin-bottom:25px; font-weight:600; border:1px dashed #cbd5e1;">
+                    <i class="fas fa-info-circle" style="color:var(--accent); font-size:2rem; margin-bottom:15px; display:block;"></i>
+                    เมนูนี้อร่อยอยู่แล้ว<br>ไม่มีตัวเลือกเสริมเพิ่มเติมครับ
+                </div>`;
             }
 
             area.innerHTML = html;
@@ -1039,8 +763,12 @@
             updateModalQtyUI();
             
             const display = document.getElementById('modal-qty-display');
-            display.style.transform = 'scale(1.2)';
-            setTimeout(() => display.style.transform = 'scale(1)', 150);
+            display.style.transform = 'scale(1.3)';
+            display.style.color = 'var(--primary)';
+            setTimeout(() => {
+                display.style.transform = 'scale(1)';
+                display.style.color = 'var(--primary-dark)';
+            }, 150);
         }
 
         function updateModalQtyUI() {
@@ -1050,56 +778,49 @@
         }
 
         /**
-         * 6. CART MANAGEMENT
+         * 6. CART LOGIC
          */
         function confirmAddToCart(e) {
             createRipple(e);
             const note = document.getElementById('modal-note').value.trim();
             
             let optString = '';
-            if(currentItem.catLevel === 1) optString = `(${selectedOptions.type}, ${selectedOptions.spicy})`;
-            else if(currentItem.catLevel === 2) optString = `(${selectedOptions.type})`;
+            if(currentItem.catLevel === 1) optString = `[${selectedOptions.type}, ${selectedOptions.spicy}]`;
+            else if(currentItem.catLevel === 2) optString = `[${selectedOptions.type}]`;
             
             const uniqueKey = `${currentItem.id}-${optString}-${note}`;
-
             const existItem = cart.find(c => c.key === uniqueKey);
+
             if(existItem) {
                 existItem.qty += modalTempQty;
             } else {
                 cart.push({
-                    key: uniqueKey,
-                    id: currentItem.id,
-                    name: currentItem.name,
-                    price: currentItem.price,
-                    options: optString,
-                    note: note,
-                    qty: modalTempQty 
+                    key: uniqueKey, id: currentItem.id, name: currentItem.name,
+                    price: currentItem.price, options: optString, note: note, qty: modalTempQty 
                 });
             }
 
             updateCartUI();
             closeOverlayManual('overlay-options');
-            showToast(`เพิ่ม <b>${currentItem.name}</b> (${modalTempQty} ที่) เรียบร้อย`);
+            showToast(`เพิ่ม <b>${currentItem.name}</b> (${modalTempQty} ที่) เรียบร้อย 🎉`);
         }
 
         function updateCartUI() {
             const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
             const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-
             const cartFloat = document.getElementById('float-cart');
+
             if(totalQty > 0) {
                 cartFloat.classList.add('visible');
                 document.getElementById('cart-badge-count').innerText = totalQty;
                 
-                // Animation for total price update
                 const priceEl = document.getElementById('cart-float-price');
                 priceEl.innerText = `${totalPrice} ฿`;
-                priceEl.style.transform = 'scale(1.1)';
+                priceEl.style.transform = 'scale(1.2)';
                 setTimeout(() => priceEl.style.transform = 'scale(1)', 200);
-
             } else {
                 cartFloat.classList.remove('visible');
-                closeOverlayManual('overlay-summary'); 
+                closeOverlayManual('overlay-summary');
             }
         }
 
@@ -1117,31 +838,36 @@
             
             if(cart.length === 0) {
                 list.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:100px;">
-                    <i class="fas fa-shopping-basket" style="font-size:4.5rem; color:#E4E6EF; margin-bottom:20px;"></i><br>
-                    <span style="font-size:1.1rem; font-weight:600;">ยังไม่มีรายการอาหารในตะกร้า</span><br>
-                    ลองเลือกเมนูแซ่บๆ สักหน่อยไหมครับ?</div>`;
+                    <div style="background:#f1f5f9; width:120px; height:120px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                        <i class="fas fa-shopping-basket" style="font-size:4rem; color:#cbd5e1;"></i>
+                    </div>
+                    <span style="font-size:1.3rem; font-weight:800; color:var(--text-main);">ตะกร้ายังว่างเปล่า</span><br>
+                    <span style="font-size:1rem;">ลองเลือกเมนูแซ่บๆ สักหน่อยไหมครับ?</span></div>`;
                 document.getElementById('summary-total-price').innerText = `0 ฿`;
                 return;
             }
 
             list.innerHTML = cart.map((item, index) => {
                 total += (item.price * item.qty);
-                // Style fix for note
-                const noteHtml = item.note ? `<div style="color:var(--accent); background:#FFF9F0; padding:6px 12px; border-radius:8px; display:inline-block; margin-top:8px; font-size:0.85rem;"><i class="fas fa-pen" style="margin-right:5px;"></i>${item.note}</div>` : '';
+                const noteHtml = item.note ? `<div style="color:var(--accent); background:#FFF9F0; padding:8px 12px; border-radius:12px; display:inline-block; margin-top:10px; font-size:0.9rem; border:1px solid #ffe8cc;"><i class="fas fa-pen" style="margin-right:5px;"></i>${item.note}</div>` : '';
+                const optHtml = item.options ? `<div style="color:var(--text-muted); font-size:0.95rem; margin-top:5px;"><i class="fas fa-tags" style="font-size:0.8rem; margin-right:5px;"></i>${item.options}</div>` : '';
                 
                 return `
-                <div class="summary-item" style="animation-delay: ${index * 0.05}s;">
-                    <div class="sum-detail">
+                <div class="summary-item animate__animated animate__fadeInRight" style="animation-delay: ${index * 0.05}s;">
+                    <div class="sum-detail" style="flex-grow:1; padding-right:15px;">
                         <h4>${item.name}</h4>
-                        <p>${item.options}</p>
+                        ${optHtml}
                         ${noteHtml}
-                        <div class="qty-control">
-                            <span class="qty-btn" onclick="changeQty(${index}, -1)"><i class="fas fa-minus"></i></span>
-                            <span class="qty-val">${item.qty}</span>
-                            <span class="qty-btn" onclick="changeQty(${index}, 1)"><i class="fas fa-plus"></i></span>
+                        <div style="display:flex; align-items:center; gap:20px; margin-top:15px; background:#f8f9fa; width:fit-content; padding:5px 15px; border-radius:20px; border:1px solid #e2e8f0;">
+                            <span style="color:var(--text-muted); font-size:1.2rem; cursor:pointer;" onclick="changeQty(${index}, -1)"><i class="fas fa-minus-circle"></i></span>
+                            <span style="font-weight:800; font-size:1.2rem; color:var(--text-main); min-width:30px; text-align:center;">${item.qty}</span>
+                            <span style="color:var(--primary); font-size:1.2rem; cursor:pointer;" onclick="changeQty(${index}, 1)"><i class="fas fa-plus-circle"></i></span>
                         </div>
                     </div>
-                    <div class="sum-price">${item.price * item.qty} ฿</div>
+                    <div class="sum-price" style="font-weight:800; font-size:1.4rem; color:var(--primary-dark); display:flex; flex-direction:column; align-items:flex-end; justify-content:center;">
+                        ${item.price * item.qty} ฿
+                        <i class="fas fa-trash-alt" style="color:#cbd5e1; font-size:1.2rem; margin-top:15px; cursor:pointer; transition:0.3s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='#cbd5e1'" onclick="changeQty(${index}, -999)"></i>
+                    </div>
                 </div>`;
             }).join('');
 
@@ -1151,8 +877,8 @@
         function changeQty(index, amount) {
             cart[index].qty += amount;
             if(cart[index].qty <= 0) {
-                cart.splice(index, 1); 
-                showToast(`ลบรายการเรียบร้อย`);
+                cart.splice(index, 1);
+                showToast(`ลบรายการเรียบร้อย 🗑️`);
             }
             updateCartUI();
             renderSummaryList();
@@ -1167,10 +893,11 @@
             
             const btn = e.target.closest('.btn-primary');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังส่งข้อมูล...';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังส่งเข้าห้องครัว...';
             btn.style.opacity = '0.9';
             btn.style.pointerEvents = 'none';
 
+            // จำลองการส่งข้อมูล
             setTimeout(() => {
                 closeOverlayManual('overlay-summary');
                 document.getElementById('overlay-success').classList.add('show');
@@ -1178,7 +905,7 @@
                 btn.innerHTML = originalHTML;
                 btn.style.opacity = '1';
                 btn.style.pointerEvents = 'auto';
-            }, 1500);
+            }, 1800);
         }
 
         function resetSystem(e) {
@@ -1188,7 +915,6 @@
                 updateCartUI();
                 closeOverlayManual('overlay-success');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                showToast(`เริ่มออเดอร์ใหม่`);
             }, 300);
         }
 
@@ -1199,12 +925,11 @@
             const container = document.getElementById('toast-box');
             const toast = document.createElement('div');
             toast.className = 'toast';
-            toast.innerHTML = `<i class="fas fa-bell"></i> <span>${message}</span>`;
+            toast.innerHTML = `<div style="background:var(--success-gradient); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(56,176,0,0.4);"><i class="fas fa-check" style="font-size:1rem; color:white;"></i></div> <span>${message}</span>`;
             container.appendChild(toast);
-            
             setTimeout(() => {
                 if(container.contains(toast)) container.removeChild(toast);
-            }, 3300);
+            }, 3500);
         }
 
         function createRipple(event) {
@@ -1225,9 +950,7 @@
             button.appendChild(circle);
         }
 
-        // Run Application
         window.onload = initApp;
-
     </script>
 </body>
 </html>
