@@ -668,7 +668,7 @@
             <p class="brand-subtitle">ขนมจีนน้ำยา เส้นบีบสดทุกวัน บุฟเฟ่ต์ผักหยิบตักไม่อั้น</p>
         </div>
         <div class="table-badge animate__animated animate__jackInTheBox">
-            <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number">1</span>
+            <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number">...</span></span>
         </div>
     </header>
 
@@ -1141,5 +1141,17 @@
         window.onload = initApp;
 
     </script>
+        <script>
+            // ดึงค่าเลขโต๊ะจาก URL เช่น ?table=5
+            const urlParams = new URLSearchParams(window.location.search);
+            const tableId = urlParams.get('table'); 
+
+            // ถ้ามีเลขโต๊ะในลิงก์ ให้เปลี่ยนเครื่องหมาย ... เป็นเลขโต๊ะจริง
+            if (tableId) {
+                document.getElementById('table-number').innerText = tableId;
+            }else {
+                document.getElementById('table-number').innerText = "สั่งกลับบ้าน"; 
+        }
+</script>
 </body>
 </html>
