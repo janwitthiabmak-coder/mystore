@@ -477,6 +477,8 @@
         <div class="cat-tab" onclick="scrollToCategory('cat-2', this)"><i class="fas fa-bowl-food"></i> ขนมจีนน้ำยา</div>
         <div class="cat-tab" onclick="scrollToCategory('cat-3', this)"><i class="fas fa-egg"></i> ของทานเล่น</div>
         <div class="cat-tab" onclick="scrollToCategory('cat-4', this)"><i class="fas fa-glass-water"></i> เครื่องดื่ม</div>
+        <div class="cat-tab" onclick="scrollToCategory('cat-5', this)"><i class="fas fa-scroll"></i> เส้นเพิ่มเติม</div>
+        <div class="cat-tab" onclick="scrollToCategory('cat-6', this)"><i class="fas fa-fill-drip"></i> น้ำยาเพิ่มเติม</div>
     </nav>
 
     <main class="main-container">
@@ -498,9 +500,18 @@
         <div id="cat-4" class="category-section">
             <h2 class="section-title"><i class="fas fa-glass-water"></i> เครื่องดื่มเย็นๆ</h2>
             <div id="grid-cat-4"></div>
+
+        <div id="cat-5" class="category-section">
+            <h2 class="section-title"><i class="fas fa-scroll"></i> เส้นเพิ่มเติม</h2>
+            <div id="grid-cat-5"></div>
+        </div>
+
+        <div id="cat-6" class="category-section">
+            <h2 class="section-title"><i class="fas fa-fill-drip"></i> น้ำยาเพิ่มเติม (ถ้วยเล็ก)</h2>
+            <div id="grid-cat-6"></div>
         </div>
     </main>
-
+    
     <div id="float-cart" class="floating-cart" onclick="openSummary(event)">
         <div class="cart-left" style="display:flex; align-items:center; gap:20px;">
             <div class="cart-icon-wrapper">
@@ -579,37 +590,51 @@
          */
         const DB = {
             cat1: [
-                {id:101, n:'ตำป่า', p:70, img: '1pa.jpg'},
-                {id:102, n:'ตำลาว', p:50, img: '2tl.jpg'},
-                {id:103, n:'ตำไทยไข่เค็ม', p:60, img: 'ttk.jpg'}, // ถ้ามีรูปให้ใส่ชื่อไฟล์แบบนี้นะครับ
-                {id:104, n:'ตำกุ้งสด, สุก', p:80, img: 'ks.jpg'},
-                {id:105, n:'ตำหมูยอ', p:80, img: 'tm.jpg'},
-                {id:106, n:'ตำซั่ว', p:60, img: 'sua.jpg'},
-                {id:107, n:'ตำข้าวโพด', p:80, img: 'cn.jpg'},
-                {id:108, n:'ตำตีนไก่', p:80, img: 'tk.jpg'},
-                {id:109, n:'ตำถั่ว', p:50, img: 'tt.jpg'},
-                {id:110, n:'ตำแตง', p:50, img: 'taeng.jpg'},
-                {id:111, n:'ตำซั่วแตง', p:60, img: 'staeng.jpg'},
-                {id:112, n:'ตำด้องแด้ง', p:80, img: 'dd.jpg'}
+                {id:101, n:'ตำป่า (จาน)', p:70, img: '1pa.jpg'},
+                {id:102, n:'ตำลาว (จาน)', p:50, img: '2tl.jpg'},
+                {id:103, n:'ตำไทยไข่เค็ม (จาน)', p:60, img: 'ttk.jpg'}, // ถ้ามีรูปให้ใส่ชื่อไฟล์แบบนี้นะครับ
+                {id:104, n:'ตำกุ้งสด, สุก (จาน)', p:80, img: 'ks.jpg'},
+                {id:105, n:'ตำหมูยอ (จาน)', p:80, img: 'tm.jpg'},
+                {id:106, n:'ตำซั่ว (จาน)', p:60, img: 'sua.jpg'},
+                {id:107, n:'ตำข้าวโพด (จาน)', p:80, img: 'cn.jpg'},
+                {id:108, n:'ตำตีนไก่ (จาน)', p:80, img: 'tk.jpg'},
+                {id:109, n:'ตำถั่ว (จาน)', p:50, img: 'tt.jpg'},
+                {id:110, n:'ตำแตง (จาน)', p:50, img: 'taeng.jpg'},
+                {id:111, n:'ตำซั่วแตง (จาน)', p:60, img: 'staeng.jpg'},
+                {id:112, n:'ตำด้องแด้ง (จาน)', p:80, img: 'dd.jpg'}
                 ],
             cat2: [
-                {id:201, n:'น้ำยาป่า', p:50, img: 'np.jpg'},
-                {id:202, n:'น้ำยากะทิ', p:50, img: 'nkt.jpg'},
-                {id:203, n:'น้ำยาแกงเขียวหวาน', p:50, img: 'kw.jpg'},
-                {id:204, n:'น้ำยาไก่', p:50, img: 'nk.jpg'}
+                {id:201, n:'น้ำยาป่า (จาน)', p:50, img: 'np.jpg'},
+                {id:202, n:'น้ำยากะทิ (จาน)', p:50, img: 'nkt.jpg'},
+                {id:203, n:'น้ำยาปู (จาน)', p:70, img: ''},
+                {id:204, n:'น้ำยาไก่ (จาน)', p:50, img: 'nk.jpg'},
+                {id:205, n:'น้ำยาแกงป่าปลาดุก (จาน)', p:50, img: ''}
+                
                 ],
             cat3: [
-                {id:301, n:'แคปหมู', p:20, img: 'mookrajok.jpg'}, // ถ้ายังไม่มีรูปก็ปล่อยไว้แบบนี้ จะขึ้นเป็นไอคอนแทนครับ
+                {id:301, n:'แคปหมู', p:15, img: 'mookrajok.jpg'}, // ถ้ายังไม่มีรูปก็ปล่อยไว้แบบนี้ จะขึ้นเป็นไอคอนแทนครับ
                 {id:302, n:'ไข่เค็ม', p:10, img: 'unnamed.jpg'},
-                {id:303, n:'ไข่ต้ม', p:5, img: 'kaitom.jpg'}
+                {id:303, n:'ไข่ต้ม', p:10, img: 'kaitom.jpg'}
                 ],
             cat4: [
-                {id:401, n:'น้ำโค้ก', p:25, img: 'coke.jpg'},
-                {id:402, n:'น้ำสไปรท์', p:25, img: 'sprite.png'},
-                {id:403, n:'น้ำเขียว', p:25, img: 'fanta-frontier-green-rgb-280-ml.png'},
-                {id:404, n:'น้ำส้ม', p:25, img: 'fanta-frontier-orange-422-ml.png'},
+                {id:401, n:'น้ำโค้ก', p:20, img: 'coke.jpg'},
+                {id:402, n:'น้ำสไปรท์', p:20, img: 'sprite.png'},
+                {id:403, n:'น้ำเขียว', p:20, img: 'fanta-frontier-green-rgb-280-ml.png'},
+                {id:404, n:'น้ำส้ม', p:20, img: 'fanta-frontier-orange-422-ml.png'},
                 {id:405, n:'น้ำเปล่า', p:10, img: 'water.png'}
-                ]
+                ],
+            cat5: [
+                {id:501, n:'เส้นขนมจีนสดเปล่า (เพิ่ม)', p:40, img: ''},
+                {id:502, n:'เส้นด้องแด้ง', p:40, img: ''},
+            ],
+            cat6: [
+                {id:603, n:'เพิ่มน้ำยาปู (ถ้วย)', p:40, img: ''},
+                {id:201, n:'น้ำยาป่า (ถ้วย)', p:20, img: 'np.jpg'},
+                {id:202, n:'น้ำยากะทิ (ถ้วย)', p:20, img: 'nkt.jpg'},
+                {id:204, n:'น้ำยาไก่ (ถ้วย)', p:20, img: 'nk.jpg'},
+                {id:205, n:'น้ำยาแกงป่าปลาดุก (ถ้วย)', p:20, img: ''},
+                {id:205, n:'ตีนไก่เพิ่ม (3 ชิ้น)', p:20, img: ''}
+            ]
             };
 
         /**
@@ -617,7 +642,7 @@
          */
         let cart = [];
         let currentItem = null;
-        let selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
+        let selectedOptions = { type: 'ใส่จาน/ถ้วย', spicy: 'เผ็ดปกติ' };
         let modalTempQty = 1;
 
         /**
@@ -628,6 +653,8 @@
             renderMenu('grid-cat-2', DB.cat2, 2);
             renderMenu('grid-cat-3', DB.cat3, 3);
             renderMenu('grid-cat-4', DB.cat4, 4);
+            renderMenu('grid-cat-5', DB.cat5, 3); // ใช้ icon หมวดของทานเล่น (3) หรือเปลี่ยนตามชอบ
+            renderMenu('grid-cat-6', DB.cat6, 2); // ใช้ icon หมวดขนมจีน (2) หรือเปลี่ยนตามชอบ
             
             // Intersection Observer สำหรับแอนิเมชันตอนเลื่อนหน้าจอ
             setupScrollAnimations();
@@ -714,7 +741,7 @@
             currentItem = { id, name, price, catLevel };
             document.getElementById('modal-food-name').innerText = name;
             document.getElementById('modal-note').value = '';
-            selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
+            selectedOptions = { type: 'ใส่จาน/ถ้วย', spicy: 'เผ็ดปกติ' };
             modalTempQty = 1; 
             updateModalQtyUI();
 
@@ -726,7 +753,7 @@
                 <div class="option-group animate__animated animate__fadeInUp">
                     <div class="option-label">รูปแบบการเสิร์ฟ <span class="required">จำเป็น</span></div>
                     <div class="chip-container">
-                        <div class="choice-chip selected" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่จาน</div>
+                        <div class="choice-chip selected" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่จาน/ถ้วย</div>
                         <div class="choice-chip" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่ถุงกลับบ้าน</div>
                     </div>
                 </div>`;
@@ -983,13 +1010,13 @@
             }
         }
         const firebaseConfig = {
-    apiKey: "AIzaSyDCrZBU2pmTcNsA1k69u8Dx1PcwfGQldQI",
-    authDomain: "somtum-order-1fdf1.firebaseapp.com",
-    databaseURL: "https://somtum-order-1fdf1-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "somtum-order-1fdf1",
-    storageBucket: "somtum-order-1fdf1.firebasestorage.app",
-    messagingSenderId: "1025067918636",
-    appId: "1:1025067918636:web:ad42e2f9013417620bf889"
+    apiKey: "AIzaSyCg9oOSl5Q3unvoC-Yfuu9NV-XWJdN4EwU",
+    authDomain: "myorder-store-5cebf.firebaseapp.com",
+    databaseURL: "https://myorder-store-5cebf-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "myorder-store-5cebf",
+    storageBucket: "myorder-store-5cebf.firebasestorage.app",
+    messagingSenderId: "662235011563",
+    appId: "1:662235011563:web:389e8320d9d16e9a6121ae"
 };
 firebase.initializeApp(firebaseConfig);
         window.onload = function() {
