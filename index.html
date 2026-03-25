@@ -450,6 +450,8 @@
         .table-badge { margin-top: 15px; background: white; color: var(--primary-dark); padding: 8px 25px; border-radius: var(--radius-full); font-size: 1.1rem; font-weight: 800; box-shadow: 0 10px 20px rgba(239, 35, 60, 0.15); border: 2px solid var(--primary); display: flex; align-items: center; gap: 10px; }
         #table-number { color: var(--primary); font-size: 1.3rem; }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -891,31 +893,43 @@
          * 7. ORDER SUBMISSION
          */
         function submitOrder(e) {
-            if(cart.length === 0) return;
-            createRipple(e);
-            
-            const btn = e.target.closest('.btn-primary');
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังส่งเข้าห้องครัว...';
-            btn.style.opacity = '0.9';
-            btn.style.pointerEvents = 'none';
+    if(cart.length === 0) return;
+    createRipple(e);
 
-            // จำลองการส่งข้อมูล
-            setTimeout(() => {
-                const tableNum = document.getElementById('table-number').innerText;
-                const successMsg = document.querySelector('#overlay-success .success-modal p');
-                if (successMsg) {
-                    successMsg.innerHTML = `ออเดอร์ของ <b>โต๊ะ ${tableNum}</b> ถูกส่งตรงเข้าครัวแล้วครับ<br>รอรับความแซ่บซี๊ดดดด ได้เลย! 🌶️✨`;
-                }
+    const btn = e.target.closest('.btn-primary');
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังส่งเข้าห้องครัว...';
+    btn.style.opacity = '0.9';
+    btn.style.pointerEvents = 'none';
 
-                closeOverlayManual('overlay-summary');
-                document.getElementById('overlay-success').classList.add('show');
-                
-                btn.innerHTML = originalHTML;
-                btn.style.opacity = '1';
-                btn.style.pointerEvents = 'auto';
-            }, 1800);
-        }
+    const tableNum = document.getElementById('table-number').innerText;
+    const orderData = {
+        table: tableNum,
+        items: cart,
+        total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+        status: 'new',
+        timestamp: Date.now()
+    };
+
+    firebase.database().ref('orders').push(orderData)
+        .then(() => {
+            const successMsg = document.querySelector('#overlay-success .success-modal p');
+            if (successMsg) {
+                successMsg.innerHTML = `ออเดอร์ของ <b>โต๊ะ ${tableNum}</b> ถูกส่งตรงเข้าครัวแล้วครับ<br>รอรับความแซ่บซี๊ดดดด ได้เลย! 🌶️✨`;
+            }
+            closeOverlayManual('overlay-summary');
+            document.getElementById('overlay-success').classList.add('show');
+            btn.innerHTML = originalHTML;
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+        })
+        .catch(() => {
+            btn.innerHTML = originalHTML;
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        });
+}
 
         function resetSystem(e) {
             createRipple(e);
@@ -968,7 +982,16 @@
                 document.getElementById('table-number').innerText = tableNum;
             }
         }
-
+        const firebaseConfig = {
+    apiKey: "AIzaSyDCrZBU2pmTcNsA1k69u8Dx1PcwfGQldQI",
+    authDomain: "somtum-order-1fdf1.firebaseapp.com",
+    databaseURL: "https://somtum-order-1fdf1-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "somtum-order-1fdf1",
+    storageBucket: "somtum-order-1fdf1.firebasestorage.app",
+    messagingSenderId: "1025067918636",
+    appId: "1:1025067918636:web:ad42e2f9013417620bf889"
+};
+firebase.initializeApp(firebaseConfig);
         window.onload = function() {
             getTableNumber();
             initApp();
