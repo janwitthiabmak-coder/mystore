@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หน้าครัว — รับออเดอร์</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Prompt',sans-serif; }
+  body { background:#f5f5f4; color:#1c1917; min-height:100vh; }
+
+  .header {
+    background:#fff; border-bottom:1px solid #e7e5e4;
+    padding:14px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:100;
+  }
+  .header-left { display:flex; align-items:center; gap:12px; }
+  .live-pill {
+    display:flex; align-items:center; gap:6px;
+    background:#f0fdf4; border:1px solid #bbf7d0;
+    color:#15803d; font-size:0.78rem; font-weight:600;
+    padding:4px 12px; border-radius:99px;
+  }
+  .live-pill::before {
+    content:''; width:7px; height:7px; border-radius:50%;
+    background:#22c55e; animation:pulse 1.5s infinite;
+  }
+  .header-title { font-size:1rem; font-weight:700; }
+  .header-sub { font-size:0.75rem; color:#78716c; margin-top:1px; }
+  .clock { font-size:0.9rem; color:#78716c; font-weight:500; font-variant-numeric:tabular-nums; }
+
+  .stats {
+    display:flex; gap:10px; padding:16px 24px;
+    border-bottom:1px solid #e7e5e4; background:#fff; overflow-x:auto;
+  }
+  .stats::-webkit-scrollbar { display:none; }
+  .stat-box { display:flex; flex-direction:column; align-items:center; padding:10px 20px; border-radius:10px; min-width:88px; flex-shrink:0; }
+  .stat-box.s-new  { background:#fff1f2; }
+  .stat-box.s-cook { background:#fffbeb; }
+  .stat-box.s-done { background:#f0fdf4; }
+  .stat-box.s-total{ background:#f5f5f4; margin-left:auto; }
+  .stat-num { font-size:1.5rem; font-weight:700; line-height:1.1; }
+  .stat-box.s-new  .stat-num { color:#e11d48; }
+  .stat-box.s-cook .stat-num { color:#d97706; }
+  .stat-box.s-done .stat-num { color:#16a34a; }
+  .stat-box.s-total .stat-num { color:#1c1917; font-size:1.2rem; }
+  .stat-label { font-size:0.7rem; color:#78716c; margin-top:2px; font-weight:500; }
+
+  .board { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; padding:20px 24px 40px; max-width:1300px; margin:0 auto; }
+
+  .col-head { display:flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:600; color:#78716c; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px; }
+  .col-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .col-count { margin-left:auto; background:#e7e5e4; font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:99px; color:#57534e; }
+
+  .order-card { background:#fff; border:1px solid #e7e5e4; border-radius:12px; padding:16px; margin-bottom:12px; border-left:3px solid transparent; transition:box-shadow 0.2s; }
+  .order-card:hover { box-shadow:0 4px 12px rgba(0,0,0,0.07); }
+  .col-new  .order-card { border-left-color:#e11d48; }
+  .col-cook .order-card { border-left-color:#d97706; }
+  .col-done .order-card { border-left-color:#16a34a; opacity:0.65; }
+
+  .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .table-num { font-size:1rem; font-weight:700; }
+  .time-chip { font-size:0.72rem; font-weight:500; color:#78716c; background:#f5f5f4; padding:3px 9px; border-radius:99px; }
+  .time-chip.urgent { color:#e11d48; background:#fff1f2; animation:blink 1.2s infinite; }
+
+  .items { margin-bottom:12px; }
+  .item-row { display:flex; justify-content:space-between; align-items:flex-start; padding:7px 0; border-bottom:1px solid #f5f5f4; font-size:0.88rem; }
+  .item-row:last-child { border-bottom:none; }
+  .item-name { font-weight:600; }
+  .item-opts { font-size:0.75rem; color:#a8a29e; margin-top:2px; }
+  .item-qty { font-size:0.8rem; font-weight:700; background:#f5f5f4; padding:2px 8px; border-radius:6px; color:#57534e; flex-shrink:0; margin-left:8px; }
+
+  .note-row { font-size:0.78rem; color:#92400e; background:#fffbeb; border:1px solid #fde68a; border-radius:7px; padding:6px 10px; margin-bottom:12px; display:flex; gap:6px; }
+
+  .total-row { display:flex; justify-content:space-between; border-top:1px solid #f5f5f4; padding-top:10px; margin-bottom:12px; font-size:0.85rem; }
+  .total-label { color:#78716c; }
+  .total-price { font-weight:700; color:#e11d48; }
+  .col-done .total-price { color:#16a34a; }
+
+  .actions { display:flex; gap:8px; }
+  .btn { flex:1; padding:9px; border:none; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:'Prompt',sans-serif; transition:all 0.15s; display:flex; align-items:center; justify-content:center; gap:5px; }
+  .btn:active { transform:scale(0.97); }
+  .btn-accept { background:#e11d48; color:#fff; }
+  .btn-accept:hover { background:#be123c; }
+  .btn-done { background:#16a34a; color:#fff; }
+  .btn-done:hover { background:#15803d; }
+  .btn-del { flex:0; padding:9px 12px; background:#f5f5f4; color:#a8a29e; border:1px solid #e7e5e4; }
+  .btn-del:hover { color:#e11d48; border-color:#fecdd3; background:#fff1f2; }
+
+  .empty { border:1px dashed #d6d3d1; border-radius:12px; padding:32px 16px; text-align:center; color:#a8a29e; font-size:0.85rem; }
+
+  .toast-wrap { position:fixed; top:70px; right:20px; z-index:999; pointer-events:none; }
+  .toast { background:#fff; border:1px solid #e7e5e4; border-left:4px solid #e11d48; border-radius:10px; padding:12px 16px; margin-bottom:8px; display:flex; gap:10px; align-items:flex-start; box-shadow:0 4px 16px rgba(0,0,0,0.1); animation:slideIn 0.35s cubic-bezier(0.34,1.56,0.64,1); min-width:240px; }
+  .toast-title { font-size:0.88rem; font-weight:600; }
+  .toast-sub { font-size:0.75rem; color:#78716c; margin-top:2px; }
+
+  @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes slideIn{ from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes fadeOut{ to{opacity:0;transform:translateX(30px)} }
+  @keyframes popIn  { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+  .card-new { animation:popIn 0.3s ease; }
+
+  @media(max-width:860px) {
+    .board { grid-template-columns:1fr; padding:16px; }
+    .stats { padding:12px 16px; }
+    .header { padding:12px 16px; }
+  }
+
+  /* ── Popup confirm ── */
+  .popup-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.4);
+    z-index:600; display:flex; align-items:flex-end; justify-content:center;
+    opacity:0; visibility:hidden; transition:opacity 0.3s, visibility 0.3s;
+  }
+  .popup-overlay.show { opacity:1; visibility:visible; }
+  .popup-sheet {
+    background:#fff; width:100%; max-width:460px;
+    border-radius:22px 22px 0 0;
+    padding:10px 24px 40px;
+    transform:translateY(110%);
+    transition:transform 0.42s cubic-bezier(0.34,1.4,0.64,1);
+    text-align:center;
+  }
+  .popup-overlay.show .popup-sheet { transform:translateY(0); }
+  .popup-drag { width:40px; height:4px; background:#e7e5e4; border-radius:99px; margin:14px auto 22px; }
+  .popup-emoji { font-size:2.6rem; display:block; margin-bottom:12px; }
+  .popup-title { font-size:1.1rem; font-weight:700; color:#1c1917; margin-bottom:6px; }
+  .popup-sub   { font-size:0.85rem; color:#78716c; margin-bottom:22px; line-height:1.6; }
+  .popup-btns  { display:flex; gap:10px; }
+  .popup-btn   { flex:1; padding:13px; border:none; border-radius:10px; font-size:0.92rem; font-weight:600; cursor:pointer; font-family:'Prompt',sans-serif; transition:all 0.15s; }
+  .popup-btn:active { transform:scale(0.97); }
+  .popup-btn.p-dismiss { background:#f5f5f4; color:#57534e; border:1px solid #e7e5e4; }
+  .popup-btn.p-confirm { color:#fff; }
+
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div>
+      <div class="header-title">ครัว — ส้มตำครกแตก</div>
+      <div class="header-sub">หน้าจอรับออเดอร์</div>
+    </div>
+    <div class="live-pill">LIVE</div>
+  </div>
+  <div class="clock" id="clock">--:--:--</div>
+</header>
+
+<div class="stats">
+  <div class="stat-box s-new">
+    <div class="stat-num" id="cnt-new">0</div>
+    <div class="stat-label">รอรับ</div>
+  </div>
+  <div class="stat-box s-cook">
+    <div class="stat-num" id="cnt-cook">0</div>
+    <div class="stat-label">กำลังทำ</div>
+  </div>
+  <div class="stat-box s-done">
+    <div class="stat-num" id="cnt-done">0</div>
+    <div class="stat-label">เสร็จแล้ว</div>
+  </div>
+  <div class="stat-box s-total">
+    <div class="stat-num" id="cnt-total">฿0</div>
+    <div class="stat-label">ยอดวันนี้</div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<div class="board">
+  <div class="col-new">
+    <div class="col-head">
+      <div class="col-dot" style="background:#e11d48;"></div>
+      ออเดอร์ใหม่
+      <span class="col-count" id="badge-new">0</span>
+    </div>
+    <div id="cards-new"><div class="empty">ยังไม่มีออเดอร์</div></div>
+  </div>
+
+  <div class="col-cook">
+    <div class="col-head">
+      <div class="col-dot" style="background:#d97706;"></div>
+      กำลังทำ
+      <span class="col-count" id="badge-cook">0</span>
+    </div>
+    <div id="cards-cook"><div class="empty">ยังไม่มีรายการ</div></div>
+  </div>
+
+  <div class="col-done">
+    <div class="col-head">
+      <div class="col-dot" style="background:#16a34a;"></div>
+      เสิร์ฟแล้ว
+      <span class="col-count" id="badge-done">0</span>
+    </div>
+    <div id="cards-done"><div class="empty">ยังไม่มีรายการ</div></div>
+  </div>
+</div>
+
+<script>
+  /* ── Firebase config — ตรงกับ index.html ── */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCg9oOSl5Q3unvoC-Yfuu9NV-XWJdN4EwU",
+    authDomain: "myorder-store-5cebf.firebaseapp.com",
+    databaseURL: "https://myorder-store-5cebf-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "myorder-store-5cebf",
+    storageBucket: "myorder-store-5cebf.firebasestorage.app",
+    messagingSenderId: "662235011563",
+    appId: "1:662235011563:web:389e8320d9d16e9a6121ae"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  /* ── Clock ── */
+  setInterval(() => {
+    document.getElementById('clock').textContent =
+      new Date().toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }, 1000);
+
+  /* ── Toast ── */
+  function toast(title, sub) {
+    const wrap = document.getElementById('toasts');
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `<div style="font-size:1.2rem;">🔔</div>
+      <div><div class="toast-title">${title}</div><div class="toast-sub">${sub}</div></div>`;
+    wrap.appendChild(el);
+    setTimeout(() => {
+      el.style.animation = 'fadeOut 0.3s forwards';
+      setTimeout(() => el.remove(), 300);
+    }, 4500);
+  }
+
+  /* ── Build card ── */
+  function buildCard(key, order) {
+    const items = order.items || [];
+    const allNotes = items.filter(i => i.note).map(i => i.note);
+
+    const itemsHtml = items.map(i => `
+      <div class="item-row">
+        <div>
+          <div class="item-name">${i.name}</div>
+          ${i.options ? `<div class="item-opts">${i.options}</div>` : ''}
+        </div>
+        <div class="item-qty">×${i.qty}</div>
+      </div>`).join('');
+
+    const noteHtml = allNotes.length
+      ? `<div class="note-row">📝 ${allNotes.join(' · ')}</div>` : '';
+
+    const isNew  = order.status === 'new';
+    const isCook = order.status === 'cooking';
+
+    const timeHtml = isNew
+      ? `<span class="time-chip urgent">ออเดอร์ใหม่!</span>`
+      : isCook
+      ? `<span class="time-chip" style="color:#d97706;background:#fffbeb;">กำลังทำ 🔥</span>`
+      : `<span class="time-chip" style="color:#16a34a;background:#f0fdf4;">เสิร์ฟแล้ว ✓</span>`;
+
+    const actionHtml = isNew
+      ? `<div class="actions">
+           <button class="btn btn-accept" onclick="showPopup('accept','${order.table}','${key}','cooking')">✓ รับออเดอร์</button>
+           <button class="btn btn-del" onclick="showPopup('delete','${order.table}','${key}',null)">✕</button>
+         </div>`
+      : isCook
+      ? `<div class="actions">
+           <button class="btn btn-done" onclick="showPopup('done','${order.table}','${key}','done')">✓ เสร็จแล้ว</button>
+         </div>`
+      : '';
+
+    const priceStyle = order.status === 'done' ? 'color:#16a34a' : '';
+
+    return `<div class="order-card card-new" id="card-${key}">
+      <div class="card-top">
+        <div class="table-num">โต๊ะ ${order.table}</div>
+        ${timeHtml}
+      </div>
+      <div class="items">${itemsHtml}</div>
+      ${noteHtml}
+      <div class="total-row">
+        <span class="total-label">ยอดรวม</span>
+        <span class="total-price" style="${priceStyle}">฿${order.total}</span>
+      </div>
+      ${actionHtml}
+    </div>`;
+  }
+
+  /* ── Popup system ── */
+  let _pa = null;
+
+  function showPopup(type, tbl, key, status) {
+    _pa = { type, key, status };
+    const emoji = document.getElementById('p-emoji');
+    const title = document.getElementById('p-title');
+    const sub   = document.getElementById('p-sub');
+    const btn   = document.getElementById('p-confirm');
+    if (type === 'accept') {
+      emoji.textContent = '✅';
+      title.textContent = 'รับออเดอร์ โต๊ะ ' + tbl;
+      sub.textContent   = 'ยืนยันรับออเดอร์นี้เข้าครัวเลยใช่ไหม?';
+      btn.style.background = '#e11d48';
+      btn.textContent   = 'รับออเดอร์เลย';
+    } else if (type === 'done') {
+      emoji.textContent = '🔔';
+      title.textContent = 'โต๊ะ ' + tbl + ' — เสร็จแล้ว';
+      sub.textContent   = 'ยืนยันว่าอาหารเสร็จและพร้อมเสิร์ฟ?';
+      btn.style.background = '#16a34a';
+      btn.textContent   = 'เสิร์ฟได้เลย';
+    } else {
+      emoji.textContent = '🗑️';
+      title.textContent = 'ยกเลิกออเดอร์ โต๊ะ ' + tbl;
+      sub.textContent   = 'ยืนยันลบออเดอร์นี้? ไม่สามารถกู้คืนได้';
+      btn.style.background = '#d97706';
+      btn.textContent   = 'ยืนยันยกเลิก';
+    }
+    document.getElementById('popup-overlay').classList.add('show');
+  }
+  function closePopup(e) {
+    if (!e || e.target.id === 'popup-overlay') {
+      document.getElementById('popup-overlay').classList.remove('show');
+      _pa = null;
+    }
+  }
+  function doAction() {
+    if (!_pa) return;
+    if (_pa.type === 'delete') db.ref('orders/' + _pa.key).remove();
+    else db.ref('orders/' + _pa.key).update({ status: _pa.status });
+    document.getElementById('popup-overlay').classList.remove('show');
+    _pa = null;
+  }
+  function setStatus(key, status) { db.ref('orders/' + key).update({ status }); }
+  function delOrder(key) { db.ref('orders/' + key).remove(); }
+
+  /* ── Real-time listener ── */
+  let prevKeys = new Set();
+
+  db.ref('orders').on('value', snap => {
+    const orders = snap.val() || {};
+    const keys   = new Set(Object.keys(orders));
+
+    keys.forEach(k => {
+      if (!prevKeys.has(k) && orders[k].status === 'new') {
+        toast(`โต๊ะ ${orders[k].table} — ออเดอร์ใหม่`, `฿${orders[k].total} · ${(orders[k].items||[]).length} รายการ`);
+        try {
+          const ctx = new AudioContext();
+          const o = ctx.createOscillator(), g = ctx.createGain();
+          o.connect(g); g.connect(ctx.destination);
+          o.frequency.value = 830;
+          g.gain.setValueAtTime(0.25, ctx.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+          o.start(); o.stop(ctx.currentTime + 0.5);
+        } catch(e) {}
+      }
+    });
+    prevKeys = keys;
+
+    let newH='', cookH='', doneH='';
+    let cntNew=0, cntCook=0, cntDone=0, total=0;
+
+    Object.entries(orders)
+      .sort((a,b) => (b[1].timestamp||0) - (a[1].timestamp||0))
+      .forEach(([k, o]) => {
+        const card = buildCard(k, o);
+        if (o.status === 'new')     { newH  += card; cntNew++;  }
+        if (o.status === 'cooking') { cookH += card; cntCook++; }
+        if (o.status === 'done')    { doneH += card; cntDone++; total += (o.total||0); }
+      });
+
+    document.getElementById('cards-new').innerHTML  = newH  || '<div class="empty">ยังไม่มีออเดอร์</div>';
+    document.getElementById('cards-cook').innerHTML = cookH || '<div class="empty">ยังไม่มีรายการ</div>';
+    document.getElementById('cards-done').innerHTML = doneH || '<div class="empty">ยังไม่มีรายการ</div>';
+
+    ['new','cook','done'].forEach(s => {
+      const val = s==='new' ? cntNew : s==='cook' ? cntCook : cntDone;
+      document.getElementById('cnt-'+s).textContent   = val;
+      document.getElementById('badge-'+s).textContent = val;
+    });
+    document.getElementById('cnt-total').textContent = '฿' + total;
+  });
+</script>
+
+<!-- ── Popup confirm ── -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+  <div class="popup-sheet" onclick="event.stopPropagation()">
+    <div class="popup-drag"></div>
+    <span class="popup-emoji" id="p-emoji"></span>
+    <div class="popup-title" id="p-title"></div>
+    <div class="popup-sub"   id="p-sub"></div>
+    <div class="popup-btns">
+      <button class="popup-btn p-dismiss" onclick="closePopup()">ยกเลิก</button>
+      <button class="popup-btn p-confirm" id="p-confirm" onclick="doAction()">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
