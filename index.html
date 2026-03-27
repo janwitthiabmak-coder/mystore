@@ -449,6 +449,54 @@
         /* จุดสำคัญ: Badge แสดงเลขโต๊ะ */
         .table-badge { margin-top: 15px; background: white; color: var(--primary-dark); padding: 8px 25px; border-radius: var(--radius-full); font-size: 1.1rem; font-weight: 800; box-shadow: 0 10px 20px rgba(239, 35, 60, 0.15); border: 2px solid var(--primary); display: flex; align-items: center; gap: 10px; }
         #table-number { color: var(--primary); font-size: 1.3rem; }
+ 
+        /* ── Announcement Banner ── */
+        .announcement-banner {
+            display: none;
+            margin: 0 20px 10px;
+            background: linear-gradient(135deg, #fffbe6, #fff3cd);
+            border: 1.5px solid #ffc107;
+            border-radius: 18px;
+            padding: 14px 18px;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(255,193,7,0.15);
+            max-width: 680px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInDown 0.5s ease;
+        }
+        .announcement-banner.visible { display: flex; }
+        .announcement-banner i { color: var(--accent); font-size: 1.1rem; margin-top: 3px; flex-shrink: 0; }
+        .announcement-banner span { font-weight: 600; font-size: 0.95rem; color: #7a5c00; line-height: 1.6; }
+        @keyframes fadeInDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+ 
+        /* ── Sold-out card ── */
+        .food-card.sold-out {
+            cursor: default !important;
+            opacity: 0.72;
+        }
+        .food-card.sold-out:hover {
+            transform: none !important;
+            box-shadow: var(--glass-shadow) !important;
+            border-color: var(--glass-border) !important;
+        }
+        .food-card.sold-out:hover::before { left: -100% !important; }
+        .food-card.sold-out .btn-add-icon { display: none; }
+ 
+        .sold-out-badge {
+            position: absolute; top: 7px; left: 7px;
+            background: linear-gradient(135deg, #ef233c, #d90429);
+            color: white; font-size: 0.72rem; font-weight: 800;
+            padding: 4px 10px; border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(239,35,60,0.45);
+            letter-spacing: 0.5px; z-index: 2;
+        }
+        .food-card.sold-out .food-img-wrapper { filter: grayscale(0.45); }
+        .sold-out-text {
+            color: var(--primary); font-size: 0.82rem; font-weight: 700;
+            margin-top: 6px; display: flex; align-items: center; gap: 5px;
+        }
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -471,6 +519,12 @@
             <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number" style="font-size:1.4rem; color:var(--primary);">1</span>
         </div>
     </header>
+ 
+    <!-- ประกาศจากพนักงาน (แสดงเมื่อมีข้อความ) -->
+    <div id="announcement-banner" class="announcement-banner">
+        <i class="fas fa-bullhorn"></i>
+        <span id="announcement-text"></span>
+    </div>
  
     <nav class="nav-categories animate__animated animate__fadeIn" id="nav-cats">
         <div class="cat-tab active" onclick="scrollToCategory('cat-1', this)"><i class="fas fa-pepper-hot"></i> ส้มตำ</div>
@@ -645,41 +699,65 @@
         let selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
         let modalTempQty = 1;
  
+        // ── Settings จาก Firebase (soldOut, extraItems, announcement) ──
+        let appSettings = { soldOut: {}, extraItems: {}, announcement: '' };
+ 
         /**
          * 3. INITIALIZATION & RENDER
          */
         function initApp() {
-            renderMenu('grid-cat-1', DB.cat1, 1);
-            renderMenu('grid-cat-2', DB.cat2, 2);
-            renderMenu('grid-cat-3', DB.cat3, 3);
-            renderMenu('grid-cat-4', DB.cat4, 4);
-            renderMenu('grid-cat-5', DB.cat5, 3); // ใช้ icon หมวดของทานเล่น (3) หรือเปลี่ยนตามชอบ
-            renderMenu('grid-cat-6', DB.cat6, 2); // ใช้ icon หมวดขนมจีน (2) หรือเปลี่ยนตามชอบ
-            
+            // รวม extraItems จาก Firebase เข้ากับเมนูหลัก
+            function mergedCat(catKey) {
+                const base  = DB[catKey] || [];
+                const extra = appSettings.extraItems && appSettings.extraItems[catKey]
+                    ? Object.values(appSettings.extraItems[catKey]) : [];
+                return [...base, ...extra];
+            }
+ 
+            renderMenu('grid-cat-1', mergedCat('cat1'), 1);
+            renderMenu('grid-cat-2', mergedCat('cat2'), 2);
+            renderMenu('grid-cat-3', mergedCat('cat3'), 3);
+            renderMenu('grid-cat-4', mergedCat('cat4'), 4);
+            renderMenu('grid-cat-5', mergedCat('cat5'), 3);
+            renderMenu('grid-cat-6', mergedCat('cat6'), 2);
+ 
+            // แสดง/ซ่อน Announcement Banner
+            const banner = document.getElementById('announcement-banner');
+            const annText = (appSettings.announcement || '').trim();
+            if (annText) {
+                document.getElementById('announcement-text').innerText = annText;
+                banner.classList.add('visible');
+            } else {
+                banner.classList.remove('visible');
+            }
+ 
             // Intersection Observer สำหรับแอนิเมชันตอนเลื่อนหน้าจอ
             setupScrollAnimations();
         }
  
         function renderMenu(containerId, items, catLevel) {
     const container = document.getElementById(containerId);
-    // iconMap คือไอคอนสำรองถ้าไม่มีรูปภาพ
     const iconMap = ['fas fa-mortar-pestle', 'fas fa-bowl-food', 'fas fa-bacon', 'fas fa-wine-glass-side'];
     
-    container.innerHTML = items.map(item => `
-        <div class="food-card" onclick="openItemModal(${item.id}, ${catLevel}, ${item.p}, '${item.n}')">
+    container.innerHTML = items.map(item => {
+        const isSoldOut = appSettings.soldOut && appSettings.soldOut[item.id] === true;
+        return `
+        <div class="food-card${isSoldOut ? ' sold-out' : ''}" ${isSoldOut ? '' : `onclick="openItemModal(${item.id}, ${catLevel}, ${item.p}, '${item.n}')"`}>
             <div class="food-img-wrapper">
                 ${item.img 
                     ? `<img src="images/${item.img}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">` 
                     : `<i class="${iconMap[catLevel-1]}"></i>`
                 }
+                ${isSoldOut ? '<div class="sold-out-badge">หมด</div>' : ''}
             </div>
             <div class="food-info">
-                <div class="food-name">${item.n}</div>
-                <div class="food-price">${item.p} ฿</div>
+                <div class="food-name" ${isSoldOut ? 'style="opacity:0.55"' : ''}>${item.n}</div>
+                <div class="food-price" ${isSoldOut ? 'style="opacity:0.55"' : ''}>${item.p} ฿</div>
+                ${isSoldOut ? '<div class="sold-out-text"><i class="fas fa-ban"></i>สินค้าหมดชั่วคราว</div>' : ''}
             </div>
-            <div class="btn-add-icon"><i class="fas fa-plus"></i></div>
-        </div>
-    `).join('');
+            ${isSoldOut ? '' : '<div class="btn-add-icon"><i class="fas fa-plus"></i></div>'}
+        </div>`;
+    }).join('');
 }
  
         // แอนิเมชันให้การ์ดค่อยๆ ลอยขึ้นมาเวลา Scroll ลง
@@ -1020,9 +1098,19 @@
     appId: "1:662235011563:web:389e8320d9d16e9a6121ae"
 };
 firebase.initializeApp(firebaseConfig);
+ 
         window.onload = function() {
             getTableNumber();
-            initApp();
+ 
+            // ฟัง settings จาก Firebase แบบ realtime
+            // เมื่อพนักงานแก้ข้อมูลในหน้า admin.html จะอัพเดทหน้านี้ทันที
+            firebase.database().ref('settings').on('value', snap => {
+                const data = snap.val() || {};
+                appSettings.soldOut    = data.soldOut    || {};
+                appSettings.extraItems = data.extraItems || {};
+                appSettings.announcement = data.announcement || '';
+                initApp();
+            });
         };
         
     </script>

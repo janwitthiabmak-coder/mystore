@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>จัดการร้าน — Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Prompt',sans-serif; -webkit-tap-highlight-color:transparent; }
+        :root {
+            --primary: #ef233c; --primary-dark: #d90429;
+            --primary-gradient: linear-gradient(135deg, #ff4d4d 0%, #d90429 100%);
+            --primary-glow: rgba(239, 35, 60, 0.3);
+            --accent: #f77f00;
+            --success: #38b000;
+            --bg: #f8f9fa; --card: #ffffff;
+            --text: #2b2d42; --muted: #8d99ae; --border: #e2e8f0;
+        }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* ── LOGIN SCREEN ── */
+        #login-screen {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(-45deg, #fdfbfb, #fff0f0, #fdfbfb, #fff7ed);
+            background-size: 400% 400%; animation: gradientBG 12s ease infinite;
+        }
+        @keyframes gradientBG { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+        .login-box {
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(20px);
+            border-radius: 36px; padding: 50px 40px 40px;
+            box-shadow: 0 30px 80px rgba(239,35,60,0.15), 0 0 0 1px rgba(255,255,255,0.8);
+            text-align: center; width: 92%; max-width: 380px;
+        }
+        .login-logo { font-size: 3.2rem; margin-bottom: 18px; display: block; }
+        .login-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 6px;
+            background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .login-sub { color: var(--muted); font-size: 0.95rem; margin-bottom: 35px; font-weight: 500; }
+
+        .pin-display { display: flex; gap: 18px; justify-content: center; margin-bottom: 32px; }
+        .pin-dot { width: 20px; height: 20px; border-radius: 50%; background: var(--border);
+            transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+        .pin-dot.filled { background: var(--primary-gradient); transform: scale(1.25);
+            box-shadow: 0 4px 12px var(--primary-glow); }
+        .pin-dot.shake { animation: pinShake 0.5s ease; }
+        @keyframes pinShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 60%{transform:translateX(6px)} 80%{transform:translateX(-3px)} }
+
+        .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .pin-btn {
+            padding: 20px; border: none; background: var(--bg); border-radius: 18px;
+            font-size: 1.4rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+            font-family: 'Prompt', sans-serif; color: var(--text);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .pin-btn:active { background: var(--primary-gradient); color: white; transform: scale(0.93); box-shadow: 0 5px 15px var(--primary-glow); }
+        .pin-btn.wide { grid-column: 2; }
+        .pin-btn.del { font-size: 1.1rem; color: var(--muted); }
+        .pin-error { color: var(--primary); font-size: 0.9rem; margin-top: 18px; min-height: 22px; font-weight: 600; }
+
+        /* ── ADMIN SCREEN ── */
+        #admin-screen { display: none; }
+
+        .admin-header {
+            background: white; padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .admin-header-left { display: flex; align-items: center; gap: 14px; }
+        .admin-logo { font-size: 1.8rem; }
+        .admin-header h1 { font-size: 1.1rem; font-weight: 800; }
+        .admin-header span { font-size: 0.78rem; color: var(--muted); display: block; margin-top: 2px; font-weight: 500; }
+        .logout-btn {
+            background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+            padding: 9px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; font-family: 'Prompt', sans-serif; transition: all 0.2s;
+            display: flex; align-items: center; gap: 7px;
+        }
+        .logout-btn:hover { color: var(--primary); border-color: rgba(239,35,60,0.3); }
+
+        /* ── MAIN TABS ── */
+        .main-tabs {
+            display: flex; background: white;
+            border-bottom: 2px solid var(--border); overflow-x: auto;
+        }
+        .main-tabs::-webkit-scrollbar { display: none; }
+        .main-tab {
+            padding: 14px 22px; font-size: 0.9rem; font-weight: 700; color: var(--muted);
+            border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.2s;
+            white-space: nowrap; margin-bottom: -2px; display: flex; align-items: center; gap: 8px;
+        }
+        .main-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #fff5f5; }
+
+        /* ── TAB CONTENT ── */
+        .tab-content { display: none; padding: 20px; max-width: 820px; margin: 0 auto; }
+        .tab-content.active { display: block; }
+
+        /* ── ANNOUNCEMENT TAB ── */
+        .section-header { margin-bottom: 18px; }
+        .section-header h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 5px; }
+        .section-header p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+        .ann-preview {
+            background: linear-gradient(135deg, #fff9e6, #fff3cd);
+            border: 1.5px solid #ffc107; border-radius: 18px;
+            padding: 14px 18px; display: flex; align-items: flex-start; gap: 12px;
+            margin-bottom: 16px; min-height: 56px;
+        }
+        .ann-preview i { color: var(--accent); font-size: 1.1rem; margin-top: 2px; flex-shrink: 0; }
+        .ann-preview-text { font-size: 0.95rem; font-weight: 600; color: #856404; line-height: 1.6;
+            flex: 1; font-style: italic; }
+        .ann-preview-empty { color: var(--muted); font-style: italic; font-size: 0.9rem; }
+
+        textarea.ann-input {
+            width: 100%; padding: 16px 18px; border: 2px solid var(--border); border-radius: 18px;
+            font-size: 1rem; font-family: 'Prompt', sans-serif; resize: none; min-height: 110px;
+            transition: border-color 0.2s; line-height: 1.6; color: var(--text);
+        }
+        textarea.ann-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+
+        .btn-row { display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+        .btn-primary-sm {
+            background: var(--primary-gradient); color: white; border: none;
+            padding: 13px 28px; border-radius: 999px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; font-family: 'Prompt', sans-serif; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px var(--primary-glow);
+        }
+        .btn-primary-sm:active { transform: scale(0.97); }
+        .btn-secondary-sm {
+            background: var(--bg); border: 1.5px solid var(--border); color: var(--muted);
+            padding: 13px 22px; border-radius: 999px; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; font-family: 'Prompt', sans-serif; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-secondary-sm:hover { color: var(--primary); border-color: rgba(239,35,60,0.3); }
+
+        /* ── MENU TAB ── */
+        .cat-tabs-wrap { overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; }
+        .cat-tabs-wrap::-webkit-scrollbar { display: none; }
+        .cat-tabs { display: flex; gap: 8px; }
+        .cat-tab-btn {
+            padding: 9px 20px; background: var(--card); border: 1.5px solid var(--border);
+            border-radius: 999px; font-size: 0.88rem; font-weight: 700; color: var(--muted);
+            cursor: pointer; white-space: nowrap; transition: all 0.2s;
+            font-family: 'Prompt', sans-serif; display: flex; align-items: center; gap: 7px;
+        }
+        .cat-tab-btn.active { background: var(--primary-gradient); color: white; border-color: transparent;
+            box-shadow: 0 6px 16px var(--primary-glow); }
+
+        /* Item cards */
+        .item-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        .item-card {
+            background: white; border-radius: 18px; padding: 14px 18px;
+            display: flex; align-items: center; gap: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1.5px solid var(--border);
+            transition: all 0.2s;
+        }
+        .item-card.is-sold-out { background: #fff8f8; border-color: rgba(239,35,60,0.15); }
+        .item-icon { font-size: 1.7rem; flex-shrink: 0; width: 44px; text-align: center; }
+        .item-info { flex: 1; min-width: 0; }
+        .item-name-text { font-weight: 700; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .item-price-text { color: var(--primary-dark); font-weight: 600; font-size: 0.88rem; margin-top: 2px; }
+        .item-tag-extra { background: #e0f2fe; color: #0284c7; font-size: 0.7rem; padding: 2px 7px; border-radius: 6px; font-weight: 700; margin-left: 6px; }
+        .item-tag-sold { background: #fee2e2; color: #dc2626; font-size: 0.72rem; padding: 2px 8px; border-radius: 6px; font-weight: 700; display: inline-block; margin-top: 4px; }
+
+        /* Toggle switch */
+        .toggle-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; }
+        .toggle-label-sm { font-size: 0.62rem; font-weight: 700; color: var(--muted); letter-spacing: 0.3px; }
+        .toggle {
+            position: relative; display: inline-block; width: 52px; height: 28px;
+        }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; cursor: pointer; inset: 0;
+            background: #d1fae5; border-radius: 34px; transition: 0.3s;
+            border: 1.5px solid #a7f3d0;
+        }
+        .toggle-slider:before {
+            content: ''; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px;
+            background: #16a34a; border-radius: 50%; transition: 0.3s;
+            box-shadow: 0 2px 6px rgba(22,163,74,0.4);
+        }
+        .toggle input:checked + .toggle-slider { background: #fee2e2; border-color: #fca5a5; }
+        .toggle input:checked + .toggle-slider:before { transform: translateX(24px); background: var(--primary);
+            box-shadow: 0 2px 6px var(--primary-glow); }
+
+        /* Delete button */
+        .btn-del-item {
+            background: none; border: 1px solid var(--border); color: #cbd5e1;
+            cursor: pointer; font-size: 0.9rem; padding: 8px 10px; border-radius: 10px;
+            transition: all 0.2s; flex-shrink: 0;
+        }
+        .btn-del-item:hover { color: var(--primary); border-color: rgba(239,35,60,0.4); background: #fff0f0; }
+
+        /* Add item section */
+        .add-section { margin-top: 4px; }
+        .btn-add-item {
+            width: 100%; padding: 16px; background: none; border: 2px dashed var(--border);
+            border-radius: 18px; color: var(--muted); font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; font-family: 'Prompt', sans-serif; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-add-item:hover { border-color: var(--primary); color: var(--primary); background: #fff5f5; }
+
+        .add-form {
+            background: white; border-radius: 20px; padding: 22px;
+            border: 2px solid rgba(239,35,60,0.3); margin-top: 12px;
+            box-shadow: 0 8px 25px var(--primary-glow); display: none;
+        }
+        .add-form-title { font-size: 0.95rem; font-weight: 800; color: var(--primary); margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 100px; gap: 12px; margin-bottom: 14px; }
+        .form-input {
+            padding: 13px 16px; border: 2px solid var(--border); border-radius: 14px;
+            font-size: 1rem; font-family: 'Prompt', sans-serif; width: 100%; transition: 0.2s;
+            color: var(--text);
+        }
+        .form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        .form-input::placeholder { color: var(--muted); }
+        .form-btn-row { display: flex; gap: 10px; }
+        .btn-confirm-add {
+            flex: 1; background: var(--primary-gradient); color: white; border: none;
+            padding: 13px; border-radius: 14px; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; font-family: 'Prompt', sans-serif; transition: all 0.15s;
+        }
+        .btn-confirm-add:active { transform: scale(0.97); }
+        .btn-cancel-add {
+            background: var(--bg); border: 1.5px solid var(--border); color: var(--muted);
+            padding: 13px 18px; border-radius: 14px; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; font-family: 'Prompt', sans-serif;
+        }
+
+        /* ── SETTINGS TAB ── */
+        .settings-card {
+            background: white; border-radius: 20px; padding: 22px 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1.5px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .settings-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 5px;
+            display: flex; align-items: center; gap: 10px; }
+        .settings-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.7; margin-bottom: 16px; }
+        .pin-change-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+        .pin-change-input {
+            flex: 1; min-width: 130px; padding: 13px 16px; border: 2px solid var(--border);
+            border-radius: 14px; font-size: 1rem; font-family: 'Prompt', sans-serif;
+            text-align: center; letter-spacing: 0.25em; transition: 0.2s; color: var(--text);
+        }
+        .pin-change-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        .info-link { color: var(--primary); text-decoration: none; font-weight: 700; }
+        .info-link:hover { text-decoration: underline; }
+
+        /* ── STATUS BADGE ── */
+        .status-bar {
+            background: white; margin: 16px 20px 0; border-radius: 16px;
+            padding: 12px 18px; border: 1.5px solid var(--border);
+            display: flex; align-items: center; gap: 10px; max-width: 820px; margin-left: auto; margin-right: auto;
+        }
+        .status-bar .dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e;
+            animation: pulse-dot 1.5s infinite; flex-shrink: 0; }
+        @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .status-bar span { font-size: 0.85rem; font-weight: 600; color: #15803d; }
+        .status-bar small { margin-left: auto; font-size: 0.78rem; color: var(--muted); }
+
+        /* ── TOAST ── */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; pointer-events: none; }
+        .admin-toast {
+            background: white; border-left: 4px solid var(--success); border-radius: 14px;
+            padding: 13px 18px; box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+            font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; min-width: 220px;
+            animation: slideInR 0.35s cubic-bezier(0.34,1.56,0.64,1); display: flex; align-items: center; gap: 10px;
+            color: var(--text); border: 1px solid #d1fae5; border-left: 4px solid var(--success);
+        }
+        .admin-toast.error { border-left-color: var(--primary); border-color: #fee2e2; border-left: 4px solid var(--primary); }
+        @keyframes slideInR { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+
+        /* ── CONFIRM POPUP ── */
+        .confirm-overlay {
+            position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 800;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .confirm-overlay.show { opacity: 1; visibility: visible; }
+        .confirm-box {
+            background: white; border-radius: 28px; padding: 32px 28px; width: 90%; max-width: 360px;
+            text-align: center;
+            transform: scale(0.85) translateY(20px); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+        .confirm-overlay.show .confirm-box { transform: scale(1) translateY(0); }
+        .confirm-emoji { font-size: 2.8rem; display: block; margin-bottom: 14px; }
+        .confirm-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+        .confirm-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.6; }
+        .confirm-btns { display: flex; gap: 12px; }
+        .confirm-btn { flex: 1; padding: 14px; border: none; border-radius: 14px;
+            font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Prompt', sans-serif; transition: all 0.15s; }
+        .confirm-btn:active { transform: scale(0.97); }
+        .confirm-btn.c-cancel { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); }
+        .confirm-btn.c-del { background: var(--primary-gradient); color: white; box-shadow: 0 8px 20px var(--primary-glow); }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: 0.4; }
+        .empty-state p { font-size: 0.95rem; font-weight: 600; }
+
+        /* Loading */
+        .loading-spin { text-align: center; padding: 40px; color: var(--muted); font-size: 0.95rem; }
+
+        @media(max-width: 480px) {
+            .login-box { padding: 40px 24px 32px; }
+            .tab-content { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════ -->
+<div id="login-screen">
+    <div class="login-box">
+        <span class="login-logo">🔐</span>
+        <div class="login-title">หน้าจัดการร้าน</div>
+        <div class="login-sub">กรุณาใส่รหัส PIN เพื่อเข้าใช้งาน</div>
+
+        <div class="pin-display">
+            <div class="pin-dot" id="dot-0"></div>
+            <div class="pin-dot" id="dot-1"></div>
+            <div class="pin-dot" id="dot-2"></div>
+            <div class="pin-dot" id="dot-3"></div>
+        </div>
+
+        <div class="pin-pad">
+            <button class="pin-btn" onclick="pinPress('1')">1</button>
+            <button class="pin-btn" onclick="pinPress('2')">2</button>
+            <button class="pin-btn" onclick="pinPress('3')">3</button>
+            <button class="pin-btn" onclick="pinPress('4')">4</button>
+            <button class="pin-btn" onclick="pinPress('5')">5</button>
+            <button class="pin-btn" onclick="pinPress('6')">6</button>
+            <button class="pin-btn" onclick="pinPress('7')">7</button>
+            <button class="pin-btn" onclick="pinPress('8')">8</button>
+            <button class="pin-btn" onclick="pinPress('9')">9</button>
+            <button class="pin-btn wide" onclick="pinPress('0')">0</button>
+            <button class="pin-btn del" onclick="pinDelete()"><i class="fas fa-delete-left"></i></button>
+        </div>
+
+        <div class="pin-error" id="pin-error"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADMIN DASHBOARD
+══════════════════════════════════════ -->
+<div id="admin-screen">
+    <header class="admin-header">
+        <div class="admin-header-left">
+            <div class="admin-logo">🛠️</div>
+            <div>
+                <h1>จัดการร้าน</h1>
+                <span>ขนมจีนบีบสดแม่พร & ส้มตำครกแตก</span>
+            </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> ออกระบบ
+        </button>
+    </header>
+
+    <!-- Status bar -->
+    <div style="padding: 16px 20px 0; max-width: 820px; margin: 0 auto;">
+        <div class="status-bar">
+            <div class="dot"></div>
+            <span>เชื่อมต่อ Firebase แล้ว — การเปลี่ยนแปลงมีผลทันที</span>
+            <small id="last-save-time"></small>
+        </div>
+    </div>
+
+    <!-- Main tabs -->
+    <div class="main-tabs" style="margin-top: 16px;">
+        <div class="main-tab active" id="tab-btn-announcement" onclick="switchMainTab('announcement', this)">
+            <i class="fas fa-bullhorn"></i> ประกาศ
+        </div>
+        <div class="main-tab" id="tab-btn-menu" onclick="switchMainTab('menu', this)">
+            <i class="fas fa-utensils"></i> จัดการเมนู
+        </div>
+        <div class="main-tab" id="tab-btn-settings" onclick="switchMainTab('settings', this)">
+            <i class="fas fa-cog"></i> ตั้งค่า
+        </div>
+    </div>
+
+    <!-- ── TAB: ANNOUNCEMENT ── -->
+    <div class="tab-content active" id="tab-announcement">
+        <div class="section-header">
+            <h2><i class="fas fa-bullhorn" style="color:var(--accent); margin-right:8px;"></i>ประกาศถึงลูกค้า</h2>
+            <p>ข้อความนี้จะแสดงบนหน้าสั่งอาหารของลูกค้าทันที เช่น แจ้งปิดชั่วคราว, โปรโมชั่น, เมนูพิเศษวันนี้</p>
+        </div>
+
+        <p style="font-size:0.85rem; font-weight:700; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">ตัวอย่างที่ลูกค้าจะเห็น</p>
+        <div class="ann-preview">
+            <i class="fas fa-bullhorn"></i>
+            <span class="ann-preview-text" id="ann-preview-text">
+                <span class="ann-preview-empty">ยังไม่มีประกาศ — ข้อความที่คุณพิมพ์จะแสดงที่นี่</span>
+            </span>
+        </div>
+
+        <p style="font-size:0.85rem; font-weight:700; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">พิมพ์ข้อความประกาศ</p>
+        <textarea class="ann-input" id="ann-text"
+            placeholder="เช่น: วันนี้ปิดบริการ 14:00 - 15:00 น. เนื่องจากทำความสะอาดครัว&#10;หรือ: โปรโมชั่นพิเศษ! สั่งส้มตำ 2 จาน แถมน้ำเปล่า 1 ขวด"
+            oninput="updatePreview(this.value)"></textarea>
+
+        <div class="btn-row">
+            <button class="btn-primary-sm" onclick="saveAnnouncement()">
+                <i class="fas fa-save"></i> บันทึกประกาศ
+            </button>
+            <button class="btn-secondary-sm" onclick="clearAnnouncement()">
+                <i class="fas fa-times"></i> ลบประกาศ
+            </button>
+        </div>
+    </div>
+
+    <!-- ── TAB: MENU ── -->
+    <div class="tab-content" id="tab-menu">
+        <div class="section-header">
+            <h2><i class="fas fa-utensils" style="color:var(--accent); margin-right:8px;"></i>จัดการเมนูอาหาร</h2>
+            <p>สลับ <strong>🔴 หมด</strong> เมื่อของหมด ลูกค้าจะกดสั่งไม่ได้ทันที กลับมาสลับ <strong>🟢 มี</strong> เมื่อของกลับมา</p>
+        </div>
+
+        <!-- Category tabs -->
+        <div class="cat-tabs-wrap">
+            <div class="cat-tabs" id="cat-tabs-bar"></div>
+        </div>
+
+        <!-- Items list -->
+        <div id="items-container">
+            <div class="loading-spin"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลด...</div>
+        </div>
+
+        <!-- Add new item -->
+        <div class="add-section">
+            <button class="btn-add-item" id="btn-show-add" onclick="toggleAddForm()">
+                <i class="fas fa-plus-circle"></i> เพิ่มเมนูใหม่ในหมวดนี้
+            </button>
+            <div class="add-form" id="add-form">
+                <div class="add-form-title"><i class="fas fa-plus-circle"></i> เพิ่มเมนูใหม่</div>
+                <div class="form-grid">
+                    <input type="text" class="form-input" id="new-item-name" placeholder="ชื่อเมนู เช่น ตำซั่วพิเศษ">
+                    <input type="number" class="form-input" id="new-item-price" placeholder="ราคา" min="1">
+                </div>
+                <div class="form-btn-row">
+                    <button class="btn-confirm-add" onclick="addNewItem()">
+                        <i class="fas fa-check"></i> เพิ่มเมนูนี้
+                    </button>
+                    <button class="btn-cancel-add" onclick="toggleAddForm()">ยกเลิก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TAB: SETTINGS ── -->
+    <div class="tab-content" id="tab-settings">
+        <div class="section-header">
+            <h2><i class="fas fa-cog" style="color:var(--accent); margin-right:8px;"></i>ตั้งค่าระบบ</h2>
+        </div>
+
+        <div class="settings-card">
+            <h3><i class="fas fa-key"></i> เปลี่ยนรหัส PIN</h3>
+            <p>PIN ปัจจุบัน: <strong id="current-pin-show" style="letter-spacing:0.2em;">****</strong><br>ใส่ PIN ใหม่ (ตัวเลข 4 หลัก) แล้วกดบันทึก</p>
+            <div class="pin-change-row">
+                <input type="password" class="pin-change-input" id="new-pin" maxlength="4"
+                    placeholder="PIN ใหม่" inputmode="numeric" autocomplete="new-password">
+                <input type="password" class="pin-change-input" id="confirm-pin" maxlength="4"
+                    placeholder="ยืนยัน" inputmode="numeric" autocomplete="new-password">
+            </div>
+            <button class="btn-primary-sm" onclick="changePin()">
+                <i class="fas fa-key"></i> บันทึก PIN ใหม่
+            </button>
+        </div>
+
+        <div class="settings-card">
+            <h3><i class="fas fa-link"></i> ลิงก์ที่เกี่ยวข้อง</h3>
+            <p>
+                <strong>หน้าลูกค้าสั่งอาหาร:</strong><br>
+                <a href="index.html" target="_blank" class="info-link">
+                    <i class="fas fa-external-link-alt" style="margin-right:5px;"></i>index.html
+                </a>
+                <br><br>
+                <strong>หน้าครัวรับออเดอร์:</strong><br>
+                <a href="kitchen.html" target="_blank" class="info-link">
+                    <i class="fas fa-external-link-alt" style="margin-right:5px;"></i>kitchen.html
+                </a>
+            </p>
+        </div>
+
+        <div class="settings-card">
+            <h3><i class="fas fa-info-circle"></i> วิธีใช้งานสรุป</h3>
+            <p style="margin-bottom:0; color:var(--text);">
+                🔴 <strong>แจ้งหมด</strong> — สลับสวิตช์แดง ลูกค้ากดสั่งไม่ได้ทันที<br>
+                🟢 <strong>เปิดขายอีกครั้ง</strong> — สลับสวิตช์กลับมาสีเขียว<br>
+                ⭐ <strong>เมนูเพิ่มเติม</strong> — เพิ่มได้จากปุ่ม "เพิ่มเมนูใหม่" ลบได้ด้วยไอคอนถังขยะ<br>
+                📢 <strong>ประกาศ</strong> — พิมพ์แล้วกดบันทึก แสดงบนหน้าลูกค้าทันที<br>
+                🔐 <strong>PIN</strong> — เปลี่ยนได้ในหน้านี้ ค่าเริ่มต้นคือ 1234
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Confirm dialog -->
+<div class="confirm-overlay" id="confirm-overlay" onclick="maybeCloseConfirm(event)">
+    <div class="confirm-box" onclick="event.stopPropagation()">
+        <span class="confirm-emoji" id="conf-emoji">🗑️</span>
+        <div class="confirm-title" id="conf-title">ยืนยันลบ?</div>
+        <div class="confirm-sub" id="conf-sub">รายการนี้จะถูกลบถาวร</div>
+        <div class="confirm-btns">
+            <button class="confirm-btn c-cancel" onclick="closeConfirm()">ยกเลิก</button>
+            <button class="confirm-btn c-del" id="conf-do-btn">ยืนยัน</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+/* ── Firebase Setup ── */
+const firebaseConfig = {
+    apiKey: "AIzaSyCg9oOSl5Q3unvoC-Yfuu9NV-XWJdN4EwU",
+    authDomain: "myorder-store-5cebf.firebaseapp.com",
+    databaseURL: "https://myorder-store-5cebf-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "myorder-store-5cebf",
+    storageBucket: "myorder-store-5cebf.firebasestorage.app",
+    messagingSenderId: "662235011563",
+    appId: "1:662235011563:web:389e8320d9d16e9a6121ae"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* ── Base Menu (เหมือนกับใน index.html) ── */
+const BASE_MENU = {
+    cat1: { name: 'ส้มตำ',         icon: '🌶️', items: [
+        {id:101,n:'ตำป่า',p:70}, {id:102,n:'ตำลาว',p:50}, {id:103,n:'ตำไทยไข่เค็ม',p:60},
+        {id:104,n:'ตำกุ้งสด, สุก',p:80}, {id:105,n:'ตำหมูยอ',p:80}, {id:106,n:'ตำซั่ว',p:60},
+        {id:107,n:'ตำข้าวโพด',p:80}, {id:108,n:'ตำตีนไก่',p:80}, {id:109,n:'ตำถั่ว',p:50},
+        {id:110,n:'ตำแตง',p:50}, {id:111,n:'ตำซั่วแตง',p:60}, {id:112,n:'ตำด้องแด้ง',p:80}
+    ]},
+    cat2: { name: 'ขนมจีนน้ำยา',   icon: '🍜', items: [
+        {id:201,n:'น้ำยาป่า',p:50}, {id:202,n:'น้ำยากะทิ',p:50}, {id:203,n:'น้ำยาปู',p:70},
+        {id:204,n:'น้ำยาไก่',p:50}, {id:205,n:'น้ำยาแกงป่าปลาดุก',p:50}
+    ]},
+    cat3: { name: 'ของทานเล่น',     icon: '🥚', items: [
+        {id:301,n:'แคปหมู',p:15}, {id:302,n:'ไข่เค็ม',p:10}, {id:303,n:'ไข่ต้ม',p:10}
+    ]},
+    cat4: { name: 'เครื่องดื่ม',    icon: '🥤', items: [
+        {id:401,n:'น้ำโค้ก',p:20}, {id:402,n:'น้ำสไปรท์',p:20}, {id:403,n:'น้ำเขียว',p:20},
+        {id:404,n:'น้ำส้ม',p:20}, {id:405,n:'น้ำเปล่า',p:10}
+    ]},
+    cat5: { name: 'เส้นเพิ่มเติม',  icon: '🍝', items: [
+        {id:501,n:'เส้นขนมจีนสดเปล่า (เพิ่ม)',p:40}, {id:502,n:'เส้นด้องแด้ง (เพิ่ม)',p:40}
+    ]},
+    cat6: { name: 'น้ำยาเพิ่มเติม', icon: '🍲', items: [
+        {id:603,n:'น้ำยาปู',p:40}, {id:601,n:'น้ำยาป่า (เพิ่ม)',p:20},
+        {id:602,n:'น้ำยากะทิ (เพิ่ม)',p:20}, {id:604,n:'น้ำยาไก่ (เพิ่ม)',p:20},
+        {id:605,n:'น้ำยาแกงป่าปลาดุก (เพิ่ม)',p:20}, {id:606,n:'ตีนไก่เพิ่ม (3 ชิ้น)',p:20}
+    ]}
+};
+
+/* ── State ── */
+let appSettings = { soldOut:{}, extraItems:{}, announcement:'', adminPin:'1234' };
+let currentCat = 'cat1';
+let addFormOpen = false;
+let isLoggedIn = false;
+
+/* ════════════════════════════════
+   PIN LOGIN
+════════════════════════════════ */
+let pinBuffer = '';
+
+function pinPress(digit) {
+    if (pinBuffer.length >= 4) return;
+    pinBuffer += digit;
+    updatePinDots();
+    if (pinBuffer.length === 4) {
+        setTimeout(verifyPin, 200);
+    }
+}
+
+function pinDelete() {
+    if (!pinBuffer.length) return;
+    pinBuffer = pinBuffer.slice(0, -1);
+    updatePinDots();
+    document.getElementById('pin-error').textContent = '';
+}
+
+function updatePinDots() {
+    for (let i = 0; i < 4; i++) {
+        document.getElementById('dot-' + i).classList.toggle('filled', i < pinBuffer.length);
+    }
+}
+
+function verifyPin() {
+    const correctPin = appSettings.adminPin || '1234';
+    if (pinBuffer === correctPin) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-screen').style.display = 'block';
+        isLoggedIn = true;
+        startDataListener();
+    } else {
+        document.getElementById('pin-error').textContent = '❌ รหัสไม่ถูกต้อง กรุณาลองใหม่';
+        // Shake animation
+        document.querySelectorAll('.pin-dot').forEach(d => {
+            d.classList.add('shake');
+            setTimeout(() => d.classList.remove('shake'), 500);
+        });
+        pinBuffer = '';
+        updatePinDots();
+        setTimeout(() => { document.getElementById('pin-error').textContent = ''; }, 2500);
+    }
+}
+
+function logout() {
+    isLoggedIn = false;
+    document.getElementById('admin-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    pinBuffer = '';
+    updatePinDots();
+    document.getElementById('pin-error').textContent = '';
+}
+
+/* ════════════════════════════════
+   FIREBASE DATA
+════════════════════════════════ */
+function startDataListener() {
+    db.ref('settings').on('value', snap => {
+        appSettings = snap.val() || {};
+        appSettings.soldOut    = appSettings.soldOut    || {};
+        appSettings.extraItems = appSettings.extraItems || {};
+        appSettings.adminPin   = appSettings.adminPin   || '1234';
+        appSettings.announcement = appSettings.announcement || '';
+
+        // Update UI
+        document.getElementById('ann-text').value = appSettings.announcement;
+        updatePreview(appSettings.announcement);
+        document.getElementById('current-pin-show').textContent = appSettings.adminPin;
+
+        if (isLoggedIn) {
+            renderCatTabs();
+            renderItems(currentCat);
+        }
+    });
+}
+
+/* ════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════ */
+function switchMainTab(name, el) {
+    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+}
+
+/* ════════════════════════════════
+   ANNOUNCEMENT
+════════════════════════════════ */
+function updatePreview(text) {
+    const el = document.getElementById('ann-preview-text');
+    if (text && text.trim()) {
+        el.innerHTML = `<span style="color:#856404; font-weight:600;">${escHtml(text.trim())}</span>`;
+    } else {
+        el.innerHTML = `<span class="ann-preview-empty">ยังไม่มีประกาศ — ข้อความที่คุณพิมพ์จะแสดงที่นี่</span>`;
+    }
+}
+
+function saveAnnouncement() {
+    const text = document.getElementById('ann-text').value.trim();
+    db.ref('settings/announcement').set(text).then(() => {
+        markSaved();
+        showToast(text ? '📢 บันทึกประกาศเรียบร้อย' : '✅ ลบประกาศแล้ว');
+    });
+}
+
+function clearAnnouncement() {
+    document.getElementById('ann-text').value = '';
+    updatePreview('');
+    db.ref('settings/announcement').set('').then(() => {
+        markSaved();
+        showToast('✅ ลบประกาศแล้ว');
+    });
+}
+
+/* ════════════════════════════════
+   MENU MANAGEMENT
+════════════════════════════════ */
+function renderCatTabs() {
+    const bar = document.getElementById('cat-tabs-bar');
+    bar.innerHTML = Object.entries(BASE_MENU).map(([key, cat]) => `
+        <button class="cat-tab-btn ${key === currentCat ? 'active' : ''}"
+            onclick="selectCat('${key}', this)">
+            ${cat.icon} ${cat.name}
+        </button>
+    `).join('');
+}
+
+function selectCat(catKey, el) {
+    document.querySelectorAll('.cat-tab-btn').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    currentCat = catKey;
+    if (addFormOpen) toggleAddForm();
+    renderItems(catKey);
+}
+
+function renderItems(catKey) {
+    const cat = BASE_MENU[catKey];
+    const extraObj = (appSettings.extraItems && appSettings.extraItems[catKey]) || {};
+    const extraEntries = Object.entries(extraObj);
+    const container = document.getElementById('items-container');
+
+    const baseHtml = cat.items.map(item => {
+        const soldOut = appSettings.soldOut[item.id] === true;
+        return itemCardHtml(item, soldOut, false, null);
+    }).join('');
+
+    const extraHtml = extraEntries.map(([fbKey, item]) => {
+        const soldOut = appSettings.soldOut[item.id] === true;
+        return itemCardHtml(item, soldOut, true, fbKey);
+    }).join('');
+
+    if (!baseHtml && !extraHtml) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-utensils"></i><p>ยังไม่มีเมนูในหมวดนี้</p></div>`;
+        return;
+    }
+
+    container.innerHTML = `<div class="item-list">${baseHtml}${extraHtml}</div>`;
+}
+
+function itemCardHtml(item, soldOut, isExtra, fbKey) {
+    return `
+    <div class="item-card ${soldOut ? 'is-sold-out' : ''}" id="icard-${item.id}">
+        <div class="item-icon">${BASE_MENU[currentCat].icon}</div>
+        <div class="item-info">
+            <div class="item-name-text">${escHtml(item.n)}${isExtra ? '<span class="item-tag-extra">ใหม่</span>' : ''}</div>
+            <div class="item-price-text">${item.p} ฿</div>
+            ${soldOut ? '<span class="item-tag-sold">🔴 หมดชั่วคราว</span>' : ''}
+        </div>
+        <div class="toggle-wrap">
+            <div class="toggle-label-sm">${soldOut ? '🔴 หมด' : '🟢 มี'}</div>
+            <label class="toggle">
+                <input type="checkbox" ${soldOut ? 'checked' : ''} onchange="toggleSoldOut(${item.id}, this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+            <div class="toggle-label-sm">แจ้งหมด</div>
+        </div>
+        ${isExtra ? `<button class="btn-del-item" onclick="askDeleteItem('${fbKey}', '${escHtml(item.n)}')" title="ลบเมนูนี้"><i class="fas fa-trash-alt"></i></button>` : ''}
+    </div>`;
+}
+
+/* ── Sold Out Toggle ── */
+function toggleSoldOut(itemId, isSoldOut) {
+    db.ref(`settings/soldOut/${itemId}`).set(isSoldOut ? true : null).then(() => {
+        markSaved();
+        showToast(isSoldOut
+            ? `🔴 แจ้ง "หมด" เรียบร้อย — ลูกค้ากดสั่งไม่ได้แล้ว`
+            : `🟢 เปิดขายอีกครั้งแล้ว`
+        );
+    });
+}
+
+/* ── Add Item ── */
+function toggleAddForm() {
+    addFormOpen = !addFormOpen;
+    const form = document.getElementById('add-form');
+    form.style.display = addFormOpen ? 'block' : 'none';
+    if (addFormOpen) {
+        document.getElementById('new-item-name').value = '';
+        document.getElementById('new-item-price').value = '';
+        setTimeout(() => document.getElementById('new-item-name').focus(), 100);
+    }
+}
+
+function addNewItem() {
+    const name  = document.getElementById('new-item-name').value.trim();
+    const price = parseInt(document.getElementById('new-item-price').value);
+
+    if (!name)          { showToast('❌ กรุณาใส่ชื่อเมนู', true); return; }
+    if (!price || price < 1) { showToast('❌ กรุณาใส่ราคาที่ถูกต้อง', true); return; }
+
+    const newId   = Date.now(); // unique ID
+    const newItem = { id: newId, n: name, p: price, img: '' };
+
+    db.ref(`settings/extraItems/${currentCat}/${newId}`).set(newItem).then(() => {
+        markSaved();
+        showToast(`✅ เพิ่ม "${name}" เรียบร้อย`);
+        toggleAddForm();
+    });
+}
+
+/* ── Delete Item ── */
+function askDeleteItem(fbKey, itemName) {
+    document.getElementById('conf-emoji').textContent = '🗑️';
+    document.getElementById('conf-title').textContent = `ลบ "${itemName}"?`;
+    document.getElementById('conf-sub').textContent = 'รายการเพิ่มเติมนี้จะถูกลบออกจากเมนูถาวร';
+    document.getElementById('conf-do-btn').onclick = () => {
+        db.ref(`settings/extraItems/${currentCat}/${fbKey}`).remove().then(() => {
+            markSaved();
+            showToast(`✅ ลบ "${itemName}" แล้ว`);
+            closeConfirm();
+        });
+    };
+    document.getElementById('confirm-overlay').classList.add('show');
+}
+
+function maybeCloseConfirm(e) {
+    if (e.target.id === 'confirm-overlay') closeConfirm();
+}
+function closeConfirm() {
+    document.getElementById('confirm-overlay').classList.remove('show');
+}
+
+/* ════════════════════════════════
+   SETTINGS — CHANGE PIN
+════════════════════════════════ */
+function changePin() {
+    const newPin     = document.getElementById('new-pin').value.trim();
+    const confirmPin = document.getElementById('confirm-pin').value.trim();
+
+    if (!/^\d{4}$/.test(newPin)) { showToast('❌ PIN ต้องเป็นตัวเลข 4 หลักเท่านั้น', true); return; }
+    if (newPin !== confirmPin)   { showToast('❌ PIN ทั้งสองช่องไม่ตรงกัน', true); return; }
+
+    db.ref('settings/adminPin').set(newPin).then(() => {
+        markSaved();
+        showToast('🔐 เปลี่ยน PIN เรียบร้อยแล้ว');
+        document.getElementById('new-pin').value = '';
+        document.getElementById('confirm-pin').value = '';
+    });
+}
+
+/* ════════════════════════════════
+   UTILS
+════════════════════════════════ */
+function markSaved() {
+    const now = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    document.getElementById('last-save-time').textContent = 'บันทึกล่าสุด ' + now;
+}
+
+function showToast(msg, isError = false) {
+    const container = document.getElementById('toast-container');
+    const el = document.createElement('div');
+    el.className = 'admin-toast' + (isError ? ' error' : '');
+    el.innerHTML = `<span style="font-size:1.1rem;">${isError ? '⚠️' : '✅'}</span> ${escHtml(msg)}`;
+    container.appendChild(el);
+    setTimeout(() => {
+        el.style.transition = 'all 0.3s';
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(30px)';
+        setTimeout(() => el.remove(), 300);
+    }, 3200);
+}
+
+function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ════════════════════════════════
+   INIT
+════════════════════════════════ */
+// Load PIN before login (for verification)
+db.ref('settings/adminPin').once('value').then(snap => {
+    if (snap.val()) appSettings.adminPin = snap.val();
+});
+</script>
+</body>
+</html>
