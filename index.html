@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
+ 
     <style>
         /* ==========================================================================
            1. CSS VARIABLES (Premium Glass & Vibrant Theme)
@@ -31,7 +31,7 @@
             
             --success: #38b000;
             --success-gradient: linear-gradient(135deg, #70e000 0%, #38b000 100%);
-
+ 
             /* Glassmorphism Variables */
             --glass-bg: rgba(255, 255, 255, 0.65);
             --glass-border: rgba(255, 255, 255, 0.8);
@@ -45,7 +45,7 @@
             --radius-lg: 32px;
             --radius-full: 999px;
         }
-
+ 
         /* ==========================================================================
            2. RESET & ANIMATED BACKGROUND
            ========================================================================== */
@@ -54,7 +54,7 @@
             font-family: 'Prompt', -apple-system, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-
+ 
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
@@ -67,7 +67,7 @@
             animation: gradientBG 15s ease infinite;
             position: relative;
         }
-
+ 
         /* ของตกแต่งพื้นหลัง */
         .bg-blobs {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -79,9 +79,9 @@
         }
         .blob-1 { top: -10%; left: -10%; width: 300px; height: 300px; background: #ffcccc; animation-delay: 0s; }
         .blob-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #ffe6cc; animation-delay: -5s; }
-
+ 
         ::-webkit-scrollbar { width: 0px; background: transparent; }
-
+ 
         /* ==========================================================================
            3. HEADER (Floating Glass)
            ========================================================================== */
@@ -97,7 +97,7 @@
             border-radius: 0 0 30px 30px;
             margin-bottom: 20px;
         }
-
+ 
         .brand-title {
             font-size: 1.8rem; font-weight: 800; line-height: 1.2;
             background: var(--primary-gradient);
@@ -105,7 +105,7 @@
             text-shadow: 2px 4px 10px var(--primary-glow);
             letter-spacing: -0.5px;
         }
-
+ 
         .brand-subtitle {
             font-size: 0.95rem; color: var(--text-muted);
             font-weight: 500; margin-top: 8px;
@@ -113,7 +113,7 @@
             padding: 4px 12px; border-radius: 20px;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
         }
-
+ 
         .table-badge {
             margin-top: 15px;
             background: linear-gradient(135deg, #ffffff, #f8f9fa);
@@ -127,19 +127,19 @@
         }
         .table-badge:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 15px 25px rgba(239, 35, 60, 0.25); }
         .table-badge i { font-size: 1.2rem; animation: tada 2s infinite; }
-
+ 
         /* ==========================================================================
            4. TABS NAVIGATION (Floating Pills)
            ========================================================================== */
         .nav-categories {
-            position: sticky; top: 140px; z-index: 99;
+            position: sticky; top: 220px; z-index:99;
             display: flex; overflow-x: auto;
             padding: 10px 20px 20px; gap: 12px;
             justify-content: start;
             scroll-snap-type: x mandatory;
         }
         .nav-categories::-webkit-scrollbar { display: none; }
-
+ 
         .cat-tab {
             scroll-snap-align: start;
             padding: 14px 28px;
@@ -154,7 +154,7 @@
             display: flex; align-items: center; gap: 10px;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
+ 
         .cat-tab.active {
             background: var(--primary-gradient);
             color: white; border: none;
@@ -163,14 +163,14 @@
         }
         .cat-tab i { font-size: 1.2rem; transition: 0.3s; color: var(--accent); }
         .cat-tab.active i { color: #fff; animation: bounceIn 0.5s; }
-
+ 
         /* ==========================================================================
            5. MAIN CONTENT & CARDS
            ========================================================================== */
         .main-container {
             padding: 10px 20px 180px; max-width: 680px; margin: 0 auto;
         }
-
+ 
         .section-title {
             margin: 40px 0 20px; font-size: 1.5rem; font-weight: 800;
             display: flex; align-items: center; gap: 15px;
@@ -181,7 +181,7 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             font-size: 1.8rem; filter: drop-shadow(0 4px 6px rgba(247, 127, 0, 0.3));
         }
-
+ 
         /* 3D Glass Cards */
         .food-card {
             background: var(--glass-bg);
@@ -201,21 +201,21 @@
         .food-card.reveal {
             opacity: 1; transform: translateY(0) scale(1);
         }
-
+ 
         .food-card::before {
             content: ''; position: absolute; top: 0; left: -100%;
             width: 50%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
             transform: skewX(-20deg); transition: 0.5s;
         }
-
+ 
         .food-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: var(--shadow-hover);
             border-color: rgba(239, 35, 60, 0.3);
         }
         .food-card:hover::before { left: 150%; }
-
+ 
         .food-img-wrapper {
             width: 100px; height: 100px; border-radius: var(--radius-sm);
             background: linear-gradient(135deg, #fdfbfb, #ebedee);
@@ -229,7 +229,7 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
         }
-
+ 
         .food-info { flex-grow: 1; padding-right: 45px; }
         .food-name {
             font-size: 1.25rem; font-weight: 800; color: var(--text-main);
@@ -241,7 +241,7 @@
             padding: 4px 14px; border-radius: 12px; display: inline-block;
             border: 1px solid rgba(239, 35, 60, 0.1);
         }
-
+ 
         .btn-add-icon {
             position: absolute; right: 20px; bottom: 20px;
             width: 45px; height: 45px; border-radius: var(--radius-full);
@@ -257,7 +257,7 @@
             transform: rotate(180deg) scale(1.1);
             box-shadow: 0 10px 20px var(--primary-glow);
         }
-
+ 
         /* ==========================================================================
            6. BOTTOM SHEETS & MODALS (Super Smooth)
            ========================================================================== */
@@ -270,7 +270,7 @@
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .overlay.show { opacity: 1; visibility: visible; }
-
+ 
         .bottom-sheet {
             background: var(--bg-main);
             width: 100%; max-width: 680px;
@@ -283,19 +283,19 @@
             position: relative;
         }
         .overlay.show .bottom-sheet { transform: translateY(0); }
-
+ 
         .drag-handle {
             width: 50px; height: 6px; background-color: #cbd5e1;
             border-radius: 10px; margin: 0 auto 25px;
         }
-
+ 
         .sheet-title {
             font-size: 1.8rem; text-align: center; font-weight: 800;
             margin-bottom: 30px; color: var(--text-main);
             background: var(--primary-gradient);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
+ 
         /* Options */
         .option-group { margin-bottom: 25px; }
         .option-label {
@@ -307,7 +307,7 @@
             font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;
             letter-spacing: 0.5px; box-shadow: 0 4px 10px var(--primary-glow);
         }
-
+ 
         .chip-container {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px;
         }
@@ -325,7 +325,7 @@
         }
         .choice-chip i { font-size: 1.4rem; display: none; }
         .choice-chip.selected i { display: block; animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
+ 
         .custom-input {
             width: 100%; padding: 18px; border: 2px solid #e2e8f0;
             border-radius: var(--radius-sm); background: white;
@@ -336,7 +336,7 @@
             outline: none; border-color: var(--primary);
             box-shadow: 0 0 0 4px var(--primary-glow); background: #fff;
         }
-
+ 
         /* Qty Control */
         .modal-qty-wrapper {
             display: flex; align-items: center; justify-content: space-between;
@@ -350,7 +350,7 @@
         }
         .modal-qty-btn:active { background: var(--primary-gradient); color: white; transform: scale(0.9); }
         .modal-qty-number { font-size: 2rem; font-weight: 800; min-width: 60px; text-align: center; color: var(--primary-dark); }
-
+ 
         /* Buttons */
         .btn-primary {
             width: 100%; padding: 22px; border: none;
@@ -395,7 +395,7 @@
             font-size: 1.5rem; font-weight: 800; background: var(--primary-gradient);
             padding: 8px 20px; border-radius: 20px; box-shadow: 0 5px 15px var(--primary-glow);
         }
-
+ 
         /* Summary Modal Additions */
         .summary-item {
             display: flex; justify-content: space-between; padding: 20px;
@@ -403,7 +403,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;
         }
         .summary-item h4 { font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 5px; }
-
+ 
         /* ==========================================================================
            8. SUCCESS POPUP & TOASTS
            ========================================================================== */
@@ -416,7 +416,7 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         .toast i { color: var(--success); font-size: 1.5rem; }
-
+ 
         .success-modal {
             background: var(--glass-bg); backdrop-filter: blur(25px);
             width: 90%; max-width: 420px; border-radius: 40px; padding: 50px 30px;
@@ -433,7 +433,7 @@
             box-shadow: 0 20px 40px rgba(56, 176, 0, 0.4), inset 0 5px 10px rgba(255,255,255,0.5);
             animation: bounceIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
         }
-
+ 
         /* ==========================================================================
            9. KEYFRAMES
            ========================================================================== */
@@ -454,14 +454,14 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
-
+ 
     <div class="bg-blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
     </div>
-
+ 
     <div class="toast-container" id="toast-box"></div>
-
+ 
     <header class="app-header animate__animated animate__fadeInDown">
         <h1 class="brand-title">ขนมจีนบีบสดแม่พร</h1>
         <p class="brand-title" style="font-size: 1.4rem; margin-top:-5px;">& ส้มตำครกแตก by.เจ๊อ้อม</p>
@@ -471,43 +471,43 @@
             <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number" style="font-size:1.4rem; color:var(--primary);">1</span>
         </div>
     </header>
-
+ 
     <nav class="nav-categories animate__animated animate__fadeIn" id="nav-cats">
-        <div class="cat-tab active" onclick="scrollToCategory('cat-1', this)"><i class="fas fa-pepper-hot"></i> ส้มตำครกแตก</div>
+        <div class="cat-tab active" onclick="scrollToCategory('cat-1', this)"><i class="fas fa-pepper-hot"></i> ส้มตำ</div>
         <div class="cat-tab" onclick="scrollToCategory('cat-2', this)"><i class="fas fa-bowl-food"></i> ขนมจีนน้ำยา</div>
         <div class="cat-tab" onclick="scrollToCategory('cat-3', this)"><i class="fas fa-egg"></i> ของทานเล่น</div>
         <div class="cat-tab" onclick="scrollToCategory('cat-4', this)"><i class="fas fa-glass-water"></i> เครื่องดื่ม</div>
         <div class="cat-tab" onclick="scrollToCategory('cat-5', this)"><i class="fas fa-scroll"></i> เส้นเพิ่มเติม</div>
         <div class="cat-tab" onclick="scrollToCategory('cat-6', this)"><i class="fas fa-fill-drip"></i> น้ำยาเพิ่มเติม</div>
     </nav>
-
+ 
     <main class="main-container">
         <div id="cat-1" class="category-section">
-            <h2 class="section-title"><i class="fas fa-pepper-hot"></i> ส้มตำครกแตก (เผ็ด...ครกแตก!)</h2>
+            <h2 class="section-title"><i class="fas fa-pepper-hot"></i> ส้มตำ</h2>
             <div id="grid-cat-1"></div>
         </div>
-
+ 
         <div id="cat-2" class="category-section">
             <h2 class="section-title"><i class="fas fa-bowl-food"></i> ขนมจีนบีบสดแม่พร</h2>
             <div id="grid-cat-2"></div>
         </div>
-
+ 
         <div id="cat-3" class="category-section">   
             <h2 class="section-title"><i class="fas fa-egg"></i> ของทานเล่น & ของเสริม กับแกล้ม</h2>
             <div id="grid-cat-3"></div>
         </div>
-
+ 
         <div id="cat-4" class="category-section">
             <h2 class="section-title"><i class="fas fa-glass-water"></i> เครื่องดื่มเย็นๆ</h2>
             <div id="grid-cat-4"></div>
-
+ 
         <div id="cat-5" class="category-section">
             <h2 class="section-title"><i class="fas fa-scroll"></i> เส้นเพิ่มเติม</h2>
             <div id="grid-cat-5"></div>
         </div>
-
+ 
         <div id="cat-6" class="category-section">
-            <h2 class="section-title"><i class="fas fa-fill-drip"></i> น้ำยาเพิ่มเติม (ถ้วยเล็ก)</h2>
+            <h2 class="section-title"><i class="fas fa-fill-drip"></i> น้ำยาเพิ่มเติม (ถ้วย)</h2>
             <div id="grid-cat-6"></div>
         </div>
     </main>
@@ -522,38 +522,38 @@
         </div>
         <div class="cart-total" id="cart-float-price">0 ฿</div>
     </div>
-
+ 
     <div id="overlay-options" class="overlay" onclick="closeOverlay(event, 'overlay-options')">
         <div class="bottom-sheet" onclick="event.stopPropagation()">
             <div class="drag-handle"></div>
             <h3 id="modal-food-name" class="sheet-title">ชื่อเมนู</h3>
             
             <div id="dynamic-options-area"></div>
-
+ 
             <div class="option-group animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
                 <div class="option-label">ระบุเพิ่มเติม <span style="color:var(--text-muted); font-size:0.9rem; font-weight:500;">(ไม่บังคับ)</span></div>
-                <textarea id="modal-note" class="custom-input" rows="2" placeholder="เช่น ไม่ใส่น้ำตาล, ไม่ปลาร้า, ไม่ถั่ว..."></textarea>
+                <textarea id="modal-note" class="custom-input" rows="2" placeholder="เช่น จำนวนพริก, ไม่ใส่น้ำตาล, ไม่ปลาร้า, ไม่ถั่ว..."></textarea>
             </div>
-
+ 
             <div class="modal-qty-wrapper animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
                 <div class="modal-qty-btn" onclick="changeModalQty(-1)"><i class="fas fa-minus"></i></div>
                 <div class="modal-qty-number" id="modal-qty-display">1</div>
                 <div class="modal-qty-btn" style="background:var(--primary-light); color:var(--primary);" onclick="changeModalQty(1)"><i class="fas fa-plus"></i></div>
             </div>
-
+ 
             <button class="btn-primary animate__animated animate__fadeInUp" style="animation-delay: 0.4s;" onclick="confirmAddToCart(event)">
                 <i class="fas fa-cart-plus" style="font-size:1.5rem;"></i> เพิ่มลงตะกร้า - <span id="modal-price-display">0</span> ฿
             </button>
         </div>
     </div>
-
+ 
     <div id="overlay-summary" class="overlay" onclick="closeOverlay(event, 'overlay-summary')">
         <div class="bottom-sheet" style="height: 90vh; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
             <div class="drag-handle"></div>
             <h3 class="sheet-title" style="margin-bottom:15px;">สรุปรายการที่สั่ง</h3>
             
             <div id="summary-list" style="flex-grow: 1; overflow-y: auto; padding: 10px 5px 20px 5px;"></div>
-
+ 
             <div style="padding-top: 25px; border-top: 2px dashed #cbd5e1; margin-top: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                     <span style="font-size: 1.3rem; color: var(--text-muted); font-weight:800;">ยอดรวมทั้งสิ้น</span>
@@ -568,7 +568,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div id="overlay-success" class="overlay">
         <div class="success-modal">
             <div class="check-icon-wrapper">
@@ -576,41 +576,39 @@
             </div>
             <h2 style="font-size: 2.2rem; margin-bottom: 15px; color:var(--text-main); font-weight: 800;">สั่งอาหารสำเร็จ!</h2>
             <p style="color: var(--text-muted); margin-bottom: 35px; font-size: 1.1rem; line-height:1.6; font-weight:500;">
-                ออเดอร์ถูกส่งตรงเข้าครัวแล้วครับ<br>รอรับความแซ่บซี๊ดดดด ได้เลย! 🌶️✨
+                ออเดอร์ถูกส่งตรงเข้าครัวแล้วครับ<br>รออาหารสักครู่นะครับ ถ้าเมนูไหนหมดเดี๋ยวทางร้านเดินมาแจ้งนะครับ🌶️✨
             </p>
             <button class="btn-primary" onclick="resetSystem(event)">
                 <i class="fas fa-redo"></i> กลับไปหน้าแรก
             </button>
         </div>
     </div>
-
+ 
     <script>
         /**
          * 1. DATABASE: ข้อมูลเมนูอาหาร (คงเดิม 100%)
          */
         const DB = {
             cat1: [
-                {id:101, n:'ตำป่า (จาน)', p:70, img: '1pa.jpg'},
-                {id:102, n:'ตำลาว (จาน)', p:50, img: '2tl.jpg'},
-                {id:103, n:'ตำไทยไข่เค็ม (จาน)', p:60, img: 'ttk.jpg'}, // ถ้ามีรูปให้ใส่ชื่อไฟล์แบบนี้นะครับ
-                {id:104, n:'ตำกุ้งสด, สุก (จาน)', p:80, img: 'ks.jpg'},
-                {id:105, n:'ตำหมูยอ (จาน)', p:80, img: 'tm.jpg'},
-                {id:106, n:'ตำซั่ว (จาน)', p:60, img: 'sua.jpg'},
-                {id:107, n:'ตำข้าวโพด (จาน)', p:80, img: 'cn.jpg'},
-                {id:108, n:'ตำตีนไก่ (จาน)', p:80, img: 'tk.jpg'},
-                {id:109, n:'ตำถั่ว (จาน)', p:50, img: 'tt.jpg'},
-                {id:110, n:'ตำแตง (จาน)', p:50, img: 'taeng.jpg'},
-                {id:111, n:'ตำซั่วแตง (จาน)', p:60, img: 'staeng.jpg'},
-                {id:112, n:'ตำด้องแด้ง (จาน)', p:80, img: 'dd.jpg'},
-                {id:112, n:'ตำซั่วหอยเชอรี่ (จาน)', p:70, img: 'hcr.jpg'},
-                {id:112, n:'ตำซั่วแคปหมู (จาน)', p:70, img: 'tskm.jpg'}
+                {id:101, n:'ตำป่า', p:70, img: '1pa.jpg'},
+                {id:102, n:'ตำลาว', p:50, img: '2tl.jpg'},
+                {id:103, n:'ตำไทยไข่เค็ม', p:60, img: 'ttk.jpg'}, // ถ้ามีรูปให้ใส่ชื่อไฟล์แบบนี้นะครับ
+                {id:104, n:'ตำกุ้งสด, สุก', p:80, img: 'ks.jpg'},
+                {id:105, n:'ตำหมูยอ', p:80, img: 'tm.jpg'},
+                {id:106, n:'ตำซั่ว', p:60, img: 'sua.jpg'},
+                {id:107, n:'ตำข้าวโพด', p:80, img: 'cn.jpg'},
+                {id:108, n:'ตำตีนไก่', p:80, img: 'tk.jpg'},
+                {id:109, n:'ตำถั่ว', p:50, img: 'tt.jpg'},
+                {id:110, n:'ตำแตง', p:50, img: 'taeng.jpg'},
+                {id:111, n:'ตำซั่วแตง', p:60, img: 'staeng.jpg'},
+                {id:112, n:'ตำด้องแด้ง', p:80, img: 'dd.jpg'}
                 ],
             cat2: [
-                {id:201, n:'น้ำยาป่า (จาน)', p:50, img: 'np.jpg'},
-                {id:202, n:'น้ำยากะทิ (จาน)', p:50, img: 'nkt.jpg'},
-                {id:203, n:'น้ำยาปู (จาน)', p:70, img: ''},
-                {id:204, n:'น้ำยาไก่ (จาน)', p:50, img: 'nk.jpg'},
-                {id:205, n:'น้ำยาแกงป่าปลาดุก (จาน)', p:50, img: ''}
+                {id:201, n:'น้ำยาป่า', p:50, img: 'np.jpg'},
+                {id:202, n:'น้ำยากะทิ', p:50, img: 'nkt.jpg'},
+                {id:203, n:'น้ำยาปู', p:70, img: ''},
+                {id:204, n:'น้ำยาไก่', p:50, img: 'nk.jpg'},
+                {id:205, n:'น้ำยาแกงป่าปลาดุก', p:50, img: ''}
                 
                 ],
             cat3: [
@@ -630,23 +628,23 @@
                 {id:502, n:'เส้นด้องแด้ง (เพิ่ม)', p:40, img: ''},
             ],
             cat6: [
-                {id:603, n:'เพิ่มน้ำยาปู (ถ้วย)', p:40, img: ''},
-                {id:201, n:'น้ำยาป่า (ถ้วย)', p:20, img: 'np.jpg'},
-                {id:202, n:'น้ำยากะทิ (ถ้วย)', p:20, img: 'nkt.jpg'},
-                {id:204, n:'น้ำยาไก่ (ถ้วย)', p:20, img: 'nk.jpg'},
-                {id:205, n:'น้ำยาแกงป่าปลาดุก (ถ้วย)', p:20, img: ''},
+                {id:603, n:'น้ำยาปู', p:40, img: ''},
+                {id:201, n:'น้ำยาป่า', p:20, img: 'np.jpg'},
+                {id:202, n:'น้ำยากะทิ', p:20, img: 'nkt.jpg'},
+                {id:204, n:'น้ำยาไก่', p:20, img: 'nk.jpg'},
+                {id:205, n:'น้ำยาแกงป่าปลาดุก', p:20, img: ''},
                 {id:205, n:'ตีนไก่เพิ่ม (3 ชิ้น)', p:20, img: ''}
             ]
             };
-
+ 
         /**
          * 2. STATE MANAGEMENT
          */
         let cart = [];
         let currentItem = null;
-        let selectedOptions = { type: 'ใส่จาน/ถ้วย', spicy: 'เผ็ดปกติ' };
+        let selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
         let modalTempQty = 1;
-
+ 
         /**
          * 3. INITIALIZATION & RENDER
          */
@@ -661,7 +659,7 @@
             // Intersection Observer สำหรับแอนิเมชันตอนเลื่อนหน้าจอ
             setupScrollAnimations();
         }
-
+ 
         function renderMenu(containerId, items, catLevel) {
     const container = document.getElementById(containerId);
     // iconMap คือไอคอนสำรองถ้าไม่มีรูปภาพ
@@ -683,7 +681,7 @@
         </div>
     `).join('');
 }
-
+ 
         // แอนิเมชันให้การ์ดค่อยๆ ลอยขึ้นมาเวลา Scroll ลง
         function setupScrollAnimations() {
             const observer = new IntersectionObserver((entries) => {
@@ -694,12 +692,12 @@
                     }
                 });
             }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-
+ 
             document.querySelectorAll('.food-card').forEach(card => {
                 observer.observe(card);
             });
         }
-
+ 
         /**
          * 4. UI INTERACTIONS
          */
@@ -716,7 +714,7 @@
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }
-
+ 
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('nav-cats');
             if (window.scrollY > 50) {
@@ -728,14 +726,14 @@
                 nav.style.boxShadow = 'none';
             }
         });
-
+ 
         function closeOverlay(e, id) {
             if(e.target.id === id) closeOverlayManual(id);
         }
         function closeOverlayManual(id) {
             document.getElementById(id).classList.remove('show');
         }
-
+ 
         /**
          * 5. MODAL & OPTIONS LOGIC
          */
@@ -743,19 +741,20 @@
             currentItem = { id, name, price, catLevel };
             document.getElementById('modal-food-name').innerText = name;
             document.getElementById('modal-note').value = '';
-            selectedOptions = { type: 'ใส่จาน/ถ้วย', spicy: 'เผ็ดปกติ' };
+            selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
             modalTempQty = 1; 
             updateModalQtyUI();
-
+ 
             const area = document.getElementById('dynamic-options-area');
             let html = '';
-
+ 
             if(catLevel === 1 || catLevel === 2) {
                 html += `
                 <div class="option-group animate__animated animate__fadeInUp">
                     <div class="option-label">รูปแบบการเสิร์ฟ <span class="required">จำเป็น</span></div>
                     <div class="chip-container">
-                        <div class="choice-chip selected" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่จาน/ถ้วย</div>
+                        <div class="choice-chip selected" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่จาน</div>
+                        <div class="choice-chip" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่ถ้วย</div>
                         <div class="choice-chip" onclick="selectChip(this, 'type')"><i class="fas fa-check-circle"></i>ใส่ถุงกลับบ้าน</div>
                     </div>
                 </div>`;
@@ -776,21 +775,21 @@
                 html = `
                 <div class="animate__animated animate__zoomIn" style="background:linear-gradient(135deg, #f8f9fa, #e9ecef); padding:25px; border-radius:24px; text-align:center; color:var(--text-muted); margin-bottom:25px; font-weight:600; border:1px dashed #cbd5e1;">
                     <i class="fas fa-info-circle" style="color:var(--accent); font-size:2rem; margin-bottom:15px; display:block;"></i>
-                    เมนูนี้อร่อยอยู่แล้ว<br>ไม่มีตัวเลือกเสริมเพิ่มเติมครับ
+                    ไม่มีตัวเลือกเสริมเพิ่มเติมครับ
                 </div>`;
             }
-
+ 
             area.innerHTML = html;
             document.getElementById('overlay-options').classList.add('show');
         }
-
+ 
         function selectChip(element, typeCategory) {
             const siblings = element.parentElement.querySelectorAll('.choice-chip');
             siblings.forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
             selectedOptions[typeCategory] = element.innerText.trim();
         }
-
+ 
         function changeModalQty(amount) {
             modalTempQty += amount;
             if(modalTempQty < 1) modalTempQty = 1; 
@@ -804,13 +803,13 @@
                 display.style.color = 'var(--primary-dark)';
             }, 150);
         }
-
+ 
         function updateModalQtyUI() {
             document.getElementById('modal-qty-display').innerText = modalTempQty;
             const totalPrice = currentItem.price * modalTempQty;
             document.getElementById('modal-price-display').innerText = totalPrice;
         }
-
+ 
         /**
          * 6. CART LOGIC
          */
@@ -824,7 +823,7 @@
             
             const uniqueKey = `${currentItem.id}-${optString}-${note}`;
             const existItem = cart.find(c => c.key === uniqueKey);
-
+ 
             if(existItem) {
                 existItem.qty += modalTempQty;
             } else {
@@ -833,17 +832,17 @@
                     price: currentItem.price, options: optString, note: note, qty: modalTempQty 
                 });
             }
-
+ 
             updateCartUI();
             closeOverlayManual('overlay-options');
             showToast(`เพิ่ม <b>${currentItem.name}</b> (${modalTempQty} ที่) เรียบร้อย 🎉`);
         }
-
+ 
         function updateCartUI() {
             const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
             const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             const cartFloat = document.getElementById('float-cart');
-
+ 
             if(totalQty > 0) {
                 cartFloat.classList.add('visible');
                 document.getElementById('cart-badge-count').innerText = totalQty;
@@ -857,7 +856,7 @@
                 closeOverlayManual('overlay-summary');
             }
         }
-
+ 
         function openSummary(e) {
             createRipple(e);
             setTimeout(() => {
@@ -865,7 +864,7 @@
                 document.getElementById('overlay-summary').classList.add('show');
             }, 100);
         }
-
+ 
         function renderSummaryList() {
             const list = document.getElementById('summary-list');
             let total = 0;
@@ -880,7 +879,7 @@
                 document.getElementById('summary-total-price').innerText = `0 ฿`;
                 return;
             }
-
+ 
             list.innerHTML = cart.map((item, index) => {
                 total += (item.price * item.qty);
                 const noteHtml = item.note ? `<div style="color:var(--accent); background:#FFF9F0; padding:8px 12px; border-radius:12px; display:inline-block; margin-top:10px; font-size:0.9rem; border:1px solid #ffe8cc;"><i class="fas fa-pen" style="margin-right:5px;"></i>${item.note}</div>` : '';
@@ -904,10 +903,10 @@
                     </div>
                 </div>`;
             }).join('');
-
+ 
             document.getElementById('summary-total-price').innerText = `${total} ฿`;
         }
-
+ 
         function changeQty(index, amount) {
             cart[index].qty += amount;
             if(cart[index].qty <= 0) {
@@ -917,20 +916,20 @@
             updateCartUI();
             renderSummaryList();
         }
-
+ 
         /**
          * 7. ORDER SUBMISSION
          */
         function submitOrder(e) {
     if(cart.length === 0) return;
     createRipple(e);
-
+ 
     const btn = e.target.closest('.btn-primary');
     const originalHTML = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังส่งเข้าห้องครัว...';
     btn.style.opacity = '0.9';
     btn.style.pointerEvents = 'none';
-
+ 
     const tableNum = document.getElementById('table-number').innerText;
     const orderData = {
         table: tableNum,
@@ -939,7 +938,7 @@
         status: 'new',
         timestamp: Date.now()
     };
-
+ 
     firebase.database().ref('orders').push(orderData)
         .then(() => {
             const successMsg = document.querySelector('#overlay-success .success-modal p');
@@ -959,7 +958,7 @@
             alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
         });
 }
-
+ 
         function resetSystem(e) {
             createRipple(e);
             setTimeout(() => {
@@ -969,7 +968,7 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }, 300);
         }
-
+ 
         /**
          * 8. MICRO-INTERACTIONS
          */
@@ -983,7 +982,7 @@
                 if(container.contains(toast)) container.removeChild(toast);
             }, 3500);
         }
-
+ 
         function createRipple(event) {
             const button = event.currentTarget;
             const circle = document.createElement('span');
