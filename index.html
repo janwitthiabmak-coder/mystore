@@ -449,7 +449,7 @@
         /* จุดสำคัญ: Badge แสดงเลขโต๊ะ */
         .table-badge { margin-top: 15px; background: white; color: var(--primary-dark); padding: 8px 25px; border-radius: var(--radius-full); font-size: 1.1rem; font-weight: 800; box-shadow: 0 10px 20px rgba(239, 35, 60, 0.15); border: 2px solid var(--primary); display: flex; align-items: center; gap: 10px; }
         #table-number { color: var(--primary); font-size: 1.3rem; }
- 
+
         /* ── Announcement Banner ── */
         .announcement-banner {
             display: none;
@@ -470,7 +470,7 @@
         .announcement-banner i { color: var(--accent); font-size: 1.1rem; margin-top: 3px; flex-shrink: 0; }
         .announcement-banner span { font-weight: 600; font-size: 0.95rem; color: #7a5c00; line-height: 1.6; }
         @keyframes fadeInDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
- 
+
         /* ── Sold-out card ── */
         .food-card.sold-out {
             cursor: default !important;
@@ -483,7 +483,7 @@
         }
         .food-card.sold-out:hover::before { left: -100% !important; }
         .food-card.sold-out .btn-add-icon { display: none; }
- 
+
         .sold-out-badge {
             position: absolute; top: 7px; left: 7px;
             background: linear-gradient(135deg, #ef233c, #d90429);
@@ -519,13 +519,13 @@
             <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number" style="font-size:1.4rem; color:var(--primary);">1</span>
         </div>
     </header>
- 
+
     <!-- ประกาศจากพนักงาน (แสดงเมื่อมีข้อความ) -->
     <div id="announcement-banner" class="announcement-banner">
         <i class="fas fa-bullhorn"></i>
         <span id="announcement-text"></span>
     </div>
- 
+
     <nav class="nav-categories animate__animated animate__fadeIn" id="nav-cats">
         <div class="cat-tab active" onclick="scrollToCategory('cat-1', this)"><i class="fas fa-pepper-hot"></i> ส้มตำ</div>
         <div class="cat-tab" onclick="scrollToCategory('cat-2', this)"><i class="fas fa-bowl-food"></i> ขนมจีนน้ำยา</div>
@@ -698,9 +698,9 @@
         let currentItem = null;
         let selectedOptions = { type: 'ใส่จาน', spicy: 'เผ็ดปกติ' };
         let modalTempQty = 1;
- 
-        // ── Settings จาก Firebase (soldOut, extraItems, announcement) ──
-        let appSettings = { soldOut: {}, extraItems: {}, announcement: '' };
+
+        // ── Settings จาก Firebase (soldOut, extraItems, overrides, announcement) ──
+        let appSettings = { soldOut: {}, extraItems: {}, overrides: {}, announcement: '' };
  
         /**
          * 3. INITIALIZATION & RENDER
@@ -713,14 +713,14 @@
                     ? Object.values(appSettings.extraItems[catKey]) : [];
                 return [...base, ...extra];
             }
- 
+
             renderMenu('grid-cat-1', mergedCat('cat1'), 1);
             renderMenu('grid-cat-2', mergedCat('cat2'), 2);
             renderMenu('grid-cat-3', mergedCat('cat3'), 3);
             renderMenu('grid-cat-4', mergedCat('cat4'), 4);
             renderMenu('grid-cat-5', mergedCat('cat5'), 3);
             renderMenu('grid-cat-6', mergedCat('cat6'), 2);
- 
+
             // แสดง/ซ่อน Announcement Banner
             const banner = document.getElementById('announcement-banner');
             const annText = (appSettings.announcement || '').trim();
@@ -730,24 +730,45 @@
             } else {
                 banner.classList.remove('visible');
             }
- 
+
             // Intersection Observer สำหรับแอนิเมชันตอนเลื่อนหน้าจอ
             setupScrollAnimations();
         }
  
+        function applyOverride(item) {
+            const ov = appSettings.overrides && appSettings.overrides[item.id];
+            if (!ov) return { ...item };
+            return {
+                ...item,
+                n:       ov.n       !== undefined ? ov.n       : item.n,
+                p:       ov.p       !== undefined ? ov.p       : item.p,
+                imgData: ov.imgData || null,
+                img:     ov.img     !== undefined ? ov.img     : item.img,
+            };
+        }
+
         function renderMenu(containerId, items, catLevel) {
     const container = document.getElementById(containerId);
     const iconMap = ['fas fa-mortar-pestle', 'fas fa-bowl-food', 'fas fa-bacon', 'fas fa-wine-glass-side'];
     
-    container.innerHTML = items.map(item => {
+    container.innerHTML = items.map(rawItem => {
+        const item = applyOverride(rawItem);
         const isSoldOut = appSettings.soldOut && appSettings.soldOut[item.id] === true;
+
+        // Decide image source: base64 override > images folder > icon
+        let imgHtml;
+        if (item.imgData) {
+            imgHtml = `<img src="${item.imgData}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">`;
+        } else if (item.img) {
+            imgHtml = `<img src="images/${item.img}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">`;
+        } else {
+            imgHtml = `<i class="${iconMap[catLevel-1]}"></i>`;
+        }
+
         return `
-        <div class="food-card${isSoldOut ? ' sold-out' : ''}" ${isSoldOut ? '' : `onclick="openItemModal(${item.id}, ${catLevel}, ${item.p}, '${item.n}')"`}>
+        <div class="food-card${isSoldOut ? ' sold-out' : ''}" ${isSoldOut ? '' : `onclick="openItemModal(${item.id}, ${catLevel}, ${item.p}, '${item.n.replace(/'/g,"\\'")}')"`}>
             <div class="food-img-wrapper">
-                ${item.img 
-                    ? `<img src="images/${item.img}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">` 
-                    : `<i class="${iconMap[catLevel-1]}"></i>`
-                }
+                ${imgHtml}
                 ${isSoldOut ? '<div class="sold-out-badge">หมด</div>' : ''}
             </div>
             <div class="food-info">
@@ -842,7 +863,7 @@
                     <div class="option-group animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
                         <div class="option-label">ระดับความแซ่บซี๊ด <span class="required">จำเป็น</span></div>
                         <div class="chip-container">
-                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>ไม่ใส่พริกเลย</div>
+                            <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>ไม่เผ็ด</div>
                             <div class="choice-chip" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดน้อย (อนุบาล)</div>
                             <div class="choice-chip selected" onclick="selectChip(this, 'spicy')"><i class="fas fa-check-circle"></i>เผ็ดปกติ (มาตรฐาน)</div>
                             <div class="choice-chip" onclick="selectChip(this, 'spicy')" style="color:var(--primary); border-color:var(--primary-light);"><i class="fas fa-fire"></i>เผ็ดมาก (ตายไม่เอาเรื่อง)</div>
@@ -1098,16 +1119,17 @@
     appId: "1:662235011563:web:389e8320d9d16e9a6121ae"
 };
 firebase.initializeApp(firebaseConfig);
- 
+
         window.onload = function() {
             getTableNumber();
- 
+
             // ฟัง settings จาก Firebase แบบ realtime
             // เมื่อพนักงานแก้ข้อมูลในหน้า admin.html จะอัพเดทหน้านี้ทันที
             firebase.database().ref('settings').on('value', snap => {
                 const data = snap.val() || {};
                 appSettings.soldOut    = data.soldOut    || {};
                 appSettings.extraItems = data.extraItems || {};
+                appSettings.overrides  = data.overrides  || {};
                 appSettings.announcement = data.announcement || '';
                 initApp();
             });
