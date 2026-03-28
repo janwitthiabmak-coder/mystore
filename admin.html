@@ -356,11 +356,59 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
 .empty-s{text-align:center;padding:34px 20px;color:var(--muted);}
 .empty-s i{font-size:2.2rem;margin-bottom:10px;display:block;opacity:.33;}
 .empty-s p{font-size:.91rem;font-weight:600;}
-@media(max-width:480px){
-  .lbox{padding:36px 20px 28px;}
-  .tc{padding:13px;}
-  .egrid{grid-template-columns:1fr;}
+/* ── DATABASE TAB ── */
+.db-sum-card {
+  background:#fff; border:1.5px solid var(--bdr); border-radius:14px;
+  padding:14px 12px; text-align:center;
 }
+.db-sum-num { font-size:1.6rem; font-weight:800; line-height:1.1; }
+.db-sum-lbl { font-size:.72rem; color:var(--muted); margin-top:3px; font-weight:600; }
+
+.db-order-row {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:10px 0; border-bottom:1px solid #f1f5f9;
+}
+.db-order-row:last-child { border-bottom:none; }
+.db-order-info { flex:1; min-width:0; }
+.db-tbl { font-weight:800; font-size:.9rem; }
+.db-items-txt { font-size:.75rem; color:var(--muted); margin-top:2px; line-height:1.6; }
+.db-status {
+  font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:5px;
+  display:inline-block; margin-top:4px;
+}
+.db-status.new    { background:#fff1f2; color:#e11d48; }
+.db-status.cooking{ background:#fffbeb; color:#d97706; }
+.db-status.done   { background:#f0fdf4; color:#16a34a; }
+.db-price { font-weight:700; font-size:.88rem; color:#16a34a; white-space:nowrap; }
+.db-del-btn {
+  background:none; border:1.5px solid var(--bdr); color:#cbd5e1;
+  cursor:pointer; font-size:.8rem; padding:6px 9px; border-radius:8px;
+  transition:all .2s; flex-shrink:0;
+}
+.db-del-btn:hover { color:var(--primary); border-color:rgba(239,35,60,.4); background:#fff0f0; }
+
+.db-hist-day {
+  border:1.5px solid var(--bdr); border-radius:12px;
+  margin-bottom:10px; overflow:hidden;
+}
+.db-hist-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 14px; background:#fafaf9; cursor:pointer; gap:10px;
+}
+.db-hist-head-left { font-weight:700; font-size:.88rem; display:flex; align-items:center; gap:8px; }
+.db-hist-head-right { display:flex; align-items:center; gap:10px; }
+.db-hist-total { font-weight:800; color:#16a34a; font-size:.9rem; }
+.db-hist-body { display:none; padding:10px 14px; }
+.db-hist-body.open { display:block; }
+
+.db-settings-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; }
+.db-settings-item { background:#f8faff; border-radius:9px; padding:9px 12px; font-size:.78rem; }
+.db-settings-item strong { display:block; color:var(--indigo); font-size:.72rem; margin-bottom:3px; font-weight:800; text-transform:uppercase; letter-spacing:.03em; }
+
+.db-raw { font-family:monospace; font-size:.75rem; background:#f8faff; border-radius:9px; padding:12px; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:#3730a3; border:1px solid #e0e7ff; }
+
+@media(max-width:480px){ #db-summary{ grid-template-columns:repeat(3,1fr); } }
+
 </style>
 </head>
 <body>
@@ -410,6 +458,7 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
     <div class="tab on" onclick="switchTab('ann',this)"><i class="fas fa-bullhorn"></i> ประกาศ</div>
     <div class="tab" onclick="switchTab('menu',this)"><i class="fas fa-utensils"></i> เมนูอาหาร</div>
     <div class="tab" onclick="switchTab('cfg',this)"><i class="fas fa-cog"></i> ตั้งค่า</div>
+    <div class="tab" onclick="switchTab('db',this)"><i class="fas fa-database"></i> Database</div>
   </div>
 
   <!-- ── ANNOUNCEMENT TAB ── -->
@@ -494,7 +543,70 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
       </p>
     </div>
   </div>
-</div>
+
+  <!-- ── DATABASE TAB ── -->
+  <div class="tc" id="tab-db">
+    <div class="shd">
+      <h2><i class="fas fa-database" style="color:var(--indigo)"></i> Database</h2>
+      <p>ดูและจัดการข้อมูลทั้งหมดใน Firebase Realtime Database โดยตรง</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div id="db-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;"></div>
+
+    <!-- Section: Current Orders -->
+    <div class="sc" style="padding:0;overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1.5px solid var(--bdr);cursor:pointer;" onclick="togDbSection('db-orders-body')">
+        <h3 style="margin:0;font-size:.95rem;"><i class="fas fa-receipt" style="color:#d97706;margin-right:6px;"></i> ออเดอร์ปัจจุบัน <span id="db-order-count" style="font-size:.78rem;color:var(--muted);font-weight:500;"></span></h3>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="bclr" style="padding:6px 12px;font-size:.78rem;" onclick="event.stopPropagation();confirmClearOrders()"><i class="fas fa-trash"></i> ล้างทั้งหมด</button>
+          <i class="fas fa-chevron-down" style="color:var(--muted);font-size:.8rem;" id="ic-db-orders-body"></i>
+        </div>
+      </div>
+      <div id="db-orders-body" style="padding:14px 18px;">
+        <div style="color:var(--muted);text-align:center;padding:20px;font-size:.85rem;">⏳ กำลังโหลด...</div>
+      </div>
+    </div>
+
+    <!-- Section: History -->
+    <div class="sc" style="padding:0;overflow:hidden;margin-top:13px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1.5px solid var(--bdr);cursor:pointer;" onclick="togDbSection('db-history-body')">
+        <h3 style="margin:0;font-size:.95rem;"><i class="fas fa-clock-rotate-left" style="color:#6366f1;margin-right:6px;"></i> ประวัติรายรับ <span id="db-hist-count" style="font-size:.78rem;color:var(--muted);font-weight:500;"></span></h3>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="bclr" style="padding:6px 12px;font-size:.78rem;" onclick="event.stopPropagation();confirmClearHistory()"><i class="fas fa-trash"></i> ล้างประวัติ</button>
+          <i class="fas fa-chevron-down" style="color:var(--muted);font-size:.8rem;" id="ic-db-history-body"></i>
+        </div>
+      </div>
+      <div id="db-history-body" style="padding:14px 18px;">
+        <div style="color:var(--muted);text-align:center;padding:20px;font-size:.85rem;">⏳ กำลังโหลด...</div>
+      </div>
+    </div>
+
+    <!-- Section: Settings snapshot -->
+    <div class="sc" style="padding:0;overflow:hidden;margin-top:13px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1.5px solid var(--bdr);cursor:pointer;" onclick="togDbSection('db-settings-body')">
+        <h3 style="margin:0;font-size:.95rem;"><i class="fas fa-sliders" style="color:#16a34a;margin-right:6px;"></i> Settings Snapshot</h3>
+        <i class="fas fa-chevron-down" style="color:var(--muted);font-size:.8rem;" id="ic-db-settings-body"></i>
+      </div>
+      <div id="db-settings-body" style="padding:14px 18px;display:none;">
+        <div id="db-settings-content" style="color:var(--muted);text-align:center;padding:20px;font-size:.85rem;">⏳ กำลังโหลด...</div>
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="sc" style="border:2px solid rgba(239,35,60,.25);background:#fff9f9;margin-top:18px;">
+      <h3><i class="fas fa-triangle-exclamation" style="color:var(--primary);"></i> Danger Zone</h3>
+      <p>ล้างข้อมูลทั้งหมด — ใช้เฉพาะกรณีฉุกเฉินหรือรีเซ็ตระบบ</p>
+      <div class="brow">
+        <button class="bsave" style="background:linear-gradient(135deg,#dc2626,#991b1b);box-shadow:0 7px 18px rgba(220,38,38,.3);" onclick="confirmNukeAll()">
+          <i class="fas fa-bomb"></i> ล้างข้อมูลทั้งหมด (orders + history)
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- end admin-screen -->
 
 <!-- Toast -->
 <div class="toasts" id="toasts"></div>
@@ -622,6 +734,7 @@ function switchTab(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));
   el.classList.add('on'); document.getElementById('tab-'+id).classList.add('on');
+  if(id==='db') initDbTab();
 }
 
 /* ══ ANNOUNCEMENT ══ */
@@ -939,6 +1052,235 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 
 /* INIT — load PIN pre-login */
 db.ref('settings/adminPin').once('value').then(s=>{if(s.val())S.adminPin=s.val();});
+
+/* ══════════════════════════════════
+   DATABASE TAB
+══════════════════════════════════ */
+let dbListening = false;
+
+function initDbTab() {
+  if (dbListening) return;
+  dbListening = true;
+
+  // Real-time listener for orders
+  db.ref('orders').on('value', snap => {
+    const orders = snap.val() || {};
+    renderDbOrders(orders);
+    updateDbSummary(orders);
+  });
+
+  // One-time load for history (refresh on demand)
+  loadDbHistory();
+
+  // Settings snapshot
+  db.ref('settings').once('value').then(snap => renderDbSettings(snap.val() || {}));
+}
+
+function updateDbSummary(orders) {
+  const entries = Object.values(orders);
+  const total = entries.reduce((s,o) => s+(o.total||0), 0);
+  const byStatus = { new:0, cooking:0, done:0 };
+  entries.forEach(o => { if(byStatus[o.status]!==undefined) byStatus[o.status]++; });
+
+  document.getElementById('db-summary').innerHTML = `
+    <div class="db-sum-card">
+      <div class="db-sum-num" style="color:#e11d48;">${byStatus.new}</div>
+      <div class="db-sum-lbl">รอรับ</div>
+    </div>
+    <div class="db-sum-card">
+      <div class="db-sum-num" style="color:#d97706;">${byStatus.cooking}</div>
+      <div class="db-sum-lbl">กำลังทำ</div>
+    </div>
+    <div class="db-sum-card">
+      <div class="db-sum-num" style="color:#16a34a;">${byStatus.done}</div>
+      <div class="db-sum-lbl">เสิร์ฟแล้ว / ฿${total}</div>
+    </div>`;
+
+  const cnt = entries.length;
+  document.getElementById('db-order-count').textContent = cnt ? `(${cnt} รายการ)` : '(ว่าง)';
+}
+
+function renderDbOrders(orders) {
+  const body = document.getElementById('db-orders-body');
+  const entries = Object.entries(orders).sort((a,b)=>(b[1].timestamp||0)-(a[1].timestamp||0));
+
+  if (!entries.length) {
+    body.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;font-size:.85rem;">📭 ไม่มีออเดอร์ในขณะนี้</div>';
+    return;
+  }
+
+  body.innerHTML = entries.map(([key, o]) => {
+    const itemsTxt = (o.items||[]).map(i=>`${i.name}×${i.qty}`).join(', ');
+    const ts = o.timestamp ? new Date(o.timestamp).toLocaleString('th-TH',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}) : '';
+    const statusMap = {new:'ใหม่',cooking:'ทำอยู่',done:'เสิร์ฟแล้ว'};
+    return `<div class="db-order-row">
+      <div class="db-order-info">
+        <div class="db-tbl">โต๊ะ ${o.table}</div>
+        <div class="db-items-txt">${itemsTxt}</div>
+        ${ts ? `<div style="font-size:.7rem;color:#b0b8c8;margin-top:2px;">🕐 ${ts}</div>` : ''}
+        <span class="db-status ${o.status}">${statusMap[o.status]||o.status}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="db-price">฿${o.total}</div>
+        <button class="db-del-btn" onclick="confirmDelOrder('${key}','${o.table}')"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadDbHistory() {
+  const body = document.getElementById('db-history-body');
+  body.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;font-size:.85rem;">⏳ กำลังโหลด...</div>';
+  const snap = await db.ref('history').once('value');
+  renderDbHistory(snap.val());
+}
+
+function renderDbHistory(histData) {
+  const body = document.getElementById('db-history-body');
+  if (!histData) {
+    body.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;font-size:.85rem;">📭 ยังไม่มีประวัติ</div>';
+    document.getElementById('db-hist-count').textContent = '';
+    return;
+  }
+
+  const days = Object.entries(histData).sort((a,b)=>b[0].localeCompare(a[0]));
+  document.getElementById('db-hist-count').textContent = `(${days.length} วัน)`;
+
+  body.innerHTML = days.map(([dateKey, dayData]) => {
+    const summary = dayData.summary || {};
+    const orders  = dayData.orders  || {};
+    const label   = summary.dateLabel || dateKey;
+    const total   = summary.total || 0;
+    const count   = summary.orderCount || Object.keys(orders).length;
+
+    const ordersHtml = Object.entries(orders)
+      .sort((a,b)=>(b[1].timestamp||0)-(a[1].timestamp||0))
+      .map(([, o]) => {
+        const itemsTxt = (o.items||[]).map(i=>`${i.name}×${i.qty}`).join(', ');
+        return `<div class="db-order-row">
+          <div class="db-order-info">
+            <div class="db-tbl">โต๊ะ ${o.table}</div>
+            <div class="db-items-txt">${itemsTxt}</div>
+          </div>
+          <div class="db-price">฿${o.total}</div>
+        </div>`;
+      }).join('');
+
+    return `<div class="db-hist-day">
+      <div class="db-hist-head" onclick="togHistDay('${dateKey}')">
+        <div class="db-hist-head-left">📅 ${label}</div>
+        <div class="db-hist-head-right">
+          <span style="font-size:.75rem;color:var(--muted);">${count} ออเดอร์</span>
+          <span class="db-hist-total">฿${total.toLocaleString()}</span>
+          <button class="db-del-btn" onclick="event.stopPropagation();confirmDelHistDay('${dateKey}','${label}')"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+      <div class="db-hist-body" id="dbhb-${dateKey}">${ordersHtml||'<div style="color:var(--muted);font-size:.82rem;padding:8px 0;">ไม่มีรายละเอียด</div>'}</div>
+    </div>`;
+  }).join('');
+}
+
+function togHistDay(dateKey) {
+  const el = document.getElementById('dbhb-'+dateKey);
+  if (el) el.classList.toggle('open');
+}
+
+function renderDbSettings(settings) {
+  const soldOut  = settings.soldOut  || {};
+  const extra    = settings.extraItems || {};
+  const overrides= settings.overrides  || {};
+  const soldKeys = Object.entries(soldOut).filter(([,v])=>v===true).map(([k])=>k);
+  const extraCnt = Object.values(extra).reduce((s,c)=>s+Object.keys(c).length,0);
+  const ovCnt    = Object.keys(overrides).length;
+
+  document.getElementById('db-settings-content').innerHTML = `
+    <div class="db-settings-grid">
+      <div class="db-settings-item"><strong>Admin PIN</strong>${settings.adminPin||'1234'}</div>
+      <div class="db-settings-item"><strong>หมดชั่วคราว</strong>${soldKeys.length} รายการ</div>
+      <div class="db-settings-item"><strong>เมนูที่เพิ่ม</strong>${extraCnt} รายการ</div>
+      <div class="db-settings-item"><strong>Override</strong>${ovCnt} รายการ</div>
+      <div class="db-settings-item"><strong>ประกาศ</strong>${settings.announcement ? '✅ มี' : '—'}</div>
+      <div class="db-settings-item"><strong>Last Reset</strong>${settings.lastResetDate||'—'}</div>
+    </div>
+    ${soldKeys.length ? `<div style="margin-top:10px;font-size:.78rem;color:var(--muted);">หมดชั่วคราว: ${soldKeys.join(', ')}</div>` : ''}
+    <div style="margin-top:12px;">
+      <button class="bclr" style="font-size:.78rem;padding:7px 14px;" onclick="togDbRaw()"><i class="fas fa-code"></i> ดู Raw JSON</button>
+    </div>
+    <div id="db-settings-raw" style="display:none;margin-top:10px;">
+      <div class="db-raw">${esc(JSON.stringify(settings,null,2))}</div>
+    </div>`;
+}
+
+function togDbRaw() {
+  const el = document.getElementById('db-settings-raw');
+  if (el) el.style.display = el.style.display==='none' ? '' : 'none';
+}
+
+/* ── Toggle section collapse ── */
+function togDbSection(id) {
+  const el = document.getElementById(id);
+  const ic = document.getElementById('ic-'+id);
+  if (!el) return;
+  const isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? '' : 'none';
+  if (ic) ic.style.transform = isHidden ? 'rotate(180deg)' : '';
+}
+
+/* ── Confirm actions ── */
+function confirmDelOrder(key, tbl) {
+  document.getElementById('cemoji').textContent='🗑️';
+  document.getElementById('ctitle').textContent=`ลบออเดอร์ โต๊ะ ${tbl}`;
+  document.getElementById('csub').textContent='ลบออเดอร์นี้ออกจากระบบถาวร?';
+  document.getElementById('cok').onclick=()=>{
+    db.ref('orders/'+key).remove().then(()=>{toast('✅ ลบออเดอร์แล้ว');closeC();});
+  };
+  document.getElementById('conf-ov').classList.add('show');
+}
+
+function confirmClearOrders() {
+  document.getElementById('cemoji').textContent='🗑️';
+  document.getElementById('ctitle').textContent='ล้างออเดอร์ทั้งหมด?';
+  document.getElementById('csub').textContent='ออเดอร์ทุกรายการในระบบจะถูกลบถาวร (ไม่บันทึกลงประวัติ)';
+  document.getElementById('cok').onclick=()=>{
+    db.ref('orders').remove().then(()=>{toast('✅ ล้างออเดอร์ทั้งหมดแล้ว');closeC();});
+  };
+  document.getElementById('conf-ov').classList.add('show');
+}
+
+function confirmDelHistDay(dateKey, label) {
+  document.getElementById('cemoji').textContent='📅';
+  document.getElementById('ctitle').textContent=`ลบประวัติ: ${label}`;
+  document.getElementById('csub').textContent='ข้อมูลรายรับของวันนี้จะถูกลบถาวร';
+  document.getElementById('cok').onclick=()=>{
+    db.ref('history/'+dateKey).remove().then(()=>{
+      toast('✅ ลบประวัติแล้ว'); closeC(); loadDbHistory();
+    });
+  };
+  document.getElementById('conf-ov').classList.add('show');
+}
+
+function confirmClearHistory() {
+  document.getElementById('cemoji').textContent='🗑️';
+  document.getElementById('ctitle').textContent='ล้างประวัติทั้งหมด?';
+  document.getElementById('csub').textContent='ประวัติรายรับทุกวันจะถูกลบถาวร ไม่สามารถกู้คืนได้';
+  document.getElementById('cok').onclick=()=>{
+    db.ref('history').remove().then(()=>{
+      toast('✅ ล้างประวัติทั้งหมดแล้ว'); closeC(); loadDbHistory();
+    });
+  };
+  document.getElementById('conf-ov').classList.add('show');
+}
+
+function confirmNukeAll() {
+  document.getElementById('cemoji').textContent='💣';
+  document.getElementById('ctitle').textContent='ล้างข้อมูลทั้งหมด!';
+  document.getElementById('csub').textContent='orders + history จะถูกลบหมด — ใช้เฉพาะกรณีรีเซ็ตระบบ\nไม่สามารถกู้คืนได้เด็ดขาด!';
+  document.getElementById('cok').onclick=()=>{
+    Promise.all([db.ref('orders').remove(), db.ref('history').remove()])
+      .then(()=>{toast('💥 ล้างข้อมูลทั้งหมดแล้ว');closeC();loadDbHistory();});
+  };
+  document.getElementById('conf-ov').classList.add('show');
+}
 </script>
 </body>
 </html>
