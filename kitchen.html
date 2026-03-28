@@ -12,6 +12,7 @@
   * { margin:0; padding:0; box-sizing:border-box; font-family:'Prompt',sans-serif; }
   body { background:#f5ebeb; color:#1c1917; min-height:100vh; }
 
+  /* ── Header ── */
   .header {
     background:#ecd2d2; border-bottom:1px solid #e7e5e4;
     padding:14px 24px;
@@ -30,9 +31,23 @@
     background:#22c55e; animation:pulse 1.5s infinite;
   }
   .header-title { font-size:1rem; font-weight:700; }
-  .header-sub { font-size:0.80rem; color:#000000; margin-top:1px; }
-  .clock { font-size:1rem; color:#000000; font-weight:500; font-variant-numeric:tabular-nums; }
+  .header-sub { font-size:0.80rem; color:#000; margin-top:1px; }
+  .clock { font-size:1rem; color:#000; font-weight:500; font-variant-numeric:tabular-nums; }
 
+  /* ── Tab bar ── */
+  .tab-bar {
+    display:flex; background:#e8d5d5; border-bottom:2px solid #dcc0c0; padding:0 24px;
+  }
+  .tab-btn {
+    padding:10px 22px; font-size:0.88rem; font-weight:600;
+    border:none; background:transparent; cursor:pointer;
+    color:#78716c; font-family:'Prompt',sans-serif;
+    border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.2s;
+  }
+  .tab-btn.active { color:#e11d48; border-bottom-color:#e11d48; }
+  .tab-btn:hover:not(.active) { color:#57534e; background:rgba(0,0,0,0.04); }
+
+  /* ── Stats ── */
   .stats {
     display:flex; gap:10px; padding:16px 24px;
     border-bottom:1px solid #e7e5e4; background:#fff; overflow-x:auto;
@@ -50,8 +65,8 @@
   .stat-box.s-total .stat-num { color:#1c1917; font-size:1.2rem; }
   .stat-label { font-size:0.7rem; color:#78716c; margin-top:2px; font-weight:500; }
 
+  /* ── Board ── */
   .board { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; padding:20px 24px 40px; max-width:1300px; margin:0 auto; }
-
   .col-head { display:flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:600; color:#78716c; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px; }
   .col-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
   .col-count { margin-left:auto; background:#e7e5e4; font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:99px; color:#57534e; }
@@ -60,7 +75,7 @@
   .order-card:hover { box-shadow:0 4px 12px rgba(0,0,0,0.07); }
   .col-new  .order-card { border-left-color:#e11d48; }
   .col-cook .order-card { border-left-color:#d97706; }
-  .col-done .order-card { border-left-color:#16a34a; opacity:0.65; }
+  .col-done .order-card { border-left-color:#16a34a; opacity:0.72; }
 
   .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
   .table-num { font-size:1rem; font-weight:700; }
@@ -90,13 +105,79 @@
   .btn-done:hover { background:#15803d; }
   .btn-del { flex:0; padding:9px 12px; background:#f5f5f4; color:#a8a29e; border:1px solid #e7e5e4; }
   .btn-del:hover { color:#e11d48; border-color:#fecdd3; background:#fff1f2; }
+  .btn-del-done { flex:1; font-size:0.82rem; background:#f5f5f4; color:#78716c; border:1px solid #e7e5e4; }
+  .btn-del-done:hover { color:#e11d48; border-color:#fecdd3; background:#fff1f2; }
 
   .empty { border:1px dashed #d6d3d1; border-radius:12px; padding:32px 16px; text-align:center; color:#a8a29e; font-size:0.85rem; }
 
+  /* ── Toast ── */
   .toast-wrap { position:fixed; top:70px; right:20px; z-index:999; pointer-events:none; }
   .toast { background:#fff; border:1px solid #e7e5e4; border-left:4px solid #e11d48; border-radius:10px; padding:12px 16px; margin-bottom:8px; display:flex; gap:10px; align-items:flex-start; box-shadow:0 4px 16px rgba(0,0,0,0.1); animation:slideIn 0.35s cubic-bezier(0.34,1.56,0.64,1); min-width:240px; }
   .toast-title { font-size:0.88rem; font-weight:600; }
   .toast-sub { font-size:0.75rem; color:#78716c; margin-top:2px; }
+
+  /* ── Reset banner ── */
+  .reset-banner {
+    display:none; background:#fffbeb; border:1px solid #fde68a;
+    border-radius:10px; margin:14px 24px 0; padding:12px 18px;
+    font-size:0.85rem; color:#92400e; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .reset-banner.show { display:flex; }
+  .reset-btn { margin-left:auto; background:#d97706; color:#fff; border:none; padding:8px 18px; border-radius:8px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:'Prompt',sans-serif; white-space:nowrap; }
+
+  /* ── History ── */
+  #panel-history { display:none; padding:20px 24px 60px; max-width:900px; margin:0 auto; }
+  #panel-history.active { display:block; }
+
+  .history-day { background:#fff; border:1px solid #e7e5e4; border-radius:14px; margin-bottom:18px; overflow:hidden; }
+  .history-day-head {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 18px; background:#fafaf9; border-bottom:1px solid #f0efee; cursor:pointer;
+  }
+  .history-date { font-size:0.95rem; font-weight:700; color:#1c1917; }
+  .history-summary { display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+  .history-badge { font-size:0.78rem; font-weight:600; padding:4px 10px; border-radius:99px; }
+  .h-orders { background:#eff6ff; color:#1d4ed8; }
+  .h-total  { background:#f0fdf4; color:#15803d; }
+  .history-chevron { font-size:0.8rem; color:#a8a29e; transition:transform 0.25s; margin-left:4px; }
+  .history-day.open .history-chevron { transform:rotate(180deg); }
+
+  .history-orders { display:none; padding:12px 18px 16px; }
+  .history-day.open .history-orders { display:block; }
+
+  .h-order-row {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0; border-bottom:1px solid #f5f5f4; font-size:0.85rem;
+  }
+  .h-order-row:last-child { border-bottom:none; }
+  .h-table { font-weight:700; }
+  .h-items { color:#78716c; font-size:0.78rem; margin-top:3px; }
+  .h-price { font-weight:700; color:#16a34a; white-space:nowrap; margin-left:12px; }
+
+  .history-empty { text-align:center; padding:60px 20px; color:#a8a29e; font-size:0.9rem; line-height:1.8; }
+
+  /* ── Popup ── */
+  .popup-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.4);
+    z-index:600; display:flex; align-items:flex-end; justify-content:center;
+    opacity:0; visibility:hidden; transition:opacity 0.3s, visibility 0.3s;
+  }
+  .popup-overlay.show { opacity:1; visibility:visible; }
+  .popup-sheet {
+    background:#fff; width:100%; max-width:460px; border-radius:22px 22px 0 0;
+    padding:10px 24px 40px; transform:translateY(110%);
+    transition:transform 0.42s cubic-bezier(0.34,1.4,0.64,1); text-align:center;
+  }
+  .popup-overlay.show .popup-sheet { transform:translateY(0); }
+  .popup-drag { width:40px; height:4px; background:#e7e5e4; border-radius:99px; margin:14px auto 22px; }
+  .popup-emoji { font-size:2.6rem; display:block; margin-bottom:12px; }
+  .popup-title { font-size:1.1rem; font-weight:700; color:#1c1917; margin-bottom:6px; }
+  .popup-sub   { font-size:0.85rem; color:#78716c; margin-bottom:22px; line-height:1.6; white-space:pre-line; }
+  .popup-btns  { display:flex; gap:10px; }
+  .popup-btn   { flex:1; padding:13px; border:none; border-radius:10px; font-size:0.92rem; font-weight:600; cursor:pointer; font-family:'Prompt',sans-serif; transition:all 0.15s; }
+  .popup-btn:active { transform:scale(0.97); }
+  .popup-btn.p-dismiss { background:#f5f5f4; color:#57534e; border:1px solid #e7e5e4; }
+  .popup-btn.p-confirm { color:#fff; }
 
   @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:0.4} }
   @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:0.3} }
@@ -109,34 +190,9 @@
     .board { grid-template-columns:1fr; padding:16px; }
     .stats { padding:12px 16px; }
     .header { padding:12px 16px; }
+    #panel-history { padding:16px 16px 60px; }
+    .reset-banner { margin:12px 16px 0; }
   }
-
-  /* ── Popup confirm ── */
-  .popup-overlay {
-    position:fixed; inset:0; background:rgba(0,0,0,0.4);
-    z-index:600; display:flex; align-items:flex-end; justify-content:center;
-    opacity:0; visibility:hidden; transition:opacity 0.3s, visibility 0.3s;
-  }
-  .popup-overlay.show { opacity:1; visibility:visible; }
-  .popup-sheet {
-    background:#fff; width:100%; max-width:460px;
-    border-radius:22px 22px 0 0;
-    padding:10px 24px 40px;
-    transform:translateY(110%);
-    transition:transform 0.42s cubic-bezier(0.34,1.4,0.64,1);
-    text-align:center;
-  }
-  .popup-overlay.show .popup-sheet { transform:translateY(0); }
-  .popup-drag { width:40px; height:4px; background:#e7e5e4; border-radius:99px; margin:14px auto 22px; }
-  .popup-emoji { font-size:2.6rem; display:block; margin-bottom:12px; }
-  .popup-title { font-size:1.1rem; font-weight:700; color:#1c1917; margin-bottom:6px; }
-  .popup-sub   { font-size:0.85rem; color:#78716c; margin-bottom:22px; line-height:1.6; }
-  .popup-btns  { display:flex; gap:10px; }
-  .popup-btn   { flex:1; padding:13px; border:none; border-radius:10px; font-size:0.92rem; font-weight:600; cursor:pointer; font-family:'Prompt',sans-serif; transition:all 0.15s; }
-  .popup-btn:active { transform:scale(0.97); }
-  .popup-btn.p-dismiss { background:#f5f5f4; color:#57534e; border:1px solid #e7e5e4; }
-  .popup-btn.p-confirm { color:#fff; }
-
 </style>
 </head>
 <body>
@@ -152,7 +208,14 @@
   <div class="clock" id="clock">--:--:--</div>
 </header>
 
-<div class="stats">
+<!-- Tab bar -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-kitchen" onclick="switchTab('kitchen')">🍳 ห้องครัว</button>
+  <button class="tab-btn" id="tab-history" onclick="switchTab('history')">📋 ประวัติรายวัน</button>
+</div>
+
+<!-- Stats -->
+<div class="stats" id="stats-bar">
   <div class="stat-box s-new">
     <div class="stat-num" id="cnt-new">0</div>
     <div class="stat-label">รอรับ</div>
@@ -163,7 +226,7 @@
   </div>
   <div class="stat-box s-done">
     <div class="stat-num" id="cnt-done">0</div>
-    <div class="stat-label">เสร็จแล้ว</div>
+    <div class="stat-label">เสิร์ฟแล้ว</div>
   </div>
   <div class="stat-box s-total">
     <div class="stat-num" id="cnt-total">฿0</div>
@@ -171,9 +234,16 @@
   </div>
 </div>
 
+<!-- Reset banner (ขึ้นวันใหม่) -->
+<div class="reset-banner" id="reset-banner">
+  <span>🌅 ขึ้นวันใหม่แล้ว! มีออเดอร์ค้างจากเมื่อวาน — กรุณาบันทึกก่อนเริ่มวันใหม่</span>
+  <button class="reset-btn" onclick="manualDailyReset()">📦 บันทึกประวัติ &amp; ล้างหน้าจอ</button>
+</div>
+
 <div class="toast-wrap" id="toasts"></div>
 
-<div class="board">
+<!-- Kitchen board -->
+<div class="board" id="panel-kitchen">
   <div class="col-new">
     <div class="col-head">
       <div class="col-dot" style="background:#e11d48;"></div>
@@ -202,8 +272,27 @@
   </div>
 </div>
 
+<!-- History panel -->
+<div id="panel-history">
+  <div id="history-content"><div class="history-empty">⏳ กำลังโหลดประวัติ...</div></div>
+</div>
+
+<!-- Popup confirm -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+  <div class="popup-sheet" onclick="event.stopPropagation()">
+    <div class="popup-drag"></div>
+    <span class="popup-emoji" id="p-emoji"></span>
+    <div class="popup-title" id="p-title"></div>
+    <div class="popup-sub"   id="p-sub"></div>
+    <div class="popup-btns">
+      <button class="popup-btn p-dismiss" onclick="closePopup()">ยกเลิก</button>
+      <button class="popup-btn p-confirm" id="p-confirm" onclick="doAction()">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  /* ── Firebase config — ตรงกับ index.html ── */
+  /* ── Firebase ── */
   const firebaseConfig = {
     apiKey: "AIzaSyCg9oOSl5Q3unvoC-Yfuu9NV-XWJdN4EwU",
     authDomain: "myorder-store-5cebf.firebaseapp.com",
@@ -216,24 +305,65 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
+  /* ── Helpers ── */
+  function todayStr() {
+    // Returns "YYYY-MM-DD" in Asia/Bangkok timezone
+    const now = new Date();
+    const bkk = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }));
+    const y = bkk.getFullYear();
+    const m = String(bkk.getMonth()+1).padStart(2,'0');
+    const d = String(bkk.getDate()).padStart(2,'0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function fmtDateThai(dateStr) {
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const months = ['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    return `${d} ${months[m]} ${y+543}`;
+  }
+
   /* ── Clock ── */
   setInterval(() => {
     document.getElementById('clock').textContent =
       new Date().toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }, 1000);
 
+  /* ── Tab switching ── */
+  let currentTab = 'kitchen';
+  function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('tab-kitchen').classList.toggle('active', tab==='kitchen');
+    document.getElementById('tab-history').classList.toggle('active', tab==='history');
+    document.getElementById('panel-kitchen').style.display = tab==='kitchen' ? '' : 'none';
+    document.getElementById('stats-bar').style.display     = tab==='kitchen' ? '' : 'none';
+
+    const banner = document.getElementById('reset-banner');
+    if (tab === 'kitchen' && banner.dataset.pending === '1') {
+      banner.classList.add('show');
+    } else {
+      banner.classList.remove('show');
+    }
+
+    if (tab === 'history') {
+      document.getElementById('panel-history').classList.add('active');
+      loadHistory();
+    } else {
+      document.getElementById('panel-history').classList.remove('active');
+    }
+  }
+
   /* ── Toast ── */
-  function toast(title, sub) {
+  function showToast(title, sub) {
     const wrap = document.getElementById('toasts');
     const el = document.createElement('div');
     el.className = 'toast';
     el.innerHTML = `<div style="font-size:1.2rem;">🔔</div>
-      <div><div class="toast-title">${title}</div><div class="toast-sub">${sub}</div></div>`;
+      <div><div class="toast-title">${title}</div>${sub ? `<div class="toast-sub">${sub}</div>` : ''}</div>`;
     wrap.appendChild(el);
     setTimeout(() => {
       el.style.animation = 'fadeOut 0.3s forwards';
       setTimeout(() => el.remove(), 300);
-    }, 4500);
+    }, 5000);
   }
 
   /* ── Build card ── */
@@ -255,6 +385,7 @@
 
     const isNew  = order.status === 'new';
     const isCook = order.status === 'cooking';
+    const isDone = order.status === 'done';
 
     const timeHtml = isNew
       ? `<span class="time-chip urgent">ออเดอร์ใหม่!</span>`
@@ -262,18 +393,23 @@
       ? `<span class="time-chip" style="color:#d97706;background:#fffbeb;">กำลังทำ 🔥</span>`
       : `<span class="time-chip" style="color:#16a34a;background:#f0fdf4;">เสิร์ฟแล้ว ✓</span>`;
 
+    /* ปุ่มในแต่ละ column */
     const actionHtml = isNew
       ? `<div class="actions">
            <button class="btn btn-accept" onclick="showPopup('accept','${order.table}','${key}','cooking')">✓ รับออเดอร์</button>
-           <button class="btn btn-del" onclick="showPopup('delete','${order.table}','${key}',null)">✕</button>
+           <button class="btn btn-del"    onclick="showPopup('delete','${order.table}','${key}',null)">✕</button>
          </div>`
       : isCook
       ? `<div class="actions">
            <button class="btn btn-done" onclick="showPopup('done','${order.table}','${key}','done')">✓ เสร็จแล้ว</button>
          </div>`
+      : isDone
+      ? `<div class="actions">
+           <button class="btn btn-del-done" onclick="showPopup('delete-done','${order.table}','${key}',null)">🗑️ ลบออเดอร์นี้</button>
+         </div>`
       : '';
 
-    const priceStyle = order.status === 'done' ? 'color:#16a34a' : '';
+    const priceStyle = isDone ? 'color:#16a34a' : '';
 
     return `<div class="order-card card-new" id="card-${key}">
       <div class="card-top">
@@ -290,7 +426,7 @@
     </div>`;
   }
 
-  /* ── Popup system ── */
+  /* ── Popup ── */
   let _pa = null;
 
   function showPopup(type, tbl, key, status) {
@@ -299,6 +435,7 @@
     const title = document.getElementById('p-title');
     const sub   = document.getElementById('p-sub');
     const btn   = document.getElementById('p-confirm');
+
     if (type === 'accept') {
       emoji.textContent = '✅';
       title.textContent = 'รับออเดอร์ โต๊ะ ' + tbl;
@@ -311,6 +448,12 @@
       sub.textContent   = 'ยืนยันว่าอาหารเสร็จและพร้อมเสิร์ฟ?';
       btn.style.background = '#16a34a';
       btn.textContent   = 'เสิร์ฟได้เลย';
+    } else if (type === 'delete-done') {
+      emoji.textContent = '🗑️';
+      title.textContent = 'ลบออเดอร์ที่เสิร์ฟแล้ว โต๊ะ ' + tbl;
+      sub.textContent   = 'ออเดอร์จะถูกลบออกจากหน้าจอ\n(ใช้ตอนทดสอบ — ไม่บันทึกลงประวัติ)';
+      btn.style.background = '#dc2626';
+      btn.textContent   = 'ลบเลย';
     } else {
       emoji.textContent = '🗑️';
       title.textContent = 'ยกเลิกออเดอร์ โต๊ะ ' + tbl;
@@ -320,21 +463,152 @@
     }
     document.getElementById('popup-overlay').classList.add('show');
   }
+
   function closePopup(e) {
     if (!e || e.target.id === 'popup-overlay') {
       document.getElementById('popup-overlay').classList.remove('show');
       _pa = null;
     }
   }
+
   function doAction() {
     if (!_pa) return;
-    if (_pa.type === 'delete') db.ref('orders/' + _pa.key).remove();
-    else db.ref('orders/' + _pa.key).update({ status: _pa.status });
+    if (_pa.type === 'delete' || _pa.type === 'delete-done') {
+      db.ref('orders/' + _pa.key).remove();
+    } else {
+      db.ref('orders/' + _pa.key).update({ status: _pa.status });
+    }
     document.getElementById('popup-overlay').classList.remove('show');
     _pa = null;
   }
-  function setStatus(key, status) { db.ref('orders/' + key).update({ status }); }
-  function delOrder(key) { db.ref('orders/' + key).remove(); }
+
+  /* ══════════════════════════════════════════════
+     DAILY RESET  (เก็บประวัติทุกวัน)
+  ══════════════════════════════════════════════ */
+
+  async function archiveDoneOrders(dateLabel) {
+    /* ย้าย done orders → /history/{dateLabel}/ แล้วลบจาก /orders */
+    const snap = await db.ref('orders').once('value');
+    const orders = snap.val() || {};
+    const doneEntries = Object.entries(orders).filter(([,o]) => o.status === 'done');
+    if (doneEntries.length === 0) return 0;
+
+    const updates = {};
+    doneEntries.forEach(([k, o]) => {
+      updates[`history/${dateLabel}/${k}`] = { ...o, archivedAt: Date.now() };
+      updates[`orders/${k}`] = null;
+    });
+    await db.ref().update(updates);
+    return doneEntries.length;
+  }
+
+  async function manualDailyReset() {
+    const banner = document.getElementById('reset-banner');
+    const archiveDate = banner.dataset.lastDate || todayStr();
+    banner.querySelector('.reset-btn').textContent = '⏳ กำลังบันทึก...';
+
+    const count = await archiveDoneOrders(archiveDate);
+    await db.ref('meta/lastResetDate').set(todayStr());
+
+    banner.classList.remove('show');
+    banner.dataset.pending = '0';
+    showToast('✅ บันทึกประวัติเรียบร้อย', `เก็บ ${count} ออเดอร์ ลงวันที่ ${fmtDateThai(archiveDate)} แล้ว`);
+    banner.querySelector('.reset-btn').textContent = '📦 บันทึกประวัติ & ล้างหน้าจอ';
+  }
+
+  async function checkDailyReset() {
+    const today = todayStr();
+    try {
+      const snap = await db.ref('meta/lastResetDate').once('value');
+      const lastReset = snap.val() || today;
+
+      if (lastReset < today) {
+        /* วันใหม่แล้ว — ตรวจว่ามี done ค้างไหม */
+        const ordSnap = await db.ref('orders').once('value');
+        const orders  = ordSnap.val() || {};
+        const hasDone = Object.values(orders).some(o => o.status === 'done');
+
+        const banner = document.getElementById('reset-banner');
+        if (hasDone) {
+          banner.dataset.pending  = '1';
+          banner.dataset.lastDate = lastReset;
+          if (currentTab === 'kitchen') banner.classList.add('show');
+        } else {
+          /* ไม่มี done — อัพเดตวันที่เฉยๆ */
+          await db.ref('meta/lastResetDate').set(today);
+        }
+      }
+    } catch(e) { console.warn('checkDailyReset error', e); }
+  }
+
+  /* ตรวจทุก 1 นาที */
+  setInterval(checkDailyReset, 60 * 1000);
+
+  /* ══════════════════════════════════════════════
+     HISTORY PANEL
+  ══════════════════════════════════════════════ */
+  async function loadHistory() {
+    const container = document.getElementById('history-content');
+    container.innerHTML = '<div class="history-empty">⏳ กำลังโหลดประวัติ...</div>';
+    try {
+      const snap = await db.ref('history').once('value');
+      const history = snap.val();
+
+      if (!history) {
+        container.innerHTML = `<div class="history-empty">
+          📭 ยังไม่มีประวัติ<br>
+          <span style="font-size:0.82rem;margin-top:8px;display:block;color:#c8b5b5;">
+            เมื่อรีเซ็ตประจำวัน ออเดอร์ที่เสิร์ฟแล้วจะบันทึกไว้ที่นี่แยกตามวันที่
+          </span>
+        </div>`;
+        return;
+      }
+
+      const days = Object.keys(history).sort().reverse();
+      let html = '';
+
+      days.forEach(dateKey => {
+        const dayOrders = history[dateKey];
+        const orderList = Object.entries(dayOrders);
+        const dayTotal  = orderList.reduce((s,[,o]) => s + (o.total||0), 0);
+        const count     = orderList.length;
+
+        const ordersHtml = orderList
+          .sort((a,b) => (b[1].timestamp||0) - (a[1].timestamp||0))
+          .map(([,o]) => {
+            const itemNames = (o.items||[]).map(i => `${i.name}×${i.qty}`).join(', ');
+            return `<div class="h-order-row">
+              <div style="flex:1;">
+                <div class="h-table">โต๊ะ ${o.table}</div>
+                <div class="h-items">${itemNames}</div>
+              </div>
+              <div class="h-price">฿${(o.total||0).toLocaleString()}</div>
+            </div>`;
+          }).join('');
+
+        html += `
+          <div class="history-day" id="hday-${dateKey}">
+            <div class="history-day-head" onclick="toggleDay('${dateKey}')">
+              <div class="history-date">📅 ${fmtDateThai(dateKey)}</div>
+              <div class="history-summary">
+                <span class="history-badge h-orders">${count} ออเดอร์</span>
+                <span class="history-badge h-total">฿${dayTotal.toLocaleString()}</span>
+                <span class="history-chevron">▼</span>
+              </div>
+            </div>
+            <div class="history-orders">${ordersHtml}</div>
+          </div>`;
+      });
+
+      container.innerHTML = html;
+    } catch(e) {
+      container.innerHTML = '<div class="history-empty">❌ โหลดข้อมูลไม่ได้ กรุณาลองใหม่</div>';
+    }
+  }
+
+  function toggleDay(dateKey) {
+    document.getElementById('hday-' + dateKey).classList.toggle('open');
+  }
 
   /* ── Real-time listener ── */
   let prevKeys = new Set();
@@ -345,7 +619,8 @@
 
     keys.forEach(k => {
       if (!prevKeys.has(k) && orders[k].status === 'new') {
-        toast(`โต๊ะ ${orders[k].table} — ออเดอร์ใหม่`, `฿${orders[k].total} · ${(orders[k].items||[]).length} รายการ`);
+        showToast(`โต๊ะ ${orders[k].table} — ออเดอร์ใหม่`,
+                  `฿${orders[k].total} · ${(orders[k].items||[]).length} รายการ`);
         try {
           const ctx = new AudioContext();
           const o = ctx.createOscillator(), g = ctx.createGain();
@@ -380,23 +655,11 @@
       document.getElementById('cnt-'+s).textContent   = val;
       document.getElementById('badge-'+s).textContent = val;
     });
-    document.getElementById('cnt-total').textContent = '฿' + total;
+    document.getElementById('cnt-total').textContent = '฿' + total.toLocaleString();
   });
+
+  /* ── Init ── */
+  checkDailyReset();
 </script>
-
-<!-- ── Popup confirm ── -->
-<div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
-  <div class="popup-sheet" onclick="event.stopPropagation()">
-    <div class="popup-drag"></div>
-    <span class="popup-emoji" id="p-emoji"></span>
-    <div class="popup-title" id="p-title"></div>
-    <div class="popup-sub"   id="p-sub"></div>
-    <div class="popup-btns">
-      <button class="popup-btn p-dismiss" onclick="closePopup()">ยกเลิก</button>
-      <button class="popup-btn p-confirm" id="p-confirm" onclick="doAction()">ยืนยัน</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
