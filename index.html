@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ขนมจีนบีบสดแม่พร & ส้มตำครกแตก by.เจ๊อ้อม</title>
     
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1135,6 +1136,17 @@ firebase.initializeApp(firebaseConfig);
             });
         };
         
+    </script>
+
+    <!-- ✅ PWA: Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(r => console.log('✅ SW registered:', r.scope))
+                    .catch(e => console.warn('SW error:', e));
+            });
+        }
     </script>
     
 </body>

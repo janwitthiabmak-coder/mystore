@@ -1,0 +1,42 @@
+{
+  "name": "MaePorn",
+  "short_name": "MaePorn",
+  "description": "ขนมจีนบีบสดแม่พร & ส้มตำครกแตก by เจ๊อ้อม",
+  "start_url": "./kitchen.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8f9fa",
+  "theme_color": "#ef233c",
+  "lang": "th",
+  "icons": [
+    {
+      "src": "images/icon.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "สั่งอาหาร",
+      "url": "./index.html",
+      "icons": [{ "src": "images/icon.jpg", "sizes": "96x96" }]
+    },
+    {
+      "name": "ห้องครัว",
+      "url": "./kitchen.html",
+      "icons": [{ "src": "images/icon.jpg", "sizes": "96x96" }]
+    },
+    {
+      "name": "แอดมิน",
+      "url": "./admin.html",
+      "icons": [{ "src": "images/icon.jpg", "sizes": "96x96" }]
+    }
+  ]
+}
