@@ -448,8 +448,58 @@
         .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.5); pointer-events: none; }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
         /* จุดสำคัญ: Badge แสดงเลขโต๊ะ */
-        .table-badge { margin-top: 15px; background: white; color: var(--primary-dark); padding: 8px 25px; border-radius: var(--radius-full); font-size: 1.1rem; font-weight: 800; box-shadow: 0 10px 20px rgba(239, 35, 60, 0.15); border: 2px solid var(--primary); display: flex; align-items: center; gap: 10px; }
+        .table-badge { margin-top: 15px; background: white; color: var(--primary-dark); padding: 8px 25px; border-radius: var(--radius-full); font-size: 1.1rem; font-weight: 800; box-shadow: 0 10px 20px rgba(239, 35, 60, 0.15); border: 2px solid var(--primary); display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
         #table-number { color: var(--primary); font-size: 1.3rem; }
+
+        /* ── Table Picker Modal ── */
+        #overlay-table-picker {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 2000; opacity: 0; visibility: hidden;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        #overlay-table-picker.show { opacity: 1; visibility: visible; }
+        .table-picker-modal {
+            background: white; border-radius: 32px;
+            padding: 36px 30px 30px; width: 90%; max-width: 380px;
+            text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.25);
+            transform: scale(0.85) translateY(20px); opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #overlay-table-picker.show .table-picker-modal { transform: scale(1) translateY(0); opacity: 1; }
+        .table-picker-title {
+            font-size: 1.5rem; font-weight: 800; margin-bottom: 8px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .table-picker-subtitle {
+            font-size: 0.95rem; color: var(--text-muted); font-weight: 500; margin-bottom: 28px;
+        }
+        .table-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;
+        }
+        .table-btn {
+            padding: 22px 10px; border-radius: 20px; border: 2px solid #e2e8f0;
+            background: #f8f9fa; font-size: 1.6rem; font-weight: 800; color: var(--text-main);
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+        }
+        .table-btn span { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        .table-btn:hover, .table-btn.active {
+            background: var(--primary-gradient); color: white;
+            border-color: transparent;
+            box-shadow: 0 10px 25px var(--primary-glow);
+            transform: translateY(-4px) scale(1.04);
+        }
+        .table-btn:hover span, .table-btn.active span { color: rgba(255,255,255,0.85); }
+        .table-picker-cancel {
+            width: 100%; padding: 16px; background: transparent; border: none;
+            color: var(--text-muted); font-weight: 700; font-size: 1.05rem;
+            cursor: pointer; border-radius: 16px; transition: background 0.2s;
+        }
+        .table-picker-cancel:hover { background: #f1f5f9; }
 
         /* ── Announcement Banner ── */
         .announcement-banner {
@@ -516,10 +566,25 @@
         <p class="brand-title" style="font-size: 1.4rem; margin-top:-5px;">& ส้มตำครกแตก by.เจ๊อ้อม</p>
         <p class="brand-subtitle"><i class="fas fa-leaf" style="color:var(--success);"></i> ขนมจีนน้ำยา เส้นบีบสดทุกวัน บุฟเฟ่ต์ผักหยิบตักไม่อั้น</p>
         
-        <div class="table-badge animate__animated animate__bounceIn" style="animation-delay: 0.5s;">
+        <div class="table-badge animate__animated animate__bounceIn" style="animation-delay: 0.5s;" onclick="openTablePicker()" title="กดเพื่อเปลี่ยนโต๊ะ">
             <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number" style="font-size:1.4rem; color:var(--primary);">1</span>
+            <i class="fas fa-pen" style="font-size:0.8rem; color:var(--text-muted); margin-left:2px;"></i>
         </div>
     </header>
+
+    <!-- Table Picker Modal -->
+    <div id="overlay-table-picker" onclick="closeTablePicker(event)">
+        <div class="table-picker-modal" onclick="event.stopPropagation()">
+            <div class="table-picker-title"><i class="fas fa-chair" style="font-size:1.2rem;"></i> เลือกหมายเลขโต๊ะ</div>
+            <div class="table-picker-subtitle">กรุณาเลือกโต๊ะที่คุณนั่งอยู่</div>
+            <div class="table-grid" id="table-grid-buttons">
+                <!-- ปุ่มโต๊ะจะถูกสร้างโดย JS -->
+            </div>
+            <button class="table-picker-cancel" onclick="closeTablePickerDirect()">
+                <i class="fas fa-times-circle" style="margin-right:6px;"></i>ยกเลิก
+            </button>
+        </div>
+    </div>
 
     <!-- ประกาศจากพนักงาน (แสดงเมื่อมีข้อความ) -->
     <div id="announcement-banner" class="announcement-banner">
@@ -1107,6 +1172,41 @@
             if (tableNum) {
                 document.getElementById('table-number').innerText = tableNum;
             }
+        }
+
+        /**
+         * 10. TABLE PICKER
+         */
+        const TOTAL_TABLES = 2; // จำนวนโต๊ะทั้งหมด (แก้ตรงนี้เพื่อเพิ่มโต๊ะ)
+
+        function openTablePicker() {
+            const current = document.getElementById('table-number').innerText.trim();
+            const grid = document.getElementById('table-grid-buttons');
+            grid.innerHTML = '';
+            for (let i = 1; i <= TOTAL_TABLES; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'table-btn' + (String(i) === current ? ' active' : '');
+                btn.innerHTML = `${i}<span>โต๊ะ ${i}</span>`;
+                btn.onclick = () => selectTable(i);
+                grid.appendChild(btn);
+            }
+            document.getElementById('overlay-table-picker').classList.add('show');
+        }
+
+        function selectTable(num) {
+            document.getElementById('table-number').innerText = num;
+            closeTablePickerDirect();
+            showToast(`เปลี่ยนเป็นโต๊ะ ${num} เรียบร้อย 🍽️`);
+        }
+
+        function closeTablePicker(event) {
+            if (event.target === document.getElementById('overlay-table-picker')) {
+                closeTablePickerDirect();
+            }
+        }
+
+        function closeTablePickerDirect() {
+            document.getElementById('overlay-table-picker').classList.remove('show');
         }
         const firebaseConfig = {
     apiKey: "AIzaSyCg9oOSl5Q3unvoC-Yfuu9NV-XWJdN4EwU",
