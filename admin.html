@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Prompt',sans-serif;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -413,7 +414,59 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
 
 .db-raw { font-family:monospace; font-size:.75rem; background:#f8faff; border-radius:9px; padding:12px; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:#3730a3; border:1px solid #e0e7ff; }
 
+
+/* ── STATS TAB ── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;min-width:280px;}
+.cal-head{text-align:center;font-size:.7rem;font-weight:800;color:var(--muted);padding:4px 2px;}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-size:.72rem;font-weight:700;cursor:default;position:relative;
+  background:#f4f6f9;color:var(--muted);transition:transform .15s;}
+.cal-day.has-data{cursor:pointer;}
+.cal-day.has-data:hover{transform:scale(1.1);z-index:5;}
+.cal-day .cal-d{font-size:.82rem;font-weight:800;}
+.cal-day .cal-r{font-size:.58rem;font-weight:700;margin-top:1px;}
+.cal-day.empty{background:transparent;}
+.stats-sum-card{background:#fff;border:1.5px solid var(--bdr);border-radius:14px;padding:16px 14px;text-align:center;}
+.stats-sum-num{font-size:1.5rem;font-weight:800;line-height:1.1;margin-bottom:3px;}
+.stats-sum-lbl{font-size:.72rem;color:var(--muted);font-weight:600;}
+.top-item-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;}
+.top-item-row:last-child{border-bottom:none;}
+.top-rank{width:26px;height:26px;border-radius:50%;background:var(--pg);color:#fff;font-size:.72rem;
+  font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
 @media(max-width:480px){ #db-summary{ grid-template-columns:repeat(3,1fr); } }
+
+/* ── DASHBOARD TAB ── */
+.dash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+.dash-card{background:#fff;border-radius:var(--r);padding:16px 18px;border:1.5px solid var(--bdr);box-shadow:0 2px 9px rgba(0,0,0,.04);}
+.dash-card .dc-num{font-size:1.8rem;font-weight:800;line-height:1.1;margin-bottom:3px;}
+.dash-card .dc-lbl{font-size:.77rem;color:var(--muted);font-weight:600;}
+.dash-card.red{border-left:4px solid var(--primary);} 
+.dash-card.orange{border-left:4px solid var(--accent);}
+.dash-card.green{border-left:4px solid var(--ok);}
+.dash-card.blue{border-left:4px solid var(--indigo);}
+.top-item-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;}
+.top-item-row:last-child{border-bottom:none;}
+.top-rank{width:26px;height:26px;border-radius:50%;background:var(--pg);color:#fff;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.top-item-row:nth-child(2) .top-rank{background:linear-gradient(135deg,#c0c0c0,#a0a0a0);}
+.top-item-row:nth-child(3) .top-rank{background:linear-gradient(135deg,#cd7f32,#a05a20);}
+
+
+/* ── STATUS UPDATE BUTTONS ── */
+.st-btns{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+.st-btn{padding:4px 10px;border-radius:7px;border:1.5px solid var(--bdr);background:var(--bg);font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Prompt',sans-serif;transition:all .15s;color:var(--muted);}
+.st-btn:active{transform:scale(.95);}
+.st-btn.active-new{background:#fff1f2;border-color:#fca5a5;color:#e11d48;}
+.st-btn.active-cooking{background:#fffbeb;border-color:#fcd34d;color:#d97706;}
+.st-btn.active-done{background:#f0fdf4;border-color:#86efac;color:#16a34a;}
+
+/* ── PRINT RECEIPT ── */
+.print-btn{background:#f0f4ff;border:1.5px solid #c7d2fe;color:var(--indigo);padding:6px 10px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Prompt',sans-serif;transition:all .2s;display:flex;align-items:center;gap:4px;}
+.print-btn:hover{background:#e0e7ff;}
+@media print{
+  body>*:not(#print-frame){display:none!important;}
+  #print-frame{display:block!important;position:fixed;inset:0;border:none;width:100%;height:100%;}
+}
 
 </style>
 </head>
@@ -428,6 +481,7 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
     <div class="pin-disp">
       <div class="pd" id="d0"></div><div class="pd" id="d1"></div>
       <div class="pd" id="d2"></div><div class="pd" id="d3"></div>
+      <div class="pd" id="d4"></div><div class="pd" id="d5"></div>
     </div>
     <div class="pin-pad">
       <button class="pb" onclick="pp('1')">1</button>
@@ -457,18 +511,43 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
         <small>ขนมจีนบีบสดแม่พร & ส้มตำครกแตก</small>
       </div>
     </div>
-    <button class="logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ออก</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+            </div>
+      <button class="logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ออก</button>
+    </div>
   </header>
+  <iframe id="print-frame" style="display:none;"></iframe>
 
   <div class="tabs">
-    <div class="tab on" onclick="switchTab('ann',this)"><i class="fas fa-bullhorn"></i> ประกาศ</div>
-    <div class="tab" onclick="switchTab('menu',this)"><i class="fas fa-utensils"></i> เมนูอาหาร</div>
-    <div class="tab" onclick="switchTab('cfg',this)"><i class="fas fa-cog"></i> ตั้งค่า</div>
-    <div class="tab" onclick="switchTab('db',this)"><i class="fas fa-database"></i> Database</div>
+    <div class="tab on" data-tab="dash" onclick="switchTab('dash',this)"><i class="fas fa-chart-line"></i> แดชบอร์ด</div>
+    <div class="tab" data-tab="ann" onclick="switchTab('ann',this)"><i class="fas fa-bullhorn"></i> ประกาศ</div>
+    <div class="tab" data-tab="menu" onclick="switchTab('menu',this)"><i class="fas fa-utensils"></i> เมนูอาหาร</div>
+    <div class="tab" data-tab="cfg" onclick="switchTab('cfg',this)"><i class="fas fa-cog"></i> ตั้งค่า</div>
+    <div class="tab" data-tab="stats" onclick="switchTab('stats',this)"><i class="fas fa-chart-pie"></i> สถิติ</div>
+    <div class="tab" data-tab="db" onclick="switchTab('db',this)"><i class="fas fa-database"></i> Database</div>
+  </div>
+
+  <!-- ── DASHBOARD TAB ── -->
+  <div class="tc on" id="tab-dash">
+    <div class="shd"><h2><i class="fas fa-chart-line" style="color:var(--primary)"></i> แดชบอร์ด</h2><p>ยอดขายและสถิติวันนี้แบบ realtime</p></div>
+    <div class="dash-grid" id="dash-stats">
+      <div class="dash-card red"><div class="dc-num" id="d-new">—</div><div class="dc-lbl">🔴 รอรับ</div></div>
+      <div class="dash-card orange"><div class="dc-num" id="d-cooking">—</div><div class="dc-lbl">🔥 กำลังทำ</div></div>
+      <div class="dash-card green"><div class="dc-num" id="d-done">—</div><div class="dc-lbl">✅ เสิร์ฟแล้ว</div></div>
+      <div class="dash-card blue"><div class="dc-num" id="d-revenue">—</div><div class="dc-lbl">💰 ยอดวันนี้ (฿)</div></div>
+    </div>
+    <div class="sc">
+      <h3><i class="fas fa-fire" style="color:var(--accent)"></i> เมนูขายดีวันนี้</h3>
+      <div id="dash-top-items"><div class="empty-s"><i class="fas fa-circle-notch fa-spin"></i><p>กำลังโหลด…</p></div></div>
+    </div>
+    <div class="sc" style="margin-top:13px;">
+      <h3><i class="fas fa-receipt" style="color:var(--indigo)"></i> ออเดอร์ล่าสุด</h3>
+      <div id="dash-recent-orders"><div class="empty-s"><i class="fas fa-circle-notch fa-spin"></i><p>กำลังโหลด…</p></div></div>
+    </div>
   </div>
 
   <!-- ── ANNOUNCEMENT TAB ── -->
-  <div class="tc on" id="tab-ann">
+  <div class="tc" id="tab-ann">
     <div class="sbar"><div class="sdot"></div><span>เชื่อมต่อ Firebase Realtime</span><small id="lsave"></small></div>
     <div class="shd">
       <h2><i class="fas fa-bullhorn" style="color:var(--accent)"></i> ประกาศถึงลูกค้า</h2>
@@ -517,10 +596,10 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
 
     <div class="sc">
       <h3><i class="fas fa-key"></i> เปลี่ยนรหัส PIN</h3>
-      <p>PIN ปัจจุบัน: <strong id="curpin" style="letter-spacing:.2em">****</strong><br>ใส่ PIN ใหม่ (ตัวเลข 4 หลัก)</p>
+      <p>PIN ปัจจุบัน: <strong id="curpin" style="letter-spacing:.2em">****</strong><br>ใส่ PIN ใหม่ (ตัวเลข 6 หลัก)</p>
       <div class="pin-row">
-        <input type="password" class="pin-inp" id="np" maxlength="4" placeholder="PIN ใหม่" inputmode="numeric">
-        <input type="password" class="pin-inp" id="cp" maxlength="4" placeholder="ยืนยัน" inputmode="numeric">
+        <input type="password" class="pin-inp" id="np" maxlength="6" placeholder="PIN ใหม่" inputmode="numeric">
+        <input type="password" class="pin-inp" id="cp" maxlength="6" placeholder="ยืนยัน" inputmode="numeric">
       </div>
       <button class="bsave" onclick="changePin()"><i class="fas fa-key"></i> บันทึก PIN ใหม่</button>
     </div>
@@ -545,8 +624,68 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
         ➕ <b>เพิ่มเมนู</b> — ปุ่ม "เพิ่มเมนูใหม่" ด้านล่างของแต่ละหมวด<br>
         🗑️ <b>ลบเมนู</b> — ลบได้เฉพาะที่เพิ่มเอง (เมนูหลักลบไม่ได้)<br>
         📢 <b>ประกาศ</b> — พิมพ์ในแท็บ "ประกาศ" กดบันทึก แสดงผลทันที<br>
-        🔐 <b>PIN</b> — ค่าเริ่มต้น <b>1234</b> เปลี่ยนได้ในหน้านี้
+        🔐 <b>PIN</b> — ค่าเริ่มต้น <b>314159</b> เปลี่ยนได้ในหน้านี้
       </p>
+    </div>
+  </div>
+
+
+  <!-- ── STATS TAB ── -->
+  <div class="tc" id="tab-stats">
+    <div class="shd"><h2><i class="fas fa-chart-pie" style="color:var(--indigo)"></i> สถิติ &amp; รายงาน</h2><p>วิเคราะห์ยอดขาย กราฟ และปฏิทินรายได้</p></div>
+
+    <!-- Month/Year Picker -->
+    <div class="sc" style="padding:14px 18px;margin-bottom:13px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:.88rem;font-weight:700;color:var(--txt);">📅 เลือกเดือน/ปี</span>
+        <select id="stats-year" class="fi" style="width:100px;padding:8px 12px;" onchange="loadStats()"></select>
+        <select id="stats-month" class="fi" style="width:130px;padding:8px 12px;" onchange="loadStats()">
+          <option value="1">มกราคม</option><option value="2">กุมภาพันธ์</option>
+          <option value="3">มีนาคม</option><option value="4">เมษายน</option>
+          <option value="5">พฤษภาคม</option><option value="6">มิถุนายน</option>
+          <option value="7">กรกฎาคม</option><option value="8">สิงหาคม</option>
+          <option value="9">กันยายน</option><option value="10">ตุลาคม</option>
+          <option value="11">พฤศจิกายน</option><option value="12">ธันวาคม</option>
+        </select>
+        <button class="bsave" style="padding:9px 18px;font-size:.85rem;" onclick="loadStats()"><i class="fas fa-sync-alt"></i> โหลด</button>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div id="stats-summary" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;"></div>
+
+    <!-- Calendar -->
+    <div class="sc" style="margin-bottom:13px;">
+      <h3 style="margin-bottom:12px;"><i class="fas fa-calendar-alt" style="color:var(--ok)"></i> ปฏิทินรายได้</h3>
+      <div id="stats-calendar" style="overflow-x:auto;"></div>
+      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:.74rem;font-weight:700;color:var(--muted);">สี:</span>
+        <span style="font-size:.74rem;padding:3px 10px;border-radius:6px;background:#1a7a3b;color:#fff;">ขายดีมาก</span>
+        <span style="font-size:.74rem;padding:3px 10px;border-radius:6px;background:#52b96a;color:#fff;">ดี</span>
+        <span style="font-size:.74rem;padding:3px 10px;border-radius:6px;background:#c8ecd3;color:#1a5e2f;">มีขาย</span>
+        <span style="font-size:.74rem;padding:3px 10px;border-radius:6px;background:#f4f6f9;color:var(--muted);border:1px solid var(--bdr);">ไม่มีข้อมูล</span>
+      </div>
+    </div>
+
+    <!-- Line Chart -->
+    <div class="sc" style="margin-bottom:13px;">
+      <h3 style="margin-bottom:12px;"><i class="fas fa-chart-line" style="color:var(--primary)"></i> ยอดขายรายวัน</h3>
+      <div style="position:relative;height:220px;"><canvas id="chart-line"></canvas></div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="sc" style="margin-bottom:13px;">
+      <h3 style="margin-bottom:12px;"><i class="fas fa-chart-pie" style="color:var(--accent)"></i> สัดส่วนเมนูยอดนิยม</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;">
+        <div style="position:relative;height:200px;"><canvas id="chart-pie"></canvas></div>
+        <div id="pie-legend" style="font-size:.78rem;line-height:2;"></div>
+      </div>
+    </div>
+
+    <!-- Top Items Table -->
+    <div class="sc">
+      <h3 style="margin-bottom:12px;"><i class="fas fa-trophy" style="color:var(--accent)"></i> เมนูขายดีประจำเดือน</h3>
+      <div id="stats-top-items"></div>
     </div>
   </div>
 
@@ -692,16 +831,16 @@ const BM={
 };
 
 /* ── State ── */
-let S={soldOut:{},extraItems:{},overrides:{},announcement:'',adminPin:'1234'};
+let S={soldOut:{},extraItems:{},overrides:{},hiddenItems:{},announcement:'',adminPin:'314159'};
 let cat='cat1', addOpen=false, editId=null, isIn=false;
 
 /* ══ PIN ══ */
 let buf='';
-function pp(d){if(buf.length>=4)return;buf+=d;udots();if(buf.length===4)setTimeout(verify,200);}
+function pp(d){if(buf.length>=6)return;buf+=d;udots();if(buf.length===6)setTimeout(verify,200);}
 function pdel(){if(!buf.length)return;buf=buf.slice(0,-1);udots();document.getElementById('pin-err').textContent='';}
-function udots(){for(let i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<buf.length);}
+function udots(){for(let i=0;i<6;i++)document.getElementById('d'+i).classList.toggle('filled',i<buf.length);}
 function verify(){
-  if(buf===(S.adminPin||'1234')){
+  if(buf===(S.adminPin||'314159')){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('admin-screen').style.display='block';
     isIn=true; listen();
@@ -725,20 +864,26 @@ function listen(){
     const d=snap.val()||{};
     S.soldOut=d.soldOut||{}; S.extraItems=d.extraItems||{};
     S.overrides=d.overrides||{}; S.announcement=d.announcement||'';
-    S.adminPin=d.adminPin||'1234';
+    S.hiddenItems=d.hiddenItems||{}; S.adminPin=d.adminPin||'314159';
     document.getElementById('ann-txt').value=S.announcement;
     prevAnn(S.announcement);
     document.getElementById('curpin').textContent=S.adminPin;
     if(isIn){renderCtabs();renderItems(cat);}
   });
+  // Auto-init dashboard
+  initDashTab();
 }
 
 /* ══ TABS ══ */
 function switchTab(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on'); document.getElementById('tab-'+id).classList.add('on');
+  if(el){el.classList.add('on');}
+  const tabEl=document.getElementById('tab-'+id);
+  if(tabEl) tabEl.classList.add('on');
   if(id==='db') initDbTab();
+  if(id==='stats') initStatsTab();
+  if(id==='dash') initDashTab();
 }
 
 /* ══ ANNOUNCEMENT ══ */
@@ -782,7 +927,7 @@ function applyOv(item){
 function renderItems(k){
   const c=BM[k];
   const extras=S.extraItems[k]?Object.entries(S.extraItems[k]):[];
-  const baseItems=c.items.map(i=>applyOv(i));
+  const baseItems=c.items.filter(i=>!S.hiddenItems[i.id]).map(i=>applyOv(i));
   const exItems=extras.map(([fbKey,i])=>({...applyOv(i),_fb:fbKey,_ex:true}));
   const all=[...baseItems,...exItems];
 
@@ -838,7 +983,7 @@ function cardHtml(item){
         </label>
       </div>
       <button class="bedit" onclick="togEdit('${eKey}')"><i class="fas fa-pen"></i> แก้ไข</button>
-      ${isEx?`<button class="bdel" onclick="askDel('${fbKey}','${esc(item.n)}')"><i class="fas fa-trash-alt"></i></button>`:''}
+<button class="bdel" onclick="askDelItem('${eKey}',${item.id},'${fbKey}','${esc(item.n)}',${isEx})"><i class="fas fa-trash-alt"></i></button>
     </div>
   </div>
 
@@ -1023,6 +1168,22 @@ function askDel(fbKey,name){
   };
   document.getElementById('conf-ov').classList.add('show');
 }
+function askDelItem(eKey,itemId,fbKey,name,isEx){
+  document.getElementById('cemoji').textContent='🗑️';
+  document.getElementById('ctitle').textContent=`ลบ "${name}"?`;
+  document.getElementById('csub').textContent='รายการนี้จะถูกลบถาวร ไม่สามารถกู้คืนได้';
+  document.getElementById('cok').onclick=()=>{
+    if(isEx&&fbKey){
+      db.ref(`settings/extraItems/${cat}/${fbKey}`).remove()
+        .then(()=>{ms();toast(`✅ ลบ "${name}" แล้ว`);closeC();});
+    } else {
+      // ซ่อนเมนูหลัก
+      db.ref(`settings/hiddenItems/${itemId}`).set(true)
+        .then(()=>{ms();toast(`✅ ลบ "${name}" แล้ว`);closeC();});
+    }
+  };
+  document.getElementById('conf-ov').classList.add('show');
+}
 function maybeCC(e){if(e.target.id==='conf-ov')closeC();}
 function closeC(){document.getElementById('conf-ov').classList.remove('show');}
 
@@ -1030,7 +1191,7 @@ function closeC(){document.getElementById('conf-ov').classList.remove('show');}
 function changePin(){
   const np=document.getElementById('np').value.trim();
   const cp=document.getElementById('cp').value.trim();
-  if(!/^\d{4}$/.test(np)){toast('❌ PIN ต้องเป็นตัวเลข 4 หลัก',true);return;}
+  if(!/^\d{6}$/.test(np)){toast('❌ PIN ต้องเป็นตัวเลข 6 หลัก',true);return;}
   if(np!==cp){toast('❌ PIN ทั้งสองช่องไม่ตรงกัน',true);return;}
   db.ref('settings/adminPin').set(np).then(()=>{
     ms();toast('🔐 เปลี่ยน PIN เรียบร้อย');
@@ -1054,13 +1215,131 @@ function toast(msg,err=false){
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+/* ══════════════════════════════════════
+   DASHBOARD TAB
+══════════════════════════════════════ */
+let dashListening = false;
+
+function initDashTab() {
+  if (dashListening) return;
+  dashListening = true;
+  db.ref('orders').on('value', snap => {
+    const orders = snap.val() || {};
+    renderDashStats(orders);
+    renderDashTopItems(orders);
+    renderDashRecentOrders(orders);
+  });
+}
+
+function renderDashStats(orders) {
+  const vals = Object.values(orders);
+  const byStatus = {new:0, cooking:0, done:0};
+  let revenue = 0;
+  vals.forEach(o => {
+    if (byStatus[o.status] !== undefined) byStatus[o.status]++;
+    if (o.status === 'done') revenue += (o.total || 0);
+  });
+  document.getElementById('d-new').textContent = byStatus.new;
+  document.getElementById('d-cooking').textContent = byStatus.cooking;
+  document.getElementById('d-done').textContent = byStatus.done;
+  document.getElementById('d-revenue').textContent = revenue.toLocaleString();
+}
+
+function renderDashTopItems(orders) {
+  const counts = {};
+  Object.values(orders).forEach(o => {
+    (o.items || []).forEach(item => {
+      const key = item.name;
+      counts[key] = (counts[key] || 0) + item.qty;
+    });
+  });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const el = document.getElementById('dash-top-items');
+  if (!sorted.length) { el.innerHTML = '<div class="empty-s"><i class="fas fa-utensils"></i><p>ยังไม่มีข้อมูล</p></div>'; return; }
+  el.innerHTML = sorted.map(([name, qty], i) =>
+    `<div class="top-item-row">
+      <div class="top-rank">${i+1}</div>
+      <div style="flex:1;font-weight:700;font-size:.9rem;">${esc(name)}</div>
+      <div style="font-weight:800;color:var(--primary-dark);font-size:.9rem;">${qty} ครั้ง</div>
+    </div>`).join('');
+}
+
+function renderDashRecentOrders(orders) {
+  const el = document.getElementById('dash-recent-orders');
+  const entries = Object.entries(orders).sort((a,b)=>(b[1].timestamp||0)-(a[1].timestamp||0)).slice(0,5);
+  if (!entries.length) { el.innerHTML = '<div class="empty-s"><i class="fas fa-receipt"></i><p>ยังไม่มีออเดอร์</p></div>'; return; }
+  const statusMap = {new:'🔴 รอรับ', cooking:'🔥 กำลังทำ', done:'✅ เสิร์ฟ'};
+  el.innerHTML = entries.map(([key,o]) => {
+    const itemsTxt = (o.items||[]).map(i=>`${i.name}×${i.qty}`).join(', ');
+    const ts = o.timestamp ? new Date(o.timestamp).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}) : '';
+    return `<div class="db-order-row">
+      <div class="db-order-info">
+        <div class="db-tbl">โต๊ะ ${o.table} <span style="font-size:.7rem;color:var(--muted);">${ts}</span></div>
+        <div class="db-items-txt">${itemsTxt}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <div class="db-price">฿${o.total}</div>
+        <span class="db-status ${o.status}">${statusMap[o.status]||o.status}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   STATUS UPDATE
+══════════════════════════════════════ */
+function setOrderStatus(key, status) {
+  db.ref('orders/' + key + '/status').set(status).then(() => {
+    const map = {new:'🔴 รอรับ', cooking:'🔥 กำลังทำ', done:'✅ เสิร์ฟแล้ว'};
+    toast(map[status] || status);
+  });
+}
+
+/* ══════════════════════════════════════
+   PRINT RECEIPT
+══════════════════════════════════════ */
+function printReceipt(order) {
+  const items = (order.items || []).map(i =>
+    `<tr><td>${i.name}${i.options ? '<br><small style="color:#888;">' + i.options + '</small>' : ''}</td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">${i.price * i.qty} ฿</td></tr>`
+  ).join('');
+  const now = new Date().toLocaleString('th-TH', {dateStyle:'medium', timeStyle:'short'});
+  const receipt = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ใบเสร็จ</title>
+  <style>body{font-family:'Prompt',Arial,sans-serif;max-width:320px;margin:0 auto;padding:20px;font-size:13px;}
+  h2{text-align:center;font-size:1.1rem;margin-bottom:4px;}
+  .sub{text-align:center;color:#888;font-size:11px;margin-bottom:16px;}
+  table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+  th{border-bottom:2px solid #333;padding:6px 4px;font-size:11px;text-align:left;}
+  td{padding:6px 4px;border-bottom:1px dashed #ddd;}
+  .total-row{font-weight:800;font-size:1.05rem;border-top:2px solid #333;border-bottom:none;}
+  .footer{text-align:center;margin-top:16px;font-size:11px;color:#888;border-top:1px dashed #ddd;padding-top:12px;}
+  @media print{button{display:none!important;}}</style></head>
+  <body>
+  <h2>ขนมจีนบีบสดแม่พร</h2>
+  <div class="sub">& ส้มตำครกแตก by.เจ๊อ้อม</div>
+  <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:11px;border-bottom:1px dashed #ddd;padding-bottom:8px;">
+    <span><b>โต๊ะ ${order.table}</b></span><span>${now}</span>
+  </div>
+  <table><thead><tr><th>รายการ</th><th style="text-align:center;">จำนวน</th><th style="text-align:right;">ราคา</th></tr></thead>
+  <tbody>${items}</tbody>
+  <tfoot><tr class="total-row"><td colspan="2">ยอดรวม</td><td style="text-align:right;">${order.total} ฿</td></tr></tfoot></table>
+  <div class="footer">ขอบคุณที่ใช้บริการ 🙏<br>กรุณาตรวจสอบรายการก่อนชำระเงิน</div>
+  <br><button onclick="window.print()" style="width:100%;padding:10px;background:#ef233c;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;">🖨️ พิมพ์ใบเสร็จ</button>
+  </body></html>`;
+  const frame = document.getElementById('print-frame');
+  frame.style.display = 'block';
+  const doc = frame.contentDocument || frame.contentWindow.document;
+  doc.open(); doc.write(receipt); doc.close();
+  setTimeout(() => { frame.contentWindow.print(); setTimeout(() => { frame.style.display = 'none'; }, 1000); }, 400);
+}
+
 /* INIT — load PIN pre-login */
-db.ref('settings/adminPin').once('value').then(s=>{if(s.val())S.adminPin=s.val();});
+db.ref('settings/adminPin').once('value').then(s=>{if(s.val())S.adminPin=s.val(); else S.adminPin='314159';});
 
 /* ══════════════════════════════════
    DATABASE TAB
 ══════════════════════════════════ */
 let dbListening = false;
+const _dbOrders = {};
 
 function initDbTab() {
   if (dbListening) return;
@@ -1105,6 +1384,7 @@ function updateDbSummary(orders) {
 }
 
 function renderDbOrders(orders) {
+  Object.assign(_dbOrders, orders);
   const body = document.getElementById('db-orders-body');
   const entries = Object.entries(orders).sort((a,b)=>(b[1].timestamp||0)-(a[1].timestamp||0));
 
@@ -1117,15 +1397,22 @@ function renderDbOrders(orders) {
     const itemsTxt = (o.items||[]).map(i=>`${i.name}×${i.qty}`).join(', ');
     const ts = o.timestamp ? new Date(o.timestamp).toLocaleString('th-TH',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}) : '';
     const statusMap = {new:'ใหม่',cooking:'ทำอยู่',done:'เสิร์ฟแล้ว'};
-    return `<div class="db-order-row">
+    const sNew = o.status==='new' ? 'active-new' : '';
+    const sCook = o.status==='cooking' ? 'active-cooking' : '';
+    const sDone = o.status==='done' ? 'active-done' : '';
+    return `<div class="db-order-row" id="or-${key}">
       <div class="db-order-info">
-        <div class="db-tbl">โต๊ะ ${o.table}</div>
+        <div class="db-tbl">โต๊ะ ${o.table} <span style="font-size:.7rem;color:var(--muted);font-weight:500;">${ts}</span></div>
         <div class="db-items-txt">${itemsTxt}</div>
-        ${ts ? `<div style="font-size:.7rem;color:#b0b8c8;margin-top:2px;">🕐 ${ts}</div>` : ''}
-        <span class="db-status ${o.status}">${statusMap[o.status]||o.status}</span>
+        <div class="st-btns">
+          <button class="st-btn ${sNew}" onclick="setOrderStatus('${key}','new')">🔴 รอรับ</button>
+          <button class="st-btn ${sCook}" onclick="setOrderStatus('${key}','cooking')">🔥 กำลังทำ</button>
+          <button class="st-btn ${sDone}" onclick="setOrderStatus('${key}','done')">✅ เสิร์ฟแล้ว</button>
+        </div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="db-price">฿${o.total}</div>
+        <button class="print-btn" onclick="printReceipt(_dbOrders['${key}'])"><i class="fas fa-print"></i> พิมพ์</button>
         <button class="db-del-btn" onclick="confirmDelOrder('${key}','${o.table}')"><i class="fas fa-trash-alt"></i></button>
       </div>
     </div>`;
@@ -1199,7 +1486,7 @@ function renderDbSettings(settings) {
 
   document.getElementById('db-settings-content').innerHTML = `
     <div class="db-settings-grid">
-      <div class="db-settings-item"><strong>Admin PIN</strong>${settings.adminPin||'1234'}</div>
+      <div class="db-settings-item"><strong>Admin PIN</strong>${settings.adminPin||'314159'}</div>
       <div class="db-settings-item"><strong>หมดชั่วคราว</strong>${soldKeys.length} รายการ</div>
       <div class="db-settings-item"><strong>เมนูที่เพิ่ม</strong>${extraCnt} รายการ</div>
       <div class="db-settings-item"><strong>Override</strong>${ovCnt} รายการ</div>
@@ -1285,6 +1572,203 @@ function confirmNukeAll() {
   };
   document.getElementById('conf-ov').classList.add('show');
 }
+/* ══════════════════════════════════════
+   STATS TAB
+══════════════════════════════════════ */
+let lineChart=null, pieChart=null;
+const thMonths=['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+function initStatsTab(){
+  // Init year selector
+  const yr=document.getElementById('stats-year');
+  if(!yr.options.length){
+    const now=new Date();
+    for(let y=now.getFullYear();y>=now.getFullYear()-3;y--){
+      const o=document.createElement('option');
+      o.value=y; o.textContent=y+543;
+      yr.appendChild(o);
+    }
+    yr.value=now.getFullYear();
+    document.getElementById('stats-month').value=now.getMonth()+1;
+  }
+  loadStats();
+}
+
+async function loadStats(){
+  const yr=parseInt(document.getElementById('stats-year').value);
+  const mo=parseInt(document.getElementById('stats-month').value);
+  const prefix=`${yr}-${String(mo).padStart(2,'0')}`;
+
+  // Fetch all history keys for this month
+  const snap=await db.ref('history').once('value');
+  const allHist=snap.val()||{};
+
+  // Filter to selected month
+  const monthData={};
+  Object.keys(allHist).forEach(k=>{
+    if(k.startsWith(prefix)) monthData[k]=allHist[k];
+  });
+
+  renderStatsSummary(monthData, yr, mo);
+  renderCalendar(monthData, yr, mo);
+  renderLineChart(monthData, yr, mo);
+  renderPieChart(monthData);
+  renderTopItems(monthData);
+}
+
+function renderStatsSummary(data, yr, mo){
+  let total=0, orders=0;
+  const itemCounts={};
+  Object.values(data).forEach(day=>{
+    const s=day.summary||{};
+    total+=(s.total||0);
+    orders+=(s.orderCount||Object.keys(day.orders||{}).length);
+    Object.values(day.orders||{}).forEach(o=>{
+      (o.items||[]).forEach(i=>{itemCounts[i.name]=(itemCounts[i.name]||0)+i.qty;});
+    });
+  });
+  const days=Object.keys(data).length;
+  const best=Object.entries(itemCounts).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('stats-summary').innerHTML=`
+    <div class="stats-sum-card"><div class="stats-sum-num" style="color:var(--ok);">฿${total.toLocaleString()}</div><div class="stats-sum-lbl">รายได้รวม (${thMonths[mo]} ${yr+543})</div></div>
+    <div class="stats-sum-card"><div class="stats-sum-num" style="color:var(--indigo);">${orders}</div><div class="stats-sum-lbl">ออเดอร์ทั้งหมด</div></div>
+    <div class="stats-sum-card"><div class="stats-sum-num" style="color:var(--primary);">${days}</div><div class="stats-sum-lbl">วันที่มีการขาย</div></div>
+    <div class="stats-sum-card"><div class="stats-sum-num" style="color:var(--accent);font-size:1rem;">${best?esc(best[0]):'—'}</div><div class="stats-sum-lbl">เมนูขายดีสุด</div></div>
+  `;
+}
+
+function renderCalendar(data, yr, mo){
+  const el=document.getElementById('stats-calendar');
+  const daysInMonth=new Date(yr,mo,0).getDate();
+  const firstDow=new Date(yr,mo-1,1).getDay(); // 0=Sun
+
+  // find max for color scaling
+  const totals=Object.values(data).map(d=>(d.summary||{}).total||0);
+  const maxT=totals.length?Math.max(...totals):1;
+
+  function getColor(t){
+    if(!t) return {bg:'#f4f6f9',fg:'var(--muted)'};
+    const r=t/maxT;
+    if(r>0.75) return {bg:'#1a7a3b',fg:'#fff'};
+    if(r>0.5)  return {bg:'#2d9e50',fg:'#fff'};
+    if(r>0.25) return {bg:'#52b96a',fg:'#fff'};
+    return {bg:'#c8ecd3',fg:'#1a5e2f'};
+  }
+
+  const days=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  let html='<div class="cal-grid">';
+  days.forEach(d=>html+=`<div class="cal-head">${d}</div>`);
+
+  // Empty cells before first day
+  for(let i=0;i<firstDow;i++) html+=`<div class="cal-day empty"></div>`;
+
+  for(let d=1;d<=daysInMonth;d++){
+    const key=`${yr}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayData=data[key];
+    const t=(dayData?.summary?.total)||0;
+    const {bg,fg}=getColor(t);
+    const hasData=!!dayData;
+    const rStr=t?`฿${t>=1000?Math.round(t/1000)+'k':t}`:'';
+    html+=`<div class="cal-day${hasData?' has-data':''}" style="background:${bg};color:${fg};"
+      title="${hasData?'฿'+t.toLocaleString()+' / '+(dayData.summary?.orderCount||0)+' ออเดอร์':'ไม่มีข้อมูล'}">
+      <div class="cal-d">${d}</div>
+      ${rStr?`<div class="cal-r">${rStr}</div>`:''}
+    </div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function renderLineChart(data, yr, mo){
+  const daysInMonth=new Date(yr,mo,0).getDate();
+  const labels=[],values=[];
+  for(let d=1;d<=daysInMonth;d++){
+    const key=`${yr}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    labels.push(d);
+    values.push((data[key]?.summary?.total)||0);
+  }
+  const ctx=document.getElementById('chart-line').getContext('2d');
+  if(lineChart) lineChart.destroy();
+  lineChart=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:'รายได้ (฿)',
+        data:values,
+        borderColor:'#ef233c',
+        backgroundColor:'rgba(239,35,60,0.08)',
+        borderWidth:2.5,
+        pointBackgroundColor:'#ef233c',
+        pointRadius:3,
+        fill:true,
+        tension:0.35
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`฿${c.raw.toLocaleString()}`}}},
+      scales:{
+        y:{beginAtZero:true,ticks:{callback:v=>`฿${v>=1000?Math.round(v/1000)+'k':v}`},grid:{color:'rgba(0,0,0,0.04)'}},
+        x:{grid:{display:false}}
+      }
+    }
+  });
+}
+
+function renderPieChart(data){
+  const counts={};
+  Object.values(data).forEach(day=>{
+    Object.values(day.orders||{}).forEach(o=>{
+      (o.items||[]).forEach(i=>{counts[i.name]=(counts[i.name]||0)+i.qty;});
+    });
+  });
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  if(!sorted.length){
+    document.getElementById('chart-pie').closest('div').innerHTML='<div style="text-align:center;color:var(--muted);padding:40px;font-size:.85rem;">ยังไม่มีข้อมูล</div>';
+    return;
+  }
+  const colors=['#ef233c','#6366f1','#f77f00','#38b000','#06b6d4','#8b5cf6','#f59e0b','#10b981'];
+  const ctx=document.getElementById('chart-pie').getContext('2d');
+  if(pieChart) pieChart.destroy();
+  pieChart=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:sorted.map(([n])=>n),
+      datasets:[{data:sorted.map(([,v])=>v),backgroundColor:colors,borderWidth:0}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} ครั้ง`}}}
+    }
+  });
+  const total=sorted.reduce((s,[,v])=>s+v,0);
+  document.getElementById('pie-legend').innerHTML=sorted.map(([n,v],i)=>
+    `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <div style="width:10px;height:10px;border-radius:3px;background:${colors[i]};flex-shrink:0;"></div>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;">${esc(n)}</span>
+      <span style="font-weight:800;font-size:.78rem;color:var(--txt);">${v}</span>
+    </div>`).join('');
+}
+
+function renderTopItems(data){
+  const counts={};
+  Object.values(data).forEach(day=>{
+    Object.values(day.orders||{}).forEach(o=>{
+      (o.items||[]).forEach(i=>{counts[i.name]=(counts[i.name]||0)+i.qty;});
+    });
+  });
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const el=document.getElementById('stats-top-items');
+  if(!sorted.length){el.innerHTML='<div style="color:var(--muted);font-size:.85rem;text-align:center;padding:20px;">ยังไม่มีข้อมูล</div>';return;}
+  el.innerHTML=sorted.map(([name,qty],i)=>
+    `<div class="top-item-row">
+      <div class="top-rank" style="${i>2?'background:var(--indigo)':''}">${i+1}</div>
+      <div style="flex:1;font-weight:700;font-size:.9rem;">${esc(name)}</div>
+      <div style="font-weight:800;color:var(--primary-dark);font-size:.9rem;">${qty} ครั้ง</div>
+    </div>`).join('');
+}
+
 </script>
 
 <!-- ✅ BOTTOM NAVIGATION BAR -->

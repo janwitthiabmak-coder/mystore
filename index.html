@@ -548,6 +548,38 @@
             color: var(--primary); font-size: 0.82rem; font-weight: 700;
             margin-top: 6px; display: flex; align-items: center; gap: 5px;
         }
+
+        /* ── Search Bar ── */
+        .search-wrap{padding:4px 20px 14px;max-width:680px;margin:0 auto;}
+        .search-input{width:100%;padding:13px 20px 13px 48px;border-radius:999px;border:2px solid transparent;background:rgba(255,255,255,.92);backdrop-filter:blur(15px);font-size:.97rem;font-family:'Prompt',sans-serif;color:var(--text-main);box-shadow:var(--glass-shadow);outline:none;transition:all .3s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238d99ae' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:14px center;background-size:20px;}
+        .search-input:focus{border-color:rgba(239,35,60,.25);box-shadow:0 8px 25px rgba(239,35,60,.1);}
+        .search-no-result{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:1rem;font-weight:500;display:none;}
+
+        /* ── Call Staff ── */
+        .btn-call-staff{position:fixed;bottom:32px;right:20px;width:56px;height:56px;border-radius:50%;background:#fff;color:var(--accent);border:2px solid rgba(247,127,0,.22);font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.13);cursor:pointer;z-index:850;transition:all .4s cubic-bezier(.34,1.56,.64,1);animation:float-anim 5s ease-in-out infinite;}
+        .btn-call-staff:active{transform:scale(.88);}
+        .call-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,23,42,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:1000;opacity:0;visibility:hidden;display:flex;align-items:flex-end;justify-content:center;transition:all .4s cubic-bezier(.25,1,.5,1);}
+        .call-overlay.show{opacity:1;visibility:visible;}
+        .call-sheet{background:var(--bg-main);width:100%;max-width:680px;border-radius:35px 35px 0 0;padding:20px 25px 40px;transform:translateY(100%);transition:transform .5s cubic-bezier(.2,.8,.2,1);box-shadow:0 -20px 40px rgba(0,0,0,.2);max-height:85vh;overflow-y:auto;}
+        .call-overlay.show .call-sheet{transform:translateY(0);}
+        .call-options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+        .call-opt{padding:22px 12px;border:2px solid #e2e8f0;border-radius:20px;background:#fff;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .3s cubic-bezier(.34,1.56,.64,1);font-size:1rem;font-weight:700;color:var(--text-main);}
+        .call-opt:active{border-color:var(--accent);background:#fffaf0;transform:translateY(-3px);box-shadow:0 8px 20px rgba(247,127,0,.15);color:var(--accent);}
+        .call-opt i{font-size:2rem;color:var(--accent);}
+        .call-sent-msg{text-align:center;padding:30px;display:none;}
+
+        /* ── Order Tracking ── */
+        #order-track-wrap{max-width:680px;margin:0 auto;padding:0 20px 10px;display:none;}
+        .order-track-bar{background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1.5px solid #ffc107;border-radius:18px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 15px rgba(255,193,7,.15);}
+        .track-dot{width:10px;height:10px;border-radius:50%;background:#ffc107;flex-shrink:0;}
+        .track-dot.pulse{animation:pdot 1.2s infinite;}
+        .track-dot.green{background:#38b000;animation:none;}
+        .order-track-bar.done-bar{background:linear-gradient(135deg,#f0fff4,#dcfce7);border-color:#38b000;}
+
+        /* ── Session History ── */
+        #hist-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,23,42,.6);backdrop-filter:blur(8px);z-index:1000;opacity:0;visibility:hidden;display:flex;align-items:flex-end;justify-content:center;transition:all .4s cubic-bezier(.25,1,.5,1);}
+        #hist-overlay.show{opacity:1;visibility:visible;}
+        .hist-total-row{display:flex;justify-content:space-between;border-top:2px dashed #e2e8f0;padding-top:10px;margin-top:5px;font-weight:800;}
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -566,9 +598,14 @@
         <p class="brand-title" style="font-size: 1.4rem; margin-top:-5px;">& ส้มตำครกแตก by.เจ๊อ้อม</p>
         <p class="brand-subtitle"><i class="fas fa-leaf" style="color:var(--success);"></i> ขนมจีนน้ำยา เส้นบีบสดทุกวัน บุฟเฟ่ต์ผักหยิบตักไม่อั้น</p>
         
-        <div class="table-badge animate__animated animate__bounceIn" style="animation-delay: 0.5s;" onclick="openTablePicker()" title="กดเพื่อเปลี่ยนโต๊ะ">
-            <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number" style="font-size:1.4rem; color:var(--primary);">1</span>
-            <i class="fas fa-pen" style="font-size:0.8rem; color:var(--text-muted); margin-left:2px;"></i>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:15px;">
+            <div class="table-badge animate__animated animate__bounceIn" style="animation-delay:0.5s;margin-top:0;" onclick="openTablePicker()" title="กดเพื่อเปลี่ยนโต๊ะ">
+                <i class="fas fa-utensils"></i> โต๊ะ <span id="table-number" style="font-size:1.4rem;color:var(--primary);">1</span>
+                <i class="fas fa-pen" style="font-size:0.8rem;color:var(--text-muted);margin-left:2px;"></i>
+            </div>
+            <button onclick="openHistory()" style="background:rgba(255,255,255,.85);border:1.5px solid rgba(239,35,60,.2);color:var(--text-muted);width:44px;height:44px;border-radius:50%;font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.06);transition:all .3s;" title="ประวัติการสั่ง">
+                <i class="fas fa-clock-rotate-left"></i>
+            </button>
         </div>
     </header>
 
@@ -592,6 +629,18 @@
         <span id="announcement-text"></span>
     </div>
 
+    <!-- Order tracking banner -->
+    <div id="order-track-wrap">
+        <div class="order-track-bar" id="order-track-bar">
+            <div class="track-dot pulse" id="track-dot"></div>
+            <div style="flex:1;">
+                <div style="font-weight:700;font-size:.9rem;color:var(--text-main);">ออเดอร์ของคุณ <span id="track-table-label"></span></div>
+                <div id="track-status-text" style="font-size:.85rem;color:var(--accent);font-weight:600;margin-top:2px;">⏳ รอรับออเดอร์...</div>
+            </div>
+            <button onclick="clearOrderTracking()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;padding:5px;flex-shrink:0;"><i class="fas fa-times-circle"></i></button>
+        </div>
+    </div>
+
     <nav class="nav-categories animate__animated animate__fadeIn" id="nav-cats">
         <div class="cat-tab active" onclick="scrollToCategory('cat-1', this)"><i class="fas fa-pepper-hot"></i> ส้มตำ</div>
         <div class="cat-tab" onclick="scrollToCategory('cat-2', this)"><i class="fas fa-bowl-food"></i> ขนมจีนน้ำยา</div>
@@ -601,6 +650,15 @@
         <div class="cat-tab" onclick="scrollToCategory('cat-6', this)"><i class="fas fa-fill-drip"></i> น้ำยาเพิ่มเติม</div>
     </nav>
  
+    <!-- Search Bar -->
+    <div class="search-wrap">
+        <input type="search" class="search-input" id="search-input" placeholder="🔍 ค้นหาเมนู..." oninput="searchMenu(this.value)" autocomplete="off">
+    </div>
+    <div class="search-no-result" id="search-no-result">
+        <i class="fas fa-search" style="font-size:2.5rem;margin-bottom:12px;opacity:.3;display:block;"></i>
+        ไม่พบเมนูที่ค้นหา
+    </div>
+
     <main class="main-container">
         <div id="cat-1" class="category-section">
             <h2 class="section-title"><i class="fas fa-pepper-hot"></i> ส้มตำ</h2>
@@ -1103,7 +1161,9 @@
     };
  
     firebase.database().ref('orders').push(orderData)
-        .then(() => {
+        .then((ref) => {
+            startOrderTracking(ref.key, orderData);
+            addToSessionHistory(orderData);
             const successMsg = document.querySelector('#overlay-success .success-modal p');
             if (successMsg) {
                 successMsg.innerHTML = `ออเดอร์ของ <b>โต๊ะ ${tableNum}</b> ถูกส่งตรงเข้าครัวแล้วครับ<br>รอรับความแซ่บซี๊ดดดด ได้เลย! 🌶️✨`;
@@ -1219,6 +1279,135 @@
 };
 firebase.initializeApp(firebaseConfig);
 
+        /* ══════════════════════════════════════
+           SEARCH
+        ══════════════════════════════════════ */
+        function searchMenu(q) {
+            const query = q.trim().toLowerCase();
+            let totalFound = 0;
+            document.querySelectorAll('.food-card').forEach(card => {
+                const name = (card.querySelector('.food-name')?.textContent || '').toLowerCase();
+                const visible = !query || name.includes(query);
+                card.style.display = visible ? '' : 'none';
+                if (visible) totalFound++;
+            });
+            document.querySelectorAll('.category-section').forEach(sec => {
+                const anyVis = [...sec.querySelectorAll('.food-card')].some(c => c.style.display !== 'none');
+                sec.style.display = (!query || anyVis) ? '' : 'none';
+            });
+            const noRes = document.getElementById('search-no-result');
+            if (noRes) noRes.style.display = (query && totalFound === 0) ? 'block' : 'none';
+        }
+
+        /* ══════════════════════════════════════
+           CALL STAFF
+        ══════════════════════════════════════ */
+        function openCallStaff() {
+            const tbl = document.getElementById('table-number').innerText;
+            document.getElementById('call-table-display').innerText = tbl;
+            document.getElementById('call-options-grid').style.display = 'grid';
+            document.getElementById('call-sent-msg').style.display = 'none';
+            document.getElementById('call-overlay').classList.add('show');
+        }
+
+        function submitCallRequest(type) {
+            const tbl = document.getElementById('table-number').innerText;
+            firebase.database().ref('calls').push({
+                table: tbl, type: type, timestamp: Date.now(), done: false
+            }).then(() => {
+                document.getElementById('call-options-grid').style.display = 'none';
+                document.getElementById('call-sent-msg').style.display = 'block';
+                setTimeout(() => closeCallOverlayDirect(), 2200);
+            }).catch(() => alert('เกิดข้อผิดพลาด กรุณาลองใหม่'));
+        }
+
+        function closeCallOverlay(e) { if (e.target.id === 'call-overlay') closeCallOverlayDirect(); }
+        function closeCallOverlayDirect() { document.getElementById('call-overlay').classList.remove('show'); }
+
+        /* ══════════════════════════════════════
+           ORDER TRACKING (Realtime)
+        ══════════════════════════════════════ */
+        let _trackRef = null;
+        let _trackHandler = null;
+
+        function startOrderTracking(orderKey, orderData) {
+            const wrap = document.getElementById('order-track-wrap');
+            const bar  = document.getElementById('order-track-bar');
+            const dot  = document.getElementById('track-dot');
+            if (wrap) wrap.style.display = 'block';
+
+            const tbl = document.getElementById('table-number').innerText;
+            const lbl = document.getElementById('track-table-label');
+            if (lbl) lbl.textContent = '(โต๊ะ ' + tbl + ')';
+
+            // Unsubscribe previous
+            if (_trackRef && _trackHandler) _trackRef.off('value', _trackHandler);
+
+            _trackRef = firebase.database().ref('orders/' + orderKey);
+            _trackHandler = _trackRef.on('value', snap => {
+                const o = snap.val();
+                const statusEl = document.getElementById('track-status-text');
+                if (!o) { clearOrderTracking(); return; }
+                const map = { new:'⏳ รอรับออเดอร์...', cooking:'🔥 กำลังทำอาหาร...', done:'✅ เสิร์ฟแล้ว!' };
+                if (statusEl) statusEl.textContent = map[o.status] || o.status;
+                if (o.status === 'done') {
+                    bar.classList.add('done-bar');
+                    dot.className = 'track-dot green';
+                } else {
+                    bar.classList.remove('done-bar');
+                    dot.className = 'track-dot pulse';
+                }
+            });
+        }
+
+        function clearOrderTracking() {
+            if (_trackRef && _trackHandler) { _trackRef.off('value', _trackHandler); _trackRef = null; _trackHandler = null; }
+            const wrap = document.getElementById('order-track-wrap');
+            if (wrap) wrap.style.display = 'none';
+        }
+
+        /* ══════════════════════════════════════
+           SESSION HISTORY
+        ══════════════════════════════════════ */
+        let sessionOrders = [];
+        let sessionOrderNum = 0;
+
+        function addToSessionHistory(orderData) {
+            sessionOrderNum++;
+            sessionOrders.unshift({
+                ...orderData,
+                num: sessionOrderNum,
+                time: new Date().toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' })
+            });
+        }
+
+        function openHistory() {
+            const list = document.getElementById('hist-list');
+            if (!sessionOrders.length) {
+                list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><i class="fas fa-receipt" style="font-size:2.5rem;opacity:.3;display:block;margin-bottom:12px;"></i>ยังไม่มีประวัติรอบนี้</div>';
+            } else {
+                const grandTotal = sessionOrders.reduce((s, o) => s + (o.total || 0), 0);
+                list.innerHTML = sessionOrders.map(o => `
+                    <div class="summary-item" style="flex-direction:column;gap:6px;margin-bottom:14px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                            <span style="font-weight:800;color:var(--primary-dark);">ออเดอร์ที่ ${o.num}</span>
+                            <span style="font-size:.8rem;background:#f1f5f9;padding:3px 10px;border-radius:10px;color:var(--text-muted);">🕐 ${o.time}</span>
+                        </div>
+                        ${(o.items || []).map(item => `
+                            <div style="display:flex;justify-content:space-between;font-size:.92rem;padding:3px 0;">
+                                <span>${item.name} <span style="color:var(--text-muted);">×${item.qty}</span></span>
+                                <span style="color:var(--primary-dark);font-weight:700;">${item.price * item.qty} ฿</span>
+                            </div>`).join('')}
+                        <div class="hist-total-row"><span>รวม</span><span style="color:var(--primary-dark);">${o.total} ฿</span></div>
+                    </div>`).join('') +
+                    (sessionOrders.length > 1 ? `<div style="text-align:right;padding:10px 5px;font-size:1.1rem;font-weight:800;color:var(--primary-dark);border-top:2px solid #e2e8f0;margin-top:5px;">ยอดรวมทั้งหมด: ${grandTotal} ฿</div>` : '');
+            }
+            document.getElementById('hist-overlay').classList.add('show');
+        }
+
+        function closeHistory(e) { if (e.target.id === 'hist-overlay') closeHistoryDirect(); }
+        function closeHistoryDirect() { document.getElementById('hist-overlay').classList.remove('show'); }
+
         window.onload = function() {
             getTableNumber();
 
@@ -1237,6 +1426,42 @@ firebase.initializeApp(firebaseConfig);
     </script>
 
     <!-- ✅ PWA: Service Worker Registration -->
+    <!-- ═══ CALL STAFF BUTTON ═══ -->
+    <button class="btn-call-staff" id="btn-call-staff" onclick="openCallStaff()" title="เรียกพนักงาน">
+        <i class="fas fa-bell"></i>
+    </button>
+
+    <!-- ═══ CALL STAFF OVERLAY ═══ -->
+    <div class="call-overlay" id="call-overlay" onclick="closeCallOverlay(event)">
+        <div class="call-sheet" onclick="event.stopPropagation()">
+            <div class="drag-handle"></div>
+            <h3 class="sheet-title" style="font-size:1.5rem;">🔔 เรียกพนักงาน</h3>
+            <p style="text-align:center;color:var(--text-muted);font-size:.95rem;">โต๊ะ <strong id="call-table-display" style="color:var(--primary);">1</strong> — เลือกสิ่งที่ต้องการ</p>
+            <div class="call-options-grid" id="call-options-grid">
+                <div class="call-opt" onclick="submitCallRequest('ขอน้ำเพิ่ม')"><i class="fas fa-droplet"></i>ขอน้ำเพิ่ม</div>
+                <div class="call-opt" onclick="submitCallRequest('เรียกเช็กบิล')"><i class="fas fa-credit-card"></i>เรียกเช็กบิล</div>
+                <div class="call-opt" onclick="submitCallRequest('ขอถุงเก็บ')"><i class="fas fa-bag-shopping"></i>ขอถุงเก็บ</div>
+                <div class="call-opt" onclick="submitCallRequest('เรียกพนักงาน')"><i class="fas fa-hand"></i>เรียกพนักงาน</div>
+            </div>
+            <div class="call-sent-msg" id="call-sent-msg">
+                <div style="font-size:3.5rem;margin-bottom:12px;">🙏</div>
+                <div style="font-size:1.3rem;font-weight:800;color:var(--text-main);margin-bottom:8px;">ส่งแจ้งเตือนแล้ว!</div>
+                <p style="color:var(--text-muted);font-size:1rem;">พนักงานจะมาหาคุณในไม่ช้า</p>
+            </div>
+            <button onclick="closeCallOverlayDirect()" style="width:100%;padding:16px;background:transparent;border:none;color:var(--text-muted);font-weight:700;font-size:1.1rem;cursor:pointer;margin-top:5px;">ปิด</button>
+        </div>
+    </div>
+
+    <!-- ═══ SESSION HISTORY OVERLAY ═══ -->
+    <div id="hist-overlay" onclick="closeHistory(event)">
+        <div class="call-sheet" onclick="event.stopPropagation()">
+            <div class="drag-handle"></div>
+            <h3 class="sheet-title" style="font-size:1.5rem;">📋 ประวัติรอบนี้</h3>
+            <div id="hist-list" style="padding:0 5px 10px;"></div>
+            <button onclick="closeHistoryDirect()" style="width:100%;padding:16px;background:transparent;border:none;color:var(--text-muted);font-weight:700;font-size:1.1rem;cursor:pointer;margin-top:5px;">ปิด</button>
+        </div>
+    </div>
+
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

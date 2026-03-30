@@ -185,6 +185,25 @@
   .popup-btn.p-dismiss { background:#f5f5f4; color:#57534e; border:1px solid #e7e5e4; }
   .popup-btn.p-confirm { color:#fff; }
 
+
+  /* ── Calls ── */
+  #panel-calls { display:none; padding:20px 24px 60px; max-width:600px; margin:0 auto; }
+  #panel-calls.active { display:block; }
+  .call-card { background:#fff; border:1px solid #e7e5e4; border-radius:12px; padding:16px; margin-bottom:10px; display:flex; align-items:center; gap:14px; border-left:4px solid #d97706; }
+  .call-card.done-c { border-left-color:#16a34a; opacity:0.55; }
+  .call-emoji { font-size:1.9rem; flex-shrink:0; }
+  .call-info { flex:1; }
+  .call-tbl { font-size:.98rem; font-weight:800; }
+  .call-type { font-size:.82rem; color:#78716c; margin-top:2px; }
+  .call-time { font-size:.72rem; color:#a8a29e; margin-top:3px; }
+  .call-done-btn { background:#f0fdf4; border:1.5px solid #bbf7d0; color:#16a34a; padding:8px 14px; border-radius:9px; font-size:.8rem; font-weight:700; cursor:pointer; font-family:'Prompt',sans-serif; transition:all .2s; flex-shrink:0; }
+  .call-done-btn:hover { background:#dcfce7; }
+  .calls-empty { text-align:center; padding:50px 20px; color:#a8a29e; font-size:.9rem; }
+  .calls-clear-btn { background:#f5f5f4; border:1.5px solid #e7e5e4; color:#78716c; padding:8px 16px; border-radius:8px; font-size:.82rem; font-weight:600; cursor:pointer; font-family:'Prompt',sans-serif; transition:all .2s; }
+  .calls-clear-btn:hover { color:#e11d48; border-color:#fecdd3; background:#fff1f2; }
+  .sound-toggle { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e7e5e4; border-radius:10px; padding:8px 14px; font-size:.82rem; font-weight:600; cursor:pointer; color:#57534e; transition:all .2s; }
+  .sound-toggle.on { color:#16a34a; border-color:#bbf7d0; background:#f0fdf4; }
+
   @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:0.4} }
   @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:0.3} }
   @keyframes slideIn{ from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
@@ -217,6 +236,7 @@
 <!-- Tab bar -->
 <div class="tab-bar">
   <button class="tab-btn active" id="tab-kitchen" onclick="switchTab('kitchen')">🍳 ห้องครัว</button>
+  <button class="tab-btn" id="tab-calls" onclick="switchTab('calls')">🔔 เรียกพนักงาน <span id="calls-badge" style="display:none;background:#e11d48;color:#fff;font-size:.65rem;font-weight:800;padding:1px 6px;border-radius:99px;margin-left:4px;"></span></button>
   <button class="tab-btn" id="tab-history" onclick="switchTab('history')">📋 ประวัติรายวัน</button>
 </div>
 
@@ -283,6 +303,19 @@
   <div id="history-content"><div class="history-empty">⏳ กำลังโหลดประวัติ...</div></div>
 </div>
 
+
+<!-- Calls panel -->
+<div id="panel-calls">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+    <h3 style="font-size:.95rem;font-weight:800;">🔔 การเรียกพนักงาน</h3>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="sound-toggle on" id="sound-toggle" onclick="toggleSound()">🔊 เสียงแจ้งเตือน</button>
+      <button class="calls-clear-btn" onclick="clearDoneCalls()">✅ ล้างที่จัดการแล้ว</button>
+    </div>
+  </div>
+  <div id="calls-list"><div class="calls-empty">⏳ กำลังโหลด...</div></div>
+</div>
+
 <!-- Popup confirm -->
 <div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
   <div class="popup-sheet" onclick="event.stopPropagation()">
@@ -340,6 +373,7 @@
     currentTab = tab;
     document.getElementById('tab-kitchen').classList.toggle('active', tab==='kitchen');
     document.getElementById('tab-history').classList.toggle('active', tab==='history');
+    document.getElementById('tab-calls').classList.toggle('active', tab==='calls');
     document.getElementById('panel-kitchen').style.display = tab==='kitchen' ? '' : 'none';
     document.getElementById('stats-bar').style.display     = tab==='kitchen' ? '' : 'none';
 
@@ -352,9 +386,14 @@
 
     if (tab === 'history') {
       document.getElementById('panel-history').classList.add('active');
+      document.getElementById('panel-calls').classList.remove('active');
       loadHistory();
+    } else if (tab === 'calls') {
+      document.getElementById('panel-calls').classList.add('active');
+      document.getElementById('panel-history').classList.remove('active');
     } else {
       document.getElementById('panel-history').classList.remove('active');
+      document.getElementById('panel-calls').classList.remove('active');
     }
   }
 
@@ -662,6 +701,106 @@
       document.getElementById('badge-'+s).textContent = val;
     });
     document.getElementById('cnt-total').textContent = '฿' + total.toLocaleString();
+  });
+
+
+  /* ══════════════════════════════════════════════
+     CALLS FEATURE (เรียกพนักงาน)
+  ══════════════════════════════════════════════ */
+  let soundEnabled = true;
+  let prevCallKeys = new Set();
+
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const btn = document.getElementById('sound-toggle');
+    btn.textContent = soundEnabled ? '🔊 เสียงแจ้งเตือน' : '🔇 ปิดเสียง';
+    btn.classList.toggle('on', soundEnabled);
+  }
+
+  function playCallSound() {
+    if (!soundEnabled) return;
+    try {
+      const ctx = new AudioContext();
+      const times = [0, 0.22, 0.44];
+      times.forEach(t => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = 1046;
+        o.type = 'sine';
+        g.gain.setValueAtTime(0, ctx.currentTime + t);
+        g.gain.linearRampToValueAtTime(0.35, ctx.currentTime + t + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.22);
+        o.start(ctx.currentTime + t);
+        o.stop(ctx.currentTime + t + 0.3);
+      });
+    } catch(e) {}
+  }
+
+  function markCallDone(key) {
+    db.ref('calls/' + key + '/done').set(true);
+  }
+
+  function clearDoneCalls() {
+    db.ref('calls').once('value').then(snap => {
+      const calls = snap.val() || {};
+      const upd = {};
+      Object.entries(calls).forEach(([k, c]) => { if (c.done) upd['calls/' + k] = null; });
+      if (!Object.keys(upd).length) { showToast('ไม่มีรายการที่จัดการแล้ว', ''); return; }
+      db.ref().update(upd).then(() => showToast('✅ ล้างรายการที่จัดการแล้ว', ''));
+    });
+  }
+
+  function renderCalls(calls) {
+    const el = document.getElementById('calls-list');
+    if (!el) return;
+    const entries = Object.entries(calls).sort((a,b) => (b[1].timestamp||0) - (a[1].timestamp||0));
+    if (!entries.length) {
+      el.innerHTML = '<div class="calls-empty">🔔 ยังไม่มีการเรียกพนักงาน</div>';
+      return;
+    }
+    const typeEmoji = {'ขอน้ำเพิ่ม':'💧','เรียกเช็กบิล':'💳','ขอถุงเก็บ':'🛍️','เรียกพนักงาน':'🙋'};
+    el.innerHTML = entries.map(([key, c]) => {
+      const ts = c.timestamp ? new Date(c.timestamp).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}) : '';
+      const em = typeEmoji[c.type] || '🔔';
+      return `<div class="call-card ${c.done ? 'done-c' : ''}">
+        <div class="call-emoji">${em}</div>
+        <div class="call-info">
+          <div class="call-tbl">โต๊ะ ${c.table||'?'}</div>
+          <div class="call-type">${c.type||'เรียกพนักงาน'}</div>
+          <div class="call-time">🕐 ${ts}</div>
+        </div>
+        ${!c.done ? `<button class="call-done-btn" onclick="markCallDone('${key}')">✅ จัดการแล้ว</button>` : '<span style="font-size:.75rem;color:#16a34a;font-weight:700;">✅ แล้ว</span>'}
+      </div>`;
+    }).join('');
+  }
+
+  function updateCallsBadge(calls) {
+    const pending = Object.values(calls).filter(c => !c.done).length;
+    const badge = document.getElementById('calls-badge');
+    if (badge) {
+      badge.textContent = pending > 9 ? '9+' : pending;
+      badge.style.display = pending > 0 ? '' : 'none';
+    }
+  }
+
+  // Listen to calls
+  db.ref('calls').orderByChild('timestamp').on('value', snap => {
+    const calls = snap.val() || {};
+    const keys = new Set(Object.keys(calls));
+
+    // Check for new pending calls
+    keys.forEach(k => {
+      if (!prevCallKeys.has(k) && !calls[k].done) {
+        playCallSound();
+        const c = calls[k];
+        showToast(`🔔 โต๊ะ ${c.table||'?'} — ${c.type||'เรียกพนักงาน'}`, 'กดแท็บ "เรียกพนักงาน" เพื่อจัดการ');
+      }
+    });
+    prevCallKeys = keys;
+
+    renderCalls(calls);
+    updateCallsBadge(calls);
   });
 
   /* ── Init ── */
