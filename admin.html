@@ -14,7 +14,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Prompt',sans-serif;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -414,26 +413,6 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
 
 .db-raw { font-family:monospace; font-size:.75rem; background:#f8faff; border-radius:9px; padding:12px; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:#3730a3; border:1px solid #e0e7ff; }
 
-
-/* ── STATS TAB ── */
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;min-width:280px;}
-.cal-head{text-align:center;font-size:.7rem;font-weight:800;color:var(--muted);padding:4px 2px;}
-.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;font-size:.72rem;font-weight:700;cursor:default;position:relative;
-  background:#f4f6f9;color:var(--muted);transition:transform .15s;}
-.cal-day.has-data{cursor:pointer;}
-.cal-day.has-data:hover{transform:scale(1.1);z-index:5;}
-.cal-day .cal-d{font-size:.82rem;font-weight:800;}
-.cal-day .cal-r{font-size:.58rem;font-weight:700;margin-top:1px;}
-.cal-day.empty{background:transparent;}
-.stats-sum-card{background:#fff;border:1.5px solid var(--bdr);border-radius:14px;padding:16px 14px;text-align:center;}
-.stats-sum-num{font-size:1.5rem;font-weight:800;line-height:1.1;margin-bottom:3px;}
-.stats-sum-lbl{font-size:.72rem;color:var(--muted);font-weight:600;}
-.top-item-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;}
-.top-item-row:last-child{border-bottom:none;}
-.top-rank{width:26px;height:26px;border-radius:50%;background:var(--pg);color:#fff;font-size:.72rem;
-  font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-
 @media(max-width:480px){ #db-summary{ grid-template-columns:repeat(3,1fr); } }
 
 /* ── DASHBOARD TAB ── */
@@ -451,6 +430,20 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
 .top-item-row:nth-child(2) .top-rank{background:linear-gradient(135deg,#c0c0c0,#a0a0a0);}
 .top-item-row:nth-child(3) .top-rank{background:linear-gradient(135deg,#cd7f32,#a05a20);}
 
+/* ── CALL NOTIFICATIONS ── */
+.call-badge{position:absolute;top:-4px;right:-4px;background:var(--pg);color:#fff;font-size:.62rem;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff;animation:pdot 1.2s infinite;}
+.call-badge.show{display:flex;}
+.bell-wrap{position:relative;cursor:pointer;background:var(--bg);border:1.5px solid var(--bdr);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--muted);transition:all .2s;}
+.bell-wrap.ringing{color:var(--accent);border-color:rgba(247,127,0,.4);background:#fff9f0;}
+.call-item{background:#fff;border-radius:12px;padding:12px 14px;border:1.5px solid var(--bdr);margin-bottom:9px;display:flex;align-items:center;gap:10px;}
+.call-item.pending{border-left:4px solid var(--accent);}
+.call-item.done-call{border-left:4px solid var(--ok);opacity:.6;}
+.ci-info{flex:1;min-width:0;}
+.ci-tbl{font-weight:800;font-size:.88rem;}
+.ci-type{font-size:.8rem;color:var(--muted);margin-top:2px;}
+.ci-time{font-size:.7rem;color:#b0b8c8;margin-top:2px;}
+.ci-done{background:#f0fdf4;border:1.5px solid #bbf7d0;color:var(--ok);padding:6px 12px;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Prompt',sans-serif;transition:all .2s;flex-shrink:0;}
+.ci-done:hover{background:#dcfce7;}
 
 /* ── STATUS UPDATE BUTTONS ── */
 .st-btns{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
@@ -481,7 +474,6 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
     <div class="pin-disp">
       <div class="pd" id="d0"></div><div class="pd" id="d1"></div>
       <div class="pd" id="d2"></div><div class="pd" id="d3"></div>
-      <div class="pd" id="d4"></div><div class="pd" id="d5"></div>
     </div>
     <div class="pin-pad">
       <button class="pb" onclick="pp('1')">1</button>
@@ -512,7 +504,11 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-            </div>
+      <div class="bell-wrap" id="bell-wrap" onclick="switchTab('calls',document.querySelector('[data-tab=calls]'))" title="การเรียกพนักงาน">
+        <i class="fas fa-bell"></i>
+        <span id="bell-label" style="display:none;">เรียกพนักงาน</span>
+        <div class="call-badge" id="call-badge"></div>
+      </div>
       <button class="logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ออก</button>
     </div>
   </header>
@@ -520,10 +516,10 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
 
   <div class="tabs">
     <div class="tab on" data-tab="dash" onclick="switchTab('dash',this)"><i class="fas fa-chart-line"></i> แดชบอร์ด</div>
+    <div class="tab" data-tab="calls" onclick="switchTab('calls',this)"><i class="fas fa-bell"></i> เรียกพนักงาน</div>
     <div class="tab" data-tab="ann" onclick="switchTab('ann',this)"><i class="fas fa-bullhorn"></i> ประกาศ</div>
     <div class="tab" data-tab="menu" onclick="switchTab('menu',this)"><i class="fas fa-utensils"></i> เมนูอาหาร</div>
     <div class="tab" data-tab="cfg" onclick="switchTab('cfg',this)"><i class="fas fa-cog"></i> ตั้งค่า</div>
-    <div class="tab" data-tab="stats" onclick="switchTab('stats',this)"><i class="fas fa-chart-pie"></i> สถิติ</div>
     <div class="tab" data-tab="db" onclick="switchTab('db',this)"><i class="fas fa-database"></i> Database</div>
   </div>
 
@@ -544,6 +540,16 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
       <h3><i class="fas fa-receipt" style="color:var(--indigo)"></i> ออเดอร์ล่าสุด</h3>
       <div id="dash-recent-orders"><div class="empty-s"><i class="fas fa-circle-notch fa-spin"></i><p>กำลังโหลด…</p></div></div>
     </div>
+  </div>
+
+  <!-- ── CALLS TAB ── -->
+  <div class="tc" id="tab-calls">
+    <div class="sbar"><div class="sdot"></div><span>รับแจ้งเตือนแบบ realtime</span><small id="calls-last-update"></small></div>
+    <div class="shd"><h2><i class="fas fa-bell" style="color:var(--accent)"></i> การเรียกพนักงาน</h2><p>ลูกค้ากดเรียกจากหน้าสั่งอาหาร จะแจ้งเตือนที่นี่ทันที</p></div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+      <button class="bclr" onclick="clearDoneCalls()" style="font-size:.8rem;padding:8px 14px;"><i class="fas fa-check-double"></i> ล้างรายการที่จัดการแล้ว</button>
+    </div>
+    <div id="calls-list"><div class="empty-s"><i class="fas fa-bell" style="opacity:.3"></i><p>ยังไม่มีการเรียกพนักงาน</p></div></div>
   </div>
 
   <!-- ── ANNOUNCEMENT TAB ── -->
@@ -594,6 +600,76 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
   <div class="tc" id="tab-cfg">
     <div class="shd"><h2><i class="fas fa-cog" style="color:var(--accent)"></i> ตั้งค่าระบบ</h2></div>
 
+    <!-- Sound Settings -->
+    <div class="sc" style="border:2px solid rgba(99,102,241,.2);background:#f8faff;">
+      <h3><i class="fas fa-volume-high" style="color:var(--indigo)"></i> ตั้งค่าเสียงแจ้งเตือน</h3>
+      <p style="margin-bottom:16px;">ตั้งค่านี้จะมีผลกับ <b>ทุกหน้า</b> (ครัว + แอดมิน) ทันที</p>
+
+      <!-- On/Off Toggle -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding:14px;background:#fff;border-radius:12px;border:1.5px solid var(--bdr);">
+        <div>
+          <div style="font-weight:800;font-size:.95rem;">เปิด/ปิดเสียงแจ้งเตือน</div>
+          <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">ครอบคลุมทุกเหตุการณ์ — ออเดอร์ใหม่, เรียกพนักงาน</div>
+        </div>
+        <label class="tog" style="flex-shrink:0;">
+          <input type="checkbox" id="snd-master" checked onchange="saveSoundCfg()">
+          <span class="ts"></span>
+        </label>
+      </div>
+
+      <!-- Volume Slider -->
+      <div style="padding:14px;background:#fff;border-radius:12px;border:1.5px solid var(--bdr);margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="font-weight:800;font-size:.88rem;"><i class="fas fa-volume-high" style="color:var(--indigo);margin-right:6px;"></i>ระดับเสียงรวม</div>
+          <span id="adm-vol-label" style="font-weight:800;font-size:.9rem;color:var(--primary);">70%</span>
+        </div>
+        <input type="range" id="adm-vol" min="0" max="100" value="70"
+          style="width:100%;accent-color:var(--primary);"
+          oninput="document.getElementById('adm-vol-label').textContent=this.value+'%'"
+          onchange="saveSoundCfg()">
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:4px;">
+          <span>🔇 เงียบ</span><span>🔊 ดัง</span>
+        </div>
+      </div>
+
+      <!-- Volume per event -->
+      <div style="padding:14px;background:#fff;border-radius:12px;border:1.5px solid var(--bdr);margin-bottom:14px;">
+        <div style="font-weight:800;font-size:.88rem;margin-bottom:12px;"><i class="fas fa-sliders" style="color:var(--indigo);margin-right:6px;"></i>ระดับเสียงแต่ละเหตุการณ์</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <span style="font-size:.83rem;font-weight:700;">🍽️ ออเดอร์ใหม่</span>
+              <span id="vol-order-label" style="font-size:.83rem;font-weight:800;color:var(--primary);">100%</span>
+            </div>
+            <input type="range" id="vol-order" min="0" max="100" value="100"
+              style="width:100%;accent-color:var(--primary);"
+              oninput="document.getElementById('vol-order-label').textContent=this.value+'%'"
+              onchange="saveSoundCfg()">
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <span style="font-size:.83rem;font-weight:700;">🔔 เรียกพนักงาน</span>
+              <span id="vol-call-label" style="font-size:.83rem;font-weight:800;color:var(--indigo);">100%</span>
+            </div>
+            <input type="range" id="vol-call" min="0" max="100" value="100"
+              style="width:100%;accent-color:var(--indigo);"
+              oninput="document.getElementById('vol-call-label').textContent=this.value+'%'"
+              onchange="saveSoundCfg()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Buttons -->
+      <div style="margin-bottom:4px;">
+        <div style="font-weight:800;font-size:.85rem;margin-bottom:9px;color:var(--muted);">ทดสอบเสียง</div>
+        <div class="brow">
+          <button class="bclr" onclick="adminTestSound('order')"><i class="fas fa-utensils"></i> ทดสอบออเดอร์</button>
+          <button class="bclr" onclick="adminTestSound('call')"><i class="fas fa-bell"></i> ทดสอบเรียกพนักงาน</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIN -->
     <div class="sc">
       <h3><i class="fas fa-key"></i> เปลี่ยนรหัส PIN</h3>
       <p>PIN ปัจจุบัน: <strong id="curpin" style="letter-spacing:.2em">****</strong><br>ใส่ PIN ใหม่ (ตัวเลข 6 หลัก)</p>
@@ -622,70 +698,11 @@ textarea.ata:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px
         📷 <b>เปลี่ยนรูป</b> — กดรูปภาพในการ์ด หรือกด ✏️ แก้ไข → อัพโหลดรูป<br>
         ✏️ <b>แก้ชื่อ/ราคา</b> — กดปุ่ม แก้ไข ใต้ชื่อเมนู<br>
         ➕ <b>เพิ่มเมนู</b> — ปุ่ม "เพิ่มเมนูใหม่" ด้านล่างของแต่ละหมวด<br>
-        🗑️ <b>ลบเมนู</b> — ลบได้เฉพาะที่เพิ่มเอง (เมนูหลักลบไม่ได้)<br>
+        🗑️ <b>ลบเมนู</b> — ลบได้ทุกรายการ เมนูหลักจะถูกซ่อนในระบบ<br>
         📢 <b>ประกาศ</b> — พิมพ์ในแท็บ "ประกาศ" กดบันทึก แสดงผลทันที<br>
-        🔐 <b>PIN</b> — ค่าเริ่มต้น <b>314159</b> เปลี่ยนได้ในหน้านี้
+        🔐 <b>PIN</b> — ค่าเริ่มต้น <b>314159</b> (6 หลัก) เปลี่ยนได้ในหน้านี้<br>
+        🔊 <b>เสียง</b> — ตั้งค่าได้ในหน้านี้ มีผลกับหน้าครัวและแอดมินทันที
       </p>
-    </div>
-  </div>
-
-
-  <!-- ── STATS TAB ── -->
-  <div class="tc" id="tab-stats">
-    <div class="shd"><h2><i class="fas fa-chart-pie" style="color:var(--indigo)"></i> สถิติ &amp; รายงาน</h2><p>วิเคราะห์ยอดขาย กราฟ และปฏิทินรายได้</p></div>
-
-    <!-- Month/Year Picker -->
-    <div class="sc" style="padding:14px 18px;margin-bottom:13px;">
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <span style="font-size:.88rem;font-weight:700;color:var(--txt);">📅 เลือกเดือน/ปี</span>
-        <select id="stats-year" class="fi" style="width:100px;padding:8px 12px;" onchange="loadStats()"></select>
-        <select id="stats-month" class="fi" style="width:130px;padding:8px 12px;" onchange="loadStats()">
-          <option value="1">มกราคม</option><option value="2">กุมภาพันธ์</option>
-          <option value="3">มีนาคม</option><option value="4">เมษายน</option>
-          <option value="5">พฤษภาคม</option><option value="6">มิถุนายน</option>
-          <option value="7">กรกฎาคม</option><option value="8">สิงหาคม</option>
-          <option value="9">กันยายน</option><option value="10">ตุลาคม</option>
-          <option value="11">พฤศจิกายน</option><option value="12">ธันวาคม</option>
-        </select>
-        <button class="bsave" style="padding:9px 18px;font-size:.85rem;" onclick="loadStats()"><i class="fas fa-sync-alt"></i> โหลด</button>
-      </div>
-    </div>
-
-    <!-- Summary Cards -->
-    <div id="stats-summary" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;"></div>
-
-    <!-- Calendar -->
-    <div class="sc" style="margin-bottom:13px;">
-      <h3 style="margin-bottom:12px;"><i class="fas fa-calendar-alt" style="color:var(--ok)"></i> ปฏิทินรายได้</h3>
-      <div id="stats-calendar" style="overflow-x:auto;"></div>
-      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center;">
-        <span style="font-size:.74rem;font-weight:700;color:var(--muted);">สี:</span>
-        <span style="font-size:.74rem;padding:3px 10px;border-radius:6px;background:#1a7a3b;color:#fff;">ขายดีมาก</span>
-        <span style="font-size:.74rem;padding:3px 10px;border-radius:6px;background:#52b96a;color:#fff;">ดี</span>
-        <span style="font-size:.74rem;padding:3px 10px;border-radius:6px;background:#c8ecd3;color:#1a5e2f;">มีขาย</span>
-        <span style="font-size:.74rem;padding:3px 10px;border-radius:6px;background:#f4f6f9;color:var(--muted);border:1px solid var(--bdr);">ไม่มีข้อมูล</span>
-      </div>
-    </div>
-
-    <!-- Line Chart -->
-    <div class="sc" style="margin-bottom:13px;">
-      <h3 style="margin-bottom:12px;"><i class="fas fa-chart-line" style="color:var(--primary)"></i> ยอดขายรายวัน</h3>
-      <div style="position:relative;height:220px;"><canvas id="chart-line"></canvas></div>
-    </div>
-
-    <!-- Pie Chart -->
-    <div class="sc" style="margin-bottom:13px;">
-      <h3 style="margin-bottom:12px;"><i class="fas fa-chart-pie" style="color:var(--accent)"></i> สัดส่วนเมนูยอดนิยม</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;">
-        <div style="position:relative;height:200px;"><canvas id="chart-pie"></canvas></div>
-        <div id="pie-legend" style="font-size:.78rem;line-height:2;"></div>
-      </div>
-    </div>
-
-    <!-- Top Items Table -->
-    <div class="sc">
-      <h3 style="margin-bottom:12px;"><i class="fas fa-trophy" style="color:var(--accent)"></i> เมนูขายดีประจำเดือน</h3>
-      <div id="stats-top-items"></div>
     </div>
   </div>
 
@@ -831,16 +848,16 @@ const BM={
 };
 
 /* ── State ── */
-let S={soldOut:{},extraItems:{},overrides:{},hiddenItems:{},announcement:'',adminPin:'314159'};
+let S={soldOut:{},extraItems:{},overrides:{},announcement:'',adminPin:'1234'};
 let cat='cat1', addOpen=false, editId=null, isIn=false;
 
 /* ══ PIN ══ */
 let buf='';
-function pp(d){if(buf.length>=6)return;buf+=d;udots();if(buf.length===6)setTimeout(verify,200);}
+function pp(d){if(buf.length>=4)return;buf+=d;udots();if(buf.length===4)setTimeout(verify,200);}
 function pdel(){if(!buf.length)return;buf=buf.slice(0,-1);udots();document.getElementById('pin-err').textContent='';}
-function udots(){for(let i=0;i<6;i++)document.getElementById('d'+i).classList.toggle('filled',i<buf.length);}
+function udots(){for(let i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<buf.length);}
 function verify(){
-  if(buf===(S.adminPin||'314159')){
+  if(buf===(S.adminPin||'1234')){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('admin-screen').style.display='block';
     isIn=true; listen();
@@ -864,14 +881,15 @@ function listen(){
     const d=snap.val()||{};
     S.soldOut=d.soldOut||{}; S.extraItems=d.extraItems||{};
     S.overrides=d.overrides||{}; S.announcement=d.announcement||'';
-    S.hiddenItems=d.hiddenItems||{}; S.adminPin=d.adminPin||'314159';
+    S.adminPin=d.adminPin||'1234';
     document.getElementById('ann-txt').value=S.announcement;
     prevAnn(S.announcement);
     document.getElementById('curpin').textContent=S.adminPin;
     if(isIn){renderCtabs();renderItems(cat);}
   });
-  // Auto-init dashboard
+  // Auto-init dashboard + calls for notification badge
   initDashTab();
+  initCallsTab();
 }
 
 /* ══ TABS ══ */
@@ -882,8 +900,8 @@ function switchTab(id,el){
   const tabEl=document.getElementById('tab-'+id);
   if(tabEl) tabEl.classList.add('on');
   if(id==='db') initDbTab();
-  if(id==='stats') initStatsTab();
   if(id==='dash') initDashTab();
+  if(id==='calls') initCallsTab();
 }
 
 /* ══ ANNOUNCEMENT ══ */
@@ -927,7 +945,7 @@ function applyOv(item){
 function renderItems(k){
   const c=BM[k];
   const extras=S.extraItems[k]?Object.entries(S.extraItems[k]):[];
-  const baseItems=c.items.filter(i=>!S.hiddenItems[i.id]).map(i=>applyOv(i));
+  const baseItems=c.items.map(i=>applyOv(i));
   const exItems=extras.map(([fbKey,i])=>({...applyOv(i),_fb:fbKey,_ex:true}));
   const all=[...baseItems,...exItems];
 
@@ -983,7 +1001,7 @@ function cardHtml(item){
         </label>
       </div>
       <button class="bedit" onclick="togEdit('${eKey}')"><i class="fas fa-pen"></i> แก้ไข</button>
-<button class="bdel" onclick="askDelItem('${eKey}',${item.id},'${fbKey}','${esc(item.n)}',${isEx})"><i class="fas fa-trash-alt"></i></button>
+      ${isEx?`<button class="bdel" onclick="askDel('${fbKey}','${esc(item.n)}')"><i class="fas fa-trash-alt"></i></button>`:''}
     </div>
   </div>
 
@@ -1168,22 +1186,6 @@ function askDel(fbKey,name){
   };
   document.getElementById('conf-ov').classList.add('show');
 }
-function askDelItem(eKey,itemId,fbKey,name,isEx){
-  document.getElementById('cemoji').textContent='🗑️';
-  document.getElementById('ctitle').textContent=`ลบ "${name}"?`;
-  document.getElementById('csub').textContent='รายการนี้จะถูกลบถาวร ไม่สามารถกู้คืนได้';
-  document.getElementById('cok').onclick=()=>{
-    if(isEx&&fbKey){
-      db.ref(`settings/extraItems/${cat}/${fbKey}`).remove()
-        .then(()=>{ms();toast(`✅ ลบ "${name}" แล้ว`);closeC();});
-    } else {
-      // ซ่อนเมนูหลัก
-      db.ref(`settings/hiddenItems/${itemId}`).set(true)
-        .then(()=>{ms();toast(`✅ ลบ "${name}" แล้ว`);closeC();});
-    }
-  };
-  document.getElementById('conf-ov').classList.add('show');
-}
 function maybeCC(e){if(e.target.id==='conf-ov')closeC();}
 function closeC(){document.getElementById('conf-ov').classList.remove('show');}
 
@@ -1191,7 +1193,7 @@ function closeC(){document.getElementById('conf-ov').classList.remove('show');}
 function changePin(){
   const np=document.getElementById('np').value.trim();
   const cp=document.getElementById('cp').value.trim();
-  if(!/^\d{6}$/.test(np)){toast('❌ PIN ต้องเป็นตัวเลข 6 หลัก',true);return;}
+  if(!/^\d{4}$/.test(np)){toast('❌ PIN ต้องเป็นตัวเลข 4 หลัก',true);return;}
   if(np!==cp){toast('❌ PIN ทั้งสองช่องไม่ตรงกัน',true);return;}
   db.ref('settings/adminPin').set(np).then(()=>{
     ms();toast('🔐 เปลี่ยน PIN เรียบร้อย');
@@ -1286,6 +1288,71 @@ function renderDashRecentOrders(orders) {
 }
 
 /* ══════════════════════════════════════
+   CALLS TAB (เรียกพนักงาน)
+══════════════════════════════════════ */
+let callsListening = false;
+
+function initCallsTab() {
+  if (callsListening) return;
+  callsListening = true;
+  db.ref('calls').orderByChild('timestamp').on('value', snap => {
+    const calls = snap.val() || {};
+    renderCalls(calls);
+    updateCallBadge(calls);
+    const el = document.getElementById('calls-last-update');
+    if (el) el.textContent = 'อัพเดท ' + new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  });
+}
+
+function renderCalls(calls) {
+  const el = document.getElementById('calls-list');
+  if (!el) return;
+  const entries = Object.entries(calls).sort((a,b)=>(b[1].timestamp||0)-(a[1].timestamp||0));
+  if (!entries.length) {
+    el.innerHTML = '<div class="empty-s"><i class="fas fa-bell" style="opacity:.3"></i><p>ยังไม่มีการเรียกพนักงาน</p></div>';
+    return;
+  }
+  const typeEmoji = {'ขอน้ำเพิ่ม':'💧','เรียกเช็กบิล':'💳','ขอถุงเก็บ':'🛍️','เรียกพนักงาน':'🙋'};
+  el.innerHTML = entries.map(([key, c]) => {
+    const ts = c.timestamp ? new Date(c.timestamp).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}) : '';
+    const em = typeEmoji[c.type] || '🔔';
+    return `<div class="call-item ${c.done ? 'done-call' : 'pending'}">
+      <div style="font-size:1.8rem;flex-shrink:0;">${em}</div>
+      <div class="ci-info">
+        <div class="ci-tbl">โต๊ะ ${esc(c.table||'?')}</div>
+        <div class="ci-type">${esc(c.type||'เรียกพนักงาน')}</div>
+        <div class="ci-time">🕐 ${ts}</div>
+      </div>
+      ${!c.done ? `<button class="ci-done" onclick="markCallDone('${key}')"><i class="fas fa-check"></i> จัดการแล้ว</button>` : '<span style="font-size:.75rem;color:var(--ok);font-weight:700;">✅ แล้ว</span>'}
+    </div>`;
+  }).join('');
+}
+
+function updateCallBadge(calls) {
+  const pending = Object.values(calls).filter(c => !c.done).length;
+  const badge = document.getElementById('call-badge');
+  const bell = document.getElementById('bell-wrap');
+  const lbl = document.getElementById('bell-label');
+  if (badge) { badge.textContent = pending > 9 ? '9+' : pending; badge.classList.toggle('show', pending > 0); }
+  if (bell) bell.classList.toggle('ringing', pending > 0);
+  if (lbl) lbl.style.display = pending > 0 ? '' : 'none';
+}
+
+function markCallDone(key) {
+  db.ref('calls/' + key + '/done').set(true).then(() => toast('✅ จัดการแล้ว'));
+}
+
+function clearDoneCalls() {
+  db.ref('calls').once('value').then(snap => {
+    const calls = snap.val() || {};
+    const upd = {};
+    Object.entries(calls).forEach(([key, c]) => { if (c.done) upd['calls/' + key] = null; });
+    if (!Object.keys(upd).length) { toast('ไม่มีรายการที่จัดการแล้ว'); return; }
+    db.ref().update(upd).then(() => toast('✅ ล้างรายการที่จัดการแล้ว'));
+  });
+}
+
+/* ══════════════════════════════════════
    STATUS UPDATE
 ══════════════════════════════════════ */
 function setOrderStatus(key, status) {
@@ -1333,7 +1400,7 @@ function printReceipt(order) {
 }
 
 /* INIT — load PIN pre-login */
-db.ref('settings/adminPin').once('value').then(s=>{if(s.val())S.adminPin=s.val(); else S.adminPin='314159';});
+db.ref('settings/adminPin').once('value').then(s=>{if(s.val())S.adminPin=s.val();});
 
 /* ══════════════════════════════════
    DATABASE TAB
@@ -1486,7 +1553,7 @@ function renderDbSettings(settings) {
 
   document.getElementById('db-settings-content').innerHTML = `
     <div class="db-settings-grid">
-      <div class="db-settings-item"><strong>Admin PIN</strong>${settings.adminPin||'314159'}</div>
+      <div class="db-settings-item"><strong>Admin PIN</strong>${settings.adminPin||'1234'}</div>
       <div class="db-settings-item"><strong>หมดชั่วคราว</strong>${soldKeys.length} รายการ</div>
       <div class="db-settings-item"><strong>เมนูที่เพิ่ม</strong>${extraCnt} รายการ</div>
       <div class="db-settings-item"><strong>Override</strong>${ovCnt} รายการ</div>
@@ -1573,200 +1640,84 @@ function confirmNukeAll() {
   document.getElementById('conf-ov').classList.add('show');
 }
 /* ══════════════════════════════════════
-   STATS TAB
+   🔊 SOUND ENGINE (Admin)
 ══════════════════════════════════════ */
-let lineChart=null, pieChart=null;
-const thMonths=['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+let ASND = { enabled: true, volume: 0.7, volOrder: 1.0, volCall: 1.0 };
+let _aAudioCtx = null;
 
-function initStatsTab(){
-  // Init year selector
-  const yr=document.getElementById('stats-year');
-  if(!yr.options.length){
-    const now=new Date();
-    for(let y=now.getFullYear();y>=now.getFullYear()-3;y--){
-      const o=document.createElement('option');
-      o.value=y; o.textContent=y+543;
-      yr.appendChild(o);
+function getAdminAudioCtx() {
+  if (!_aAudioCtx || _aAudioCtx.state === 'closed')
+    _aAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_aAudioCtx.state === 'suspended') _aAudioCtx.resume();
+  return _aAudioCtx;
+}
+
+// Sync sound config from Firebase → UI
+db.ref('settings/soundConfig').on('value', snap => {
+  const cfg = snap.val() || {};
+  ASND.enabled  = cfg.enabled  !== false;
+  ASND.volume   = typeof cfg.volume   === 'number' ? cfg.volume   : 0.7;
+  ASND.volOrder = typeof cfg.volOrder === 'number' ? cfg.volOrder : 1.0;
+  ASND.volCall  = typeof cfg.volCall  === 'number' ? cfg.volCall  : 1.0;
+  syncSoundUI();
+});
+
+function syncSoundUI() {
+  const master   = document.getElementById('snd-master');
+  const vol      = document.getElementById('adm-vol');
+  const volLbl   = document.getElementById('adm-vol-label');
+  const vOrd     = document.getElementById('vol-order');
+  const vOrdLbl  = document.getElementById('vol-order-label');
+  const vCall    = document.getElementById('vol-call');
+  const vCallLbl = document.getElementById('vol-call-label');
+  if (master)   master.checked = ASND.enabled;
+  if (vol)      { vol.value    = Math.round(ASND.volume   * 100); }
+  if (volLbl)   volLbl.textContent   = Math.round(ASND.volume   * 100) + '%';
+  if (vOrd)     { vOrd.value   = Math.round(ASND.volOrder * 100); }
+  if (vOrdLbl)  vOrdLbl.textContent  = Math.round(ASND.volOrder * 100) + '%';
+  if (vCall)    { vCall.value  = Math.round(ASND.volCall  * 100); }
+  if (vCallLbl) vCallLbl.textContent = Math.round(ASND.volCall  * 100) + '%';
+}
+
+function saveSoundCfg() {
+  const enabled  = document.getElementById('snd-master')?.checked ?? true;
+  const volume   = (document.getElementById('adm-vol')?.value    ?? 70) / 100;
+  const volOrder = (document.getElementById('vol-order')?.value  ?? 100) / 100;
+  const volCall  = (document.getElementById('vol-call')?.value   ?? 100) / 100;
+  db.ref('settings/soundConfig').set({ enabled, volume, volOrder, volCall })
+    .then(() => toast('🔊 บันทึกการตั้งค่าเสียงแล้ว'));
+}
+
+function adminTestSound(type) {
+  if (!ASND.enabled) { toast('⚠️ เสียงถูกปิดอยู่ — เปิดก่อนแล้วทดสอบ', true); return; }
+  try {
+    const ctx = getAdminAudioCtx();
+    const vol = ASND.volume;
+    const ev  = type === 'order' ? ASND.volOrder : ASND.volCall;
+    const finalVol = vol * ev;
+
+    if (type === 'order') {
+      [[0,700],[0.18,900],[0.36,1100]].forEach(([t,freq]) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = 'sine'; o.frequency.value = freq;
+        g.gain.setValueAtTime(0, ctx.currentTime+t);
+        g.gain.linearRampToValueAtTime(finalVol*0.5, ctx.currentTime+t+0.04);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+t+0.22);
+        o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+0.25);
+      });
+    } else {
+      [[0,1046],[0.22,1046],[0.44,1318],[0.66,1046]].forEach(([t,freq]) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = 'triangle'; o.frequency.value = freq;
+        g.gain.setValueAtTime(0, ctx.currentTime+t);
+        g.gain.linearRampToValueAtTime(finalVol*0.55, ctx.currentTime+t+0.03);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+t+0.2);
+        o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+0.22);
+      });
     }
-    yr.value=now.getFullYear();
-    document.getElementById('stats-month').value=now.getMonth()+1;
-  }
-  loadStats();
-}
-
-async function loadStats(){
-  const yr=parseInt(document.getElementById('stats-year').value);
-  const mo=parseInt(document.getElementById('stats-month').value);
-  const prefix=`${yr}-${String(mo).padStart(2,'0')}`;
-
-  // Fetch all history keys for this month
-  const snap=await db.ref('history').once('value');
-  const allHist=snap.val()||{};
-
-  // Filter to selected month
-  const monthData={};
-  Object.keys(allHist).forEach(k=>{
-    if(k.startsWith(prefix)) monthData[k]=allHist[k];
-  });
-
-  renderStatsSummary(monthData, yr, mo);
-  renderCalendar(monthData, yr, mo);
-  renderLineChart(monthData, yr, mo);
-  renderPieChart(monthData);
-  renderTopItems(monthData);
-}
-
-function renderStatsSummary(data, yr, mo){
-  let total=0, orders=0;
-  const itemCounts={};
-  Object.values(data).forEach(day=>{
-    const s=day.summary||{};
-    total+=(s.total||0);
-    orders+=(s.orderCount||Object.keys(day.orders||{}).length);
-    Object.values(day.orders||{}).forEach(o=>{
-      (o.items||[]).forEach(i=>{itemCounts[i.name]=(itemCounts[i.name]||0)+i.qty;});
-    });
-  });
-  const days=Object.keys(data).length;
-  const best=Object.entries(itemCounts).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('stats-summary').innerHTML=`
-    <div class="stats-sum-card"><div class="stats-sum-num" style="color:var(--ok);">฿${total.toLocaleString()}</div><div class="stats-sum-lbl">รายได้รวม (${thMonths[mo]} ${yr+543})</div></div>
-    <div class="stats-sum-card"><div class="stats-sum-num" style="color:var(--indigo);">${orders}</div><div class="stats-sum-lbl">ออเดอร์ทั้งหมด</div></div>
-    <div class="stats-sum-card"><div class="stats-sum-num" style="color:var(--primary);">${days}</div><div class="stats-sum-lbl">วันที่มีการขาย</div></div>
-    <div class="stats-sum-card"><div class="stats-sum-num" style="color:var(--accent);font-size:1rem;">${best?esc(best[0]):'—'}</div><div class="stats-sum-lbl">เมนูขายดีสุด</div></div>
-  `;
-}
-
-function renderCalendar(data, yr, mo){
-  const el=document.getElementById('stats-calendar');
-  const daysInMonth=new Date(yr,mo,0).getDate();
-  const firstDow=new Date(yr,mo-1,1).getDay(); // 0=Sun
-
-  // find max for color scaling
-  const totals=Object.values(data).map(d=>(d.summary||{}).total||0);
-  const maxT=totals.length?Math.max(...totals):1;
-
-  function getColor(t){
-    if(!t) return {bg:'#f4f6f9',fg:'var(--muted)'};
-    const r=t/maxT;
-    if(r>0.75) return {bg:'#1a7a3b',fg:'#fff'};
-    if(r>0.5)  return {bg:'#2d9e50',fg:'#fff'};
-    if(r>0.25) return {bg:'#52b96a',fg:'#fff'};
-    return {bg:'#c8ecd3',fg:'#1a5e2f'};
-  }
-
-  const days=['อา','จ','อ','พ','พฤ','ศ','ส'];
-  let html='<div class="cal-grid">';
-  days.forEach(d=>html+=`<div class="cal-head">${d}</div>`);
-
-  // Empty cells before first day
-  for(let i=0;i<firstDow;i++) html+=`<div class="cal-day empty"></div>`;
-
-  for(let d=1;d<=daysInMonth;d++){
-    const key=`${yr}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dayData=data[key];
-    const t=(dayData?.summary?.total)||0;
-    const {bg,fg}=getColor(t);
-    const hasData=!!dayData;
-    const rStr=t?`฿${t>=1000?Math.round(t/1000)+'k':t}`:'';
-    html+=`<div class="cal-day${hasData?' has-data':''}" style="background:${bg};color:${fg};"
-      title="${hasData?'฿'+t.toLocaleString()+' / '+(dayData.summary?.orderCount||0)+' ออเดอร์':'ไม่มีข้อมูล'}">
-      <div class="cal-d">${d}</div>
-      ${rStr?`<div class="cal-r">${rStr}</div>`:''}
-    </div>`;
-  }
-  html+='</div>';
-  el.innerHTML=html;
-}
-
-function renderLineChart(data, yr, mo){
-  const daysInMonth=new Date(yr,mo,0).getDate();
-  const labels=[],values=[];
-  for(let d=1;d<=daysInMonth;d++){
-    const key=`${yr}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    labels.push(d);
-    values.push((data[key]?.summary?.total)||0);
-  }
-  const ctx=document.getElementById('chart-line').getContext('2d');
-  if(lineChart) lineChart.destroy();
-  lineChart=new Chart(ctx,{
-    type:'line',
-    data:{
-      labels,
-      datasets:[{
-        label:'รายได้ (฿)',
-        data:values,
-        borderColor:'#ef233c',
-        backgroundColor:'rgba(239,35,60,0.08)',
-        borderWidth:2.5,
-        pointBackgroundColor:'#ef233c',
-        pointRadius:3,
-        fill:true,
-        tension:0.35
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`฿${c.raw.toLocaleString()}`}}},
-      scales:{
-        y:{beginAtZero:true,ticks:{callback:v=>`฿${v>=1000?Math.round(v/1000)+'k':v}`},grid:{color:'rgba(0,0,0,0.04)'}},
-        x:{grid:{display:false}}
-      }
-    }
-  });
-}
-
-function renderPieChart(data){
-  const counts={};
-  Object.values(data).forEach(day=>{
-    Object.values(day.orders||{}).forEach(o=>{
-      (o.items||[]).forEach(i=>{counts[i.name]=(counts[i.name]||0)+i.qty;});
-    });
-  });
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  if(!sorted.length){
-    document.getElementById('chart-pie').closest('div').innerHTML='<div style="text-align:center;color:var(--muted);padding:40px;font-size:.85rem;">ยังไม่มีข้อมูล</div>';
-    return;
-  }
-  const colors=['#ef233c','#6366f1','#f77f00','#38b000','#06b6d4','#8b5cf6','#f59e0b','#10b981'];
-  const ctx=document.getElementById('chart-pie').getContext('2d');
-  if(pieChart) pieChart.destroy();
-  pieChart=new Chart(ctx,{
-    type:'doughnut',
-    data:{
-      labels:sorted.map(([n])=>n),
-      datasets:[{data:sorted.map(([,v])=>v),backgroundColor:colors,borderWidth:0}]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} ครั้ง`}}}
-    }
-  });
-  const total=sorted.reduce((s,[,v])=>s+v,0);
-  document.getElementById('pie-legend').innerHTML=sorted.map(([n,v],i)=>
-    `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-      <div style="width:10px;height:10px;border-radius:3px;background:${colors[i]};flex-shrink:0;"></div>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;">${esc(n)}</span>
-      <span style="font-weight:800;font-size:.78rem;color:var(--txt);">${v}</span>
-    </div>`).join('');
-}
-
-function renderTopItems(data){
-  const counts={};
-  Object.values(data).forEach(day=>{
-    Object.values(day.orders||{}).forEach(o=>{
-      (o.items||[]).forEach(i=>{counts[i.name]=(counts[i.name]||0)+i.qty;});
-    });
-  });
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  const el=document.getElementById('stats-top-items');
-  if(!sorted.length){el.innerHTML='<div style="color:var(--muted);font-size:.85rem;text-align:center;padding:20px;">ยังไม่มีข้อมูล</div>';return;}
-  el.innerHTML=sorted.map(([name,qty],i)=>
-    `<div class="top-item-row">
-      <div class="top-rank" style="${i>2?'background:var(--indigo)':''}">${i+1}</div>
-      <div style="flex:1;font-weight:700;font-size:.9rem;">${esc(name)}</div>
-      <div style="font-weight:800;color:var(--primary-dark);font-size:.9rem;">${qty} ครั้ง</div>
-    </div>`).join('');
+  } catch(e) { toast('❌ ทดสอบเสียงไม่ได้: '+e.message, true); }
 }
 
 </script>
